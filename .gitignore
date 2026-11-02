@@ -1,0 +1,37 @@
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.coverage
+htmlcov/
+
+# TypeScript and browser tooling
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+
+# Local runtime artifacts; keep source fixtures and lockfiles tracked
+.cache/
+data/
+models/
+bin/stockfish*
+*.log
+
+# Editor and operating-system files
+.DS_Store
+.idea/
+.vscode/
