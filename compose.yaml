@@ -1,0 +1,72 @@
+name: chesstutor
+services:
+  postgres:
+    image: postgres:17.6-alpine@sha256:ef257d85f76e48da1c64832459b59fcaba1a4dac97bf5d7450c77753542eee94
+    environment:
+      POSTGRES_USER: chess
+      POSTGRES_PASSWORD: local-development
+      POSTGRES_DB: chesstutor
+    ports: ["127.0.0.1:5433:5432"]
+    volumes: ["postgres-data:/var/lib/postgresql/data"]
+    networks: [default, backend]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chess -d chesstutor"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+  redis:
+    image: redis:7.2.11-alpine@sha256:1a34bdba051ecd8a58ec8a3cc460acef697a1605e918149cc53d920673c1a0a7
+    command: ["redis-server", "--appendonly", "yes"]
+    ports: ["127.0.0.1:6380:6379"]
+    volumes: ["redis-data:/data"]
+    networks: [default, backend]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+  api:
+    build: .
+    environment:
+      CHESS_DATABASE_URL: postgresql://chess:local-development@postgres:5432/chesstutor
+      CHESS_REDIS_URL: redis://redis:6379/0
+    ports: ["127.0.0.1:8000:8000"]
+    networks: [default, backend]
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", ".venv/bin/python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health/ready', timeout=5)"]
+      interval: 5s
+      timeout: 6s
+      retries: 20
+  worker:
+    build: .
+    command: [".venv/bin/python", "-m", "services.worker.main"]
+    environment:
+      CHESS_REDIS_URL: redis://redis:6379/0
+    networks: [backend]
+    depends_on:
+      redis: {condition: service_healthy}
+    mem_limit: 512m
+    cpus: 1
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      API_PROXY_TARGET: http://api:8000
+    ports: ["127.0.0.1:5173:5173"]
+    depends_on:
+      api: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:5173').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 6s
+      retries: 20
+networks:
+  backend:
+    internal: true
+volumes:
+  postgres-data:
+  redis-data:

@@ -1,0 +1,24 @@
+{
+  "artifacts": {
+    "darwin-arm64": {
+      "archive_sha256": "4e23165eb8f353c221ff7ab6716f0a160c3993dadf90d0c0ad982a7ade4091c9",
+      "archive_url": "https://github.com/official-stockfish/Stockfish/releases/download/sf_17.1/stockfish-macos-m1-apple-silicon.tar",
+      "binary_path": "stockfish/stockfish-macos-m1-apple-silicon",
+      "binary_sha256": "9345c44970093cabed9757be86a9ca86809a5b6ca1bdc654cf51a5eed7568858",
+      "nnue_packaging": "embedded in the checksummed release executable"
+    },
+    "linux-x86_64": {
+      "archive_sha256": "4dafdd04f71e70755a327b5be258937b281e60ba87bc0a5801399908240d4a73",
+      "archive_url": "https://github.com/official-stockfish/Stockfish/releases/download/sf_17.1/stockfish-ubuntu-x86-64.tar",
+      "binary_path": "stockfish/stockfish-ubuntu-x86-64",
+      "binary_sha256": "4e7507c0b1d3a3020e16b212101c0ba8c8cbff5ea87764bd56301c7d53bfa10c",
+      "nnue_packaging": "embedded in the checksummed release executable"
+    }
+  },
+  "engine": "Stockfish",
+  "license": "GPL-3.0",
+  "note": "S0 pins artifacts only. Verified installation and engine execution begin in S3. Other platforms require a separately verified artifact.",
+  "release_tag": "sf_17.1",
+  "source_url": "https://github.com/official-stockfish/Stockfish/tree/sf_17.1",
+  "version": "17.1"
+}

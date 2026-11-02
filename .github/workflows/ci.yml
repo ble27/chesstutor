@@ -1,0 +1,32 @@
+name: Sprint gate
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-python@v5.6.0
+        with:
+          python-version-file: .python-version
+      - uses: actions/setup-node@v4.4.0
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - uses: astral-sh/setup-uv@v6.0.1
+        with:
+          version: 0.11.2
+      - run: make setup
+      - run: cd apps/web && npx playwright install --with-deps chromium
+      - run: docker compose up -d --wait postgres redis
+      - run: make verify
+      - run: docker compose build
+      - run: docker compose up -d --wait
+      - run: curl --fail http://127.0.0.1:8000/api/v1/health/ready
+      - if: always()
+        run: docker compose down
