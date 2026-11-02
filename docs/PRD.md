@@ -2,9 +2,10 @@
 
 Version 1.0 · 2026-11-02 · Ready for implementation planning.
 
-This repository contains planning documentation. Application code and runtime
-tests have not been implemented. Numerical budgets below are initial product
-decisions that require measurement, not verified performance claims.
+Sprint 0 implementation establishes the application foundation; current status
+and actual checks are recorded in [sprint evidence](sprints/S0.md). Later product
+features remain planned. Numerical budgets below require measurement and are not
+verified performance claims.
 
 ## 1. Purpose and success
 
@@ -513,7 +514,7 @@ engine legality and qualitative outcomes with tolerances, not exact timing/nodes
 
 S0 must introduce `make check`, `make test-unit`, `make test-integration`,
 `make test-e2e`, `make build`, and aggregate `make verify` (or clearly documented
-equivalents). They are implementation requirements, not existing commands.
+equivalents). Sprint 0 introduces these commands through the root Makefile.
 Use meaningful branch coverage on decision-heavy domain code; avoid tests that
 only restate trivial implementation details.
 

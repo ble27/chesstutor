@@ -1,8 +1,8 @@
 # Contributor and agent conventions
 
 These rules apply throughout this repository. Product scope and acceptance
-criteria are in [docs/PRD.md](docs/PRD.md). This is currently a documentation-only
-repository; implementation and test commands are planned, not available yet.
+criteria are in [docs/PRD.md](docs/PRD.md). Sprint 0 establishes the application
+foundation; see `Makefile` and `docs/sprints/S0.md` for commands and gate evidence.
 
 ## Scope and workflow
 
