@@ -174,3 +174,7 @@ by this merge. Integration/browser/manual/release gates were not rerun for this
 tests-only merge, and no sprint is marked complete. Normal unit discovery retains
 all future failures; merging the user-requested specifications does not certify
 `make verify` or unblock dependent implementation/release gates.
+
+Verified integration checkpoint: `121ff0502dc59024f81034767c33d37bc556448e`.
+The following evidence commit records this ID; the main merge preserves the
+verified code and evidence tree. No remote push is part of this task.
