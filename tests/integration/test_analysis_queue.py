@@ -5,11 +5,32 @@ from redis import Redis
 from rq import Queue
 from rq.job import Job
 from rq.serializers import JSONSerializer
+from rq.worker_registration import unregister
 
 from services.adapters.analysis_queue import RQDispatch
 from services.api.app.settings import Settings
 from services.worker.main import ReadyWorker
 from tests.integration.analysis_fixtures import analysis_fixture
+
+
+@pytest.mark.integration
+def test_live_worker_repairs_expired_registration_before_another_review():
+    with Redis.from_url(Settings().redis_url.get_secret_value()) as redis:
+        checksum = "fixture-checksum"
+        queue = Queue("test-analysis-" + uuid4().hex, connection=redis)
+        dispatch = RQDispatch(redis, checksum, queue.name)
+        worker = ReadyWorker(queue, redis, checksum, name="fixture-" + uuid4().hex)
+        worker.register_birth()
+        try:
+            redis.delete(worker.key)
+            unregister(worker)
+
+            worker.heartbeat()
+
+            assert dispatch.ready(worker.hostname)
+        finally:
+            worker.register_death()
+            redis.delete("chesstutor:engine-ready:" + worker.name)
 
 
 @pytest.mark.integration

@@ -5,6 +5,7 @@ from redis import Redis
 from redis.client import Pipeline
 from rq import Queue, Worker
 from rq.serializers import JSONSerializer
+from rq.worker_registration import register
 
 from services.adapters.analysis_queue import engine_queue
 from services.adapters.engine_binary import selected_artifact, verify_binary
@@ -30,7 +31,15 @@ class ReadyWorker(Worker):
 
     def heartbeat(self, timeout: int | None = None, pipeline: Pipeline | None = None) -> None:
         super().heartbeat(timeout=timeout, pipeline=pipeline)
-        self.connection.setex("chesstutor:engine-ready:" + self.name, 90, self.binary_sha256)
+        connection = pipeline if pipeline is not None else self.connection
+        # A host pause can expire RQ identity and queue membership while this
+        # process survives; every live heartbeat must reconstruct both.
+        connection.hset(self.key, mapping=self.serialize())
+        if pipeline is None:
+            register(self)
+        else:
+            register(self, pipeline)
+        connection.setex("chesstutor:engine-ready:" + self.name, 90, self.binary_sha256)
 
 
 async def engine_probe(settings: Settings) -> None:
