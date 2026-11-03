@@ -13,8 +13,8 @@ Question: can full Stockfish WASM provide a working, faster personal-review path
 without server engine queues or x86 emulation, while preserving history, legal
 variations and honest provisional status?
 
-Keep main unchanged. Preserve the server workflow for comparison; no S4/S5
-classification or coaching work. Browser evidence remains local/untrusted, never
+The original experiment kept main unchanged and preserved the server workflow
+for comparison; no S4/S5 classification or coaching work. Browser evidence remains local/untrusted, never
 uploaded into the server's verified evidence cache. Prototype branch changes may
 revise execution and budget assumptions; no Chess.com-equivalence claim.
 
@@ -171,5 +171,40 @@ fix is a separate ancestor commit recorded above. Both coherent commits include
 their necessary tests; the feature commit also includes contracts, provenance
 and documentation. Explicit paths were staged and the staged diffs inspected.
 This documentation-only follow-up records the final feature ID; its own ID is
-available in Git history. `main` remains at the fixed starting commit and the
-working branch is `experiment/browser-stockfish`.
+available in Git history. At that checkpoint, `main` remained at the fixed
+starting commit and the working branch was `experiment/browser-stockfish`.
+
+## Authorized main merge verification
+
+On 2026-11-03 the user requested proof that Stockfish computes analysis rather
+than only updating sidebar progress, followed by merging into main. This
+supersedes the original branch-only constraint, while retaining the opt-in
+browser mode and all provisional-quality/adoption limitations above.
+Pre-merge branch checkpoint: `1fb6927`; main baseline remains
+`787ce2ee6436569e2643a4d122add5b4a4d4890a` for the whole-change review.
+
+The real-WASM Playwright tests now observe actual worker messages without
+replacing its script or outputs. Both full builds must identify Stockfish 17.1,
+complete the UCI handshake, and return search output with positive depth/nodes,
+a score, PV and bestmove. Raw UCI transcripts are attached to the test results.
+The resulting evidence still passes the real Python legality endpoint and is
+rendered in the variations panel. A negative control blocks WASM downloads:
+analysis must fail with zero available plies, no variations, no evidence requests
+and no live worker. All three targeted cases passed before the full gate.
+
+Slash commands remain unavailable. Equivalent whole-change Git diff and parallel
+code-review skill reviews against AGENTS.md and the PRD reported zero actionable
+Standards findings and zero actionable Spec findings. The reviewed diff includes
+the original experiment, Quick fix and new proof tests, not merely this follow-up.
+Diff snapshot: `/tmp/chesstutor-browser-merge.diff`.
+
+Final pre-merge `make verify` passed **316 tests**: 136 Python unit, 113 frontend
+unit, 26 database/Redis integration and 41 Chromium tests, plus contract drift,
+static/format/function checks and builds. Log:
+`/tmp/chesstutor-browser-merge-verify.log`. Documentation links resolve and
+`git diff --check` passes. No production application behavior changed in this
+follow-up. Explicit test/doc paths were staged and inspected together.
+The proof-test/evidence commit is identified by Git history; main will advance
+by fast-forward to that reviewed checkpoint without rewriting history. No remote
+push or deployment is included. Browser mode remains opt-in; human chess review,
+manual accessibility, cross-device and quality calibration gates remain open.

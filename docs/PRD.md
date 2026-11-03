@@ -19,7 +19,9 @@ server cache. This permits client UCI transport without duplicating chess rules
 or classification in TypeScript. Existing S3 server budgets and contracts remain
 the production baseline. Experimental execution, trust and performance evidence
 are in [the branch record](sprints/browser-experiment.md); cross-device and
-accuracy gates must pass before adopting it as product policy.
+accuracy gates must pass before adopting it as product policy. On 2026-11-03
+the user authorized merging this opt-in experiment into main after direct engine
+execution verification; merging does not waive those adoption gates.
 
 ## 1. Purpose and success
 
