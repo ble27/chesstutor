@@ -15,7 +15,12 @@ export class ApiError extends Error {
   }
 }
 
-type RequestOptions = { signal?: AbortSignal; timeoutMs?: number };
+type RequestOptions = {
+  signal?: AbortSignal;
+  timeoutMs?: number;
+  method?: "POST";
+  body?: string;
+};
 
 async function readJson(response: Response): Promise<unknown> {
   try {
@@ -58,7 +63,17 @@ export async function request<T>(
   const timer = setTimeout(() => timeout.abort(), timeoutMs);
   try {
     signal.throwIfAborted();
-    const response = await fetch(path, { signal, credentials: "same-origin" });
+    const response = await fetch(path, {
+      signal,
+      credentials: "same-origin",
+      ...(options.method
+        ? {
+            method: options.method,
+            headers: { "Content-Type": "application/json" },
+          }
+        : {}),
+      ...(options.body === undefined ? {} : { body: options.body }),
+    });
     const value = await readJson(response);
     if (!response.ok) throw responseError(response, value);
     try {

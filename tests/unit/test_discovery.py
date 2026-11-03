@@ -7,6 +7,7 @@ from services.adapters.pubapi import PubAPI
 from services.api.app.main import create_app
 from services.application.discovery import Discovery
 from services.core.games.discovery import DiscoveryError
+from tests.unit.analysis_fakes import Service
 from tests.unit.discovery_fakes import Clock, MemoryCache, MemoryStore, provider_game
 
 
@@ -34,7 +35,7 @@ def discovery_client(records=None):
     service = Discovery(
         PubAPI(http, MemoryCache(), "ChessTutor test", clock.now, clock.sleep), MemoryStore()
     )
-    return TestClient(create_app(discovery=service)), service
+    return TestClient(create_app(discovery=service, analysis=Service())), service
 
 
 def test_lookup_import_and_idempotency():

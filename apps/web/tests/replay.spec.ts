@@ -85,7 +85,7 @@ test("puts recorded moves beside the board and distinguishes them from engine an
     insights.getByRole("heading", { name: "Engine analysis" }),
   ).toBeVisible();
   await expect(
-    insights.getByText("Engine analysis is not available yet."),
+    insights.getByRole("button", { name: "Quick review" }),
   ).toBeVisible();
   const board = await page
     .getByRole("img", { name: /Chessboard/ })

@@ -4,8 +4,9 @@ Version 1.0 · 2026-11-02 · Ready for implementation planning.
 
 Sprint 0 establishes the foundation; Sprint 1 adds discovery and safe import.
 Actual checks and implementation limits are recorded in [S0](sprints/S0.md) and
-[S1](sprints/S1.md). Replay implementation and pending manual acceptance are
-recorded in [S2](sprints/S2.md); later product features remain planned.
+[S1](sprints/S1.md). User-accepted replay is recorded in [S2](sprints/S2.md).
+Stockfish implementation and gate status are recorded in [S3](sprints/S3.md);
+classification and later product features remain planned.
 Numerical budgets below require measurement and are not
 verified performance claims.
 

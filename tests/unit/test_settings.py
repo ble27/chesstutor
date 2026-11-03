@@ -52,6 +52,7 @@ def test_explicit_production_configuration(monkeypatch: pytest.MonkeyPatch) -> N
     monkeypatch.setenv("CHESS_ENVIRONMENT", "production")
     monkeypatch.setenv("CHESS_DATABASE_URL", "postgresql://app:secret@database/chess")
     monkeypatch.setenv("CHESS_ALLOWED_ORIGINS", '["https://chess.example"]')
+    monkeypatch.setenv("CHESS_SESSION_SECRET", "sprint-test-session-secret-32-characters")
     assert Settings(_env_file=None).allowed_origins == ("https://chess.example",)
 
 
@@ -66,3 +67,15 @@ def test_pubapi_user_agent_is_optional_and_empty_compose_value_is_unconfigured()
 def test_pubapi_user_agent_rejects_unbounded_or_header_injection_values(value):
     with pytest.raises(ValidationError):
         Settings(_env_file=None, pubapi_user_agent=value)
+
+
+@pytest.mark.parametrize("secret", ["short", "local-development-session-key-change-before-hosting"])
+def test_production_requires_a_private_session_signing_key(secret):
+    with pytest.raises(ValidationError, match="session signing key"):
+        Settings(
+            _env_file=None,
+            environment="production",
+            database_url="postgresql://app:secret@database/chess",
+            allowed_origins=("https://chess.example",),
+            session_secret=secret,
+        )

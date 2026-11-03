@@ -26,18 +26,21 @@ services:
       timeout: 2s
       retries: 30
   migrate:
-    build: .
+    build: {context: ., target: application}
     command: [".venv/bin/alembic", "upgrade", "head"]
     environment:
       CHESS_DATABASE_URL: postgresql://chess:local-development@postgres:5432/chesstutor
     depends_on:
       postgres: {condition: service_healthy}
   api:
-    build: .
+    build: {context: ., target: application}
     environment:
       CHESS_DATABASE_URL: postgresql://chess:local-development@postgres:5432/chesstutor
       CHESS_PUBAPI_USER_AGENT: ${CHESS_PUBAPI_USER_AGENT:-}
       CHESS_REDIS_URL: redis://redis:6379/0
+      CHESS_ENGINE_PLATFORM: linux-x86_64
+      CHESS_SESSION_SECRET: ${CHESS_SESSION_SECRET:-local-development-session-key-change-before-hosting}
+      CHESS_ANALYSIS_IP_JOBS_PER_HOUR: ${CHESS_ANALYSIS_IP_JOBS_PER_HOUR:-20}
     ports: ["127.0.0.1:8000:8000"]
     networks: [default, backend]
     depends_on:
@@ -50,14 +53,25 @@ services:
       timeout: 6s
       retries: 20
   worker:
-    build: .
+    platform: linux/amd64
+    build: {context: ., target: engine-worker}
     command: [".venv/bin/python", "-m", "services.worker.main"]
     environment:
       CHESS_REDIS_URL: redis://redis:6379/0
+      CHESS_DATABASE_URL: postgresql://chess:local-development@postgres:5432/chesstutor
+      CHESS_ENGINE_PLATFORM: linux-x86_64
     networks: [backend]
     depends_on:
       redis: {condition: service_healthy}
-    mem_limit: 512m
+      migrate: {condition: service_completed_successfully}
+    deploy:
+      replicas: 2
+    healthcheck:
+      test: ["CMD", ".venv/bin/python", "-m", "services.worker.health"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    mem_limit: 768m
     cpus: 1
   web:
     build:

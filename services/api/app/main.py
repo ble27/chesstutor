@@ -16,10 +16,15 @@ from starlette.responses import Response
 from services.adapters.game_store import PostgresGameStore
 from services.adapters.pubapi import PubAPI, RedisProviderCache
 from services.adapters.readiness import ReadinessProbe, ServiceReadiness
+from services.api.app.analysis_routes import analysis_router
+from services.api.app.analysis_security import AnalysisBodyLimit
 from services.api.app.game_routes import discovery_router
 from services.api.app.schemas import ErrorResponse, HealthResponse
 from services.api.app.settings import Settings
+from services.application.analysis import AnalysisService
+from services.application.analysis_resources import AnalysisResources
 from services.application.discovery import Discovery
+from services.core.analysis.values import AnalysisError
 from services.core.games.discovery import DiscoveryError
 
 
@@ -37,6 +42,7 @@ def create_app(
     settings: Settings | None = None,
     probe: ReadinessProbe | None = None,
     discovery: Discovery | None = None,
+    analysis: AnalysisService | None = None,
 ) -> FastAPI:
     config = settings if settings is not None else Settings()
     readiness = (
@@ -49,12 +55,21 @@ def create_app(
         )
     )
     resources = DiscoveryResources(config) if discovery is None else None
+    analysis_resources = (
+        AnalysisResources(config, resources.store.engine if resources else None)
+        if analysis is None
+        else None
+    )
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         try:
+            if analysis_resources is not None:
+                analysis_resources.start()
             yield
         finally:
+            if analysis_resources is not None:
+                await analysis_resources.close()
             if resources is not None:
                 await resources.close()
 
@@ -67,14 +82,24 @@ def create_app(
     service = discovery if discovery is not None else resources.discovery if resources else None
     assert service is not None
     app.include_router(discovery_router(service))
+    analysis_service = (
+        analysis
+        if analysis is not None
+        else analysis_resources.service
+        if analysis_resources
+        else None
+    )
+    assert analysis_service is not None
+    app.include_router(analysis_router(analysis_service, config))
     register_discovery_errors(app)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=list(config.allowed_origins),
         allow_credentials=True,
-        allow_methods=["GET"],
+        allow_methods=["GET", "POST"],
         allow_headers=["Content-Type"],
     )
+    app.add_middleware(AnalysisBodyLimit)
 
     @app.middleware("http")
     async def request_id(
@@ -130,8 +155,11 @@ class DiscoveryResources:
 
 
 def register_discovery_errors(app: FastAPI) -> None:
+    @app.exception_handler(AnalysisError)
     @app.exception_handler(DiscoveryError)
-    async def discovery_error(request: Request, exc: DiscoveryError) -> JSONResponse:
+    async def discovery_error(
+        request: Request, exc: DiscoveryError | AnalysisError
+    ) -> JSONResponse:
         error = ErrorResponse(
             code=exc.code,
             message=exc.message,

@@ -23,10 +23,12 @@ Stockfish archives and executable checksums are pinned in
 [engines/stockfish.json](engines/stockfish.json). The selected official release
 executables embed their NNUE data, covered by the executable checksum. Their
 matching source is linked in that manifest. No engine binaries or model weights
-are committed or bundled in the S0 application images. Engine installation and
-execution are a Sprint 3 deliverable. A future redistributable engine package must
-include its notices and corresponding source/build provenance, including the
-network data needed for that exact build.
+are committed. The S3 engine-worker image installs the checksum-verified official
+Linux x86-64 executable, its `Copying.txt` as `bin/stockfish-LICENSE.txt`, and exact
+release/source/embedded-network provenance as `bin/stockfish-provenance.json`.
+Native installation preserves the same sidecars. API images do not install the
+engine. Retain these files and provide corresponding source for the exact build
+when distributing; the manifest links the official release source and artifacts.
 
 The board uses the default SVG piece artwork repackaged by react-chessboard.
 Its shapes match Cburnett's Wikimedia chess set (for example,

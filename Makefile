@@ -3,7 +3,7 @@ export npm_config_cache := $(CURDIR)/.cache/npm
 UV := uv run --frozen
 WEB := npm --prefix apps/web
 
-.PHONY: migrate setup check test-unit test-integration test-e2e build contracts contracts-check verify up down
+.PHONY: migrate engine-install setup check test-unit test-integration test-e2e build contracts contracts-check verify up down
 
 setup:
 	uv sync --frozen
@@ -12,6 +12,9 @@ setup:
 
 migrate:
 	$(UV) alembic upgrade head
+
+engine-install:
+	$(UV) python -m scripts.install_engine
 
 contracts:
 	$(UV) python -m scripts.export_openapi
@@ -33,7 +36,7 @@ test-unit:
 	$(UV) pytest tests/unit
 	$(WEB) test
 
-test-integration: migrate
+test-integration: migrate engine-install
 	$(UV) pytest tests/integration
 
 test-e2e:
