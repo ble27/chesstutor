@@ -57,12 +57,22 @@ local API; no backend secrets enter its bundle.
 
 ## Public game lookup
 
-Set `CHESS_PUBAPI_USER_AGENT` in `.env` to an identifying User-Agent with your
-real operator contact email or project contact URL, then run `make up`.
-For example, replace the example contact in `.env.example`; it is commented out
-so a fake contact is never sent upstream. Without this setting the page explains
-that public lookup is not configured. Health checks and fixture tests still work.
-A host-run API also reads `.env`; Compose forwards this setting to its API.
+If `.env` does not exist, create it from the template:
+
+```sh
+cp .env.example .env
+```
+
+In **`.env`**, uncomment `CHESS_PUBAPI_USER_AGENT` and replace the example contact
+with your real operator email or project contact URL. Keep `ChessTutor/0.1` as
+the application name and version, then run `make up` to load the setting.
+Editing `.env.example` alone does not configure the application. The `.env` file
+is ignored by Git; keep personal contact details and credentials there.
+
+The template setting is commented out so a fake contact is never sent upstream.
+Without this setting the page explains that public lookup is not configured.
+Health checks and fixture tests still work. A host-run API also reads `.env`;
+Compose forwards this setting to its API.
 
 Enter a public Chess.com username. The newest archive month opens by default;
 choose another month or filter by player color, exact opponent username, and time
