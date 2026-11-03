@@ -165,4 +165,11 @@ completion is claimed. The experiment is left running on 5175 with validation on
 8001; temporary packaging containers are removed. Screenshot inspection and
 relative documentation-link/whitespace checks passed. No screen-reader session
 or cross-device measurements are inferred from automated viewport assertions.
-The final feature checkpoint is recorded by a following documentation commit.
+Feature checkpoint: `0ec6ead68999696557d4d82a9ad1670c4cf01d48`
+(`feat(experiment): run full Stockfish reviews in browser workers`). The Quick
+fix is a separate ancestor commit recorded above. Both coherent commits include
+their necessary tests; the feature commit also includes contracts, provenance
+and documentation. Explicit paths were staged and the staged diffs inspected.
+This documentation-only follow-up records the final feature ID; its own ID is
+available in Git history. `main` remains at the fixed starting commit and the
+working branch is `experiment/browser-stockfish`.
