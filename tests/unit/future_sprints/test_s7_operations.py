@@ -5,11 +5,12 @@ load, and process cleanup remain integration gates, not mocked unit proof.
 """
 
 from datetime import UTC, datetime, timedelta
-from typing import NamedTuple
+from typing import NamedTuple, cast
 
 import pytest
 
 from tests.unit.future_sprints.contracts import policy
+from tests.unit.future_sprints.results import AdmissionResult
 
 NOW = datetime(2026, 11, 3, 12, tzinfo=UTC)
 
@@ -22,7 +23,7 @@ class Submission(NamedTuple):
     cache_hit: bool = False
 
 
-def admission(**changes: object):
+def admission(**changes: object) -> AdmissionResult:
     arguments: dict[str, object] = {
         "session": "alice",
         "ip": "shared-ip",
@@ -35,7 +36,7 @@ def admission(**changes: object):
         "ip_hourly_limit": 20,
     }
     arguments.update(changes)
-    return policy("services.core.operations", "admit_analysis")(**arguments)
+    return cast(AdmissionResult, policy("services.core.operations", "admit_analysis")(**arguments))
 
 
 @pytest.mark.parametrize(("mode", "limit"), [("quick", 5), ("deep", 2)])

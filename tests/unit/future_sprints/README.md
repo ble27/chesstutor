@@ -35,8 +35,9 @@ assert-false, or replacement implementation hides missing functionality.
 The PRD does not fix internal Python or TypeScript names. The following are
 **proposed test seams**, not existing APIs or changes to the OpenAPI contract.
 Only `source_url`, `PubAPI`, and `Replay` currently exist on this baseline.
-Python case factories spell out all arguments; their NamedTuple inputs are
-structural records. Implementations should own typed models/protocols and adapt
+Python case factories spell out all arguments. Classification reuses the S3
+`Wdl` value; other NamedTuple inputs are structural records. Helper results are
+explicit structural protocols in `results.py`. Implementations should own typed models/protocols and adapt
 these tests to approved public interfaces, preserving the behavioral assertions.
 They must not import test fixtures or accept unvalidated arbitrary model data.
 
@@ -120,8 +121,56 @@ These SHA-256 values pin the exact files read at baseline `2af3574`:
 | `docs/PRD.md` | `968f9d8775ff043dacb56366b8d5e801146f2e1e968fa0e7e18789263384ba99` |
 | `AGENTS.md` | `52cf73bc58afe97a629b136ddf563d173974d92f886779e221f07b2bd5d54de6` |
 
-Final execution: **238 new cases: 20 passed, 218 failed**. Python new cases:
+Original authoring execution at `35d734f`: **238 new cases: 20 passed, 218 failed**. Python new cases:
 18 passed/194 failed; frontend new cases: 2 passed/24 failed. The full Python
 unit suite had 113 passed/194 failed; the final full frontend unit run had
 76 passed/24 failed. Contract/static/build checks passed; `make verify` remains
 failed at Python unit tests. No sprint completion or release approval is implied.
+
+## Verification for merge into main — 2026-11-03
+
+The user explicitly authorized merging this tests-only branch after verifying
+its cases. The merge target was `513a14e703e955d2e66f6c150d0567cd25295c29`.
+Current main was first combined into the isolated branch without conflicts;
+verification covered that complete tree. Original authoring evidence and source
+fingerprints above remain historical. The current PRD fingerprint is
+`ab2cb0e41ce8f44a22fc33b3d061cdee4d094f8460c6ac83244200692f8b422f`;
+`plan.md` and `AGENTS.md` still match their recorded fingerprints.
+
+Standards review found missing explicit result types in the test adapters;
+`results.py` and typed helper signatures resolve that finding. Classification
+now reuses the existing S3 WDL value. Specification review found indirect renderer
+safety coverage and no aggregate retry-deadline case. Six added coaching cases
+now test direct rendering with a valid control, unknown templates/raw values,
+a retry using four seconds after six elapsed, and no retry at deadline expiry.
+The renderer receives structural blocks with reviewed IDs, evidence IDs and
+validated typed `values`; the optional injected `clock` returns monotonic seconds.
+Both reviewers confirmed their findings resolved and reported no new blockers.
+
+Final new-case count: **244 = 21 passed + 223 intentionally failing**.
+The new Quick/Deep accessibility case now passes using S3's existing controls.
+Python specs: 18 passed/200 failed; frontend specs: 3 passed/23 failed.
+Full Python unit suite: 154 passed/200 failed. Full frontend suite:
+116 passed/23 failed. All 136 pre-existing Python and 113 pre-existing frontend
+unit cases pass. Every Python failure was checked in JUnit output and identifies
+one of the documented absent classification/coaching/operations callables;
+frontend failures are only the absent presentation/variation modules.
+
+`make verify UV=/private/tmp/chesstutor-test-python` passed contract drift,
+Ruff lint/format, mypy (44 production modules), TypeScript, ESLint, Prettier and
+function-length checks, then failed at the intentionally red Python unit suite.
+Frontend tests ran separately using `npm --prefix apps/web test -- --reporter=dot`.
+`make build UV=/private/tmp/chesstutor-test-python` passed Python sdist/wheel and
+frontend builds; explicit mypy of `results.py` and `contracts.py` also passed.
+The external wrapper used existing pinned Python binaries; the temporary frontend
+dependency symlink was removed after verification. No dependency/config changes
+or failure suppression were introduced.
+
+`/diff` and `/review` are unavailable as slash tools. Equivalent Git diff and
+parallel Standards/Spec reviews covered the full change since the authoring
+baseline, plus the integration diff against fixed main `513a14e`. Documentation
+links and whitespace were checked. No production behavior changes are introduced
+by this merge. Integration/browser/manual/release gates were not rerun for this
+tests-only merge, and no sprint is marked complete. Normal unit discovery retains
+all future failures; merging the user-requested specifications does not certify
+`make verify` or unblock dependent implementation/release gates.

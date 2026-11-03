@@ -67,7 +67,7 @@ function ReplaySession({ game }: { game: Game }) {
           </p>
           <MoveList game={game} selectedPly={selectedPly} select={select} />
         </section>
-        <InsightPanels />
+        <InsightPanels game={game} selectedPly={selectedPly} />
       </aside>
     </section>
   );

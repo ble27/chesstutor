@@ -1,6 +1,167 @@
 {
   "components": {
     "schemas": {
+      "AnalysisRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "game_id": {
+            "format": "uuid",
+            "title": "Game Id",
+            "type": "string"
+          },
+          "mode": {
+            "enum": [
+              "quick",
+              "deep"
+            ],
+            "title": "Mode",
+            "type": "string"
+          }
+        },
+        "required": [
+          "game_id",
+          "mode"
+        ],
+        "title": "AnalysisRequest",
+        "type": "object"
+      },
+      "AnalysisResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "attempts": {
+            "maximum": 2.0,
+            "minimum": 0.0,
+            "title": "Attempts",
+            "type": "integer"
+          },
+          "cached": {
+            "title": "Cached",
+            "type": "boolean"
+          },
+          "can_cancel": {
+            "title": "Can Cancel",
+            "type": "boolean"
+          },
+          "completed_plies": {
+            "maximum": 300.0,
+            "minimum": 0.0,
+            "title": "Completed Plies",
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "deadline_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline At"
+          },
+          "dispatch_pending": {
+            "title": "Dispatch Pending",
+            "type": "boolean"
+          },
+          "engine": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "title": "Engine",
+            "type": "object"
+          },
+          "error_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Code"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/MoveEvidence"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "game_id": {
+            "format": "uuid",
+            "title": "Game Id",
+            "type": "string"
+          },
+          "game_version": {
+            "title": "Game Version",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "mode": {
+            "enum": [
+              "quick",
+              "deep"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "queued",
+              "running",
+              "cancel_requested",
+              "cancelled",
+              "completed",
+              "failed"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "total_plies": {
+            "maximum": 300.0,
+            "minimum": 1.0,
+            "title": "Total Plies",
+            "type": "integer"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "game_id",
+          "game_version",
+          "mode",
+          "state",
+          "completed_plies",
+          "total_plies",
+          "attempts",
+          "created_at",
+          "updated_at",
+          "deadline_at",
+          "error_code",
+          "dispatch_pending",
+          "cached",
+          "can_cancel",
+          "engine",
+          "evidence"
+        ],
+        "title": "AnalysisResponse",
+        "type": "object"
+      },
       "ArchivesResponse": {
         "additionalProperties": false,
         "properties": {
@@ -32,6 +193,278 @@
           "months"
         ],
         "title": "ArchivesResponse",
+        "type": "object"
+      },
+      "BrowserBatch": {
+        "additionalProperties": false,
+        "properties": {
+          "game_version": {
+            "minimum": 1.0,
+            "title": "Game Version",
+            "type": "integer"
+          },
+          "pgn_hash": {
+            "pattern": "^[a-f0-9]{64}$",
+            "title": "Pgn Hash",
+            "type": "string"
+          },
+          "positions": {
+            "items": {
+              "$ref": "#/components/schemas/BrowserPly"
+            },
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Positions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "game_version",
+          "pgn_hash",
+          "positions"
+        ],
+        "title": "BrowserBatch",
+        "type": "object"
+      },
+      "BrowserEvidence": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/MoveEvidence"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "trust": {
+            "const": "client_unverified",
+            "default": "client_unverified",
+            "title": "Trust",
+            "type": "string"
+          }
+        },
+        "required": [
+          "evidence"
+        ],
+        "title": "BrowserEvidence",
+        "type": "object"
+      },
+      "BrowserLine": {
+        "additionalProperties": false,
+        "properties": {
+          "bounded": {
+            "title": "Bounded",
+            "type": "boolean"
+          },
+          "depth": {
+            "maximum": 1000.0,
+            "minimum": 1.0,
+            "title": "Depth",
+            "type": "integer"
+          },
+          "nodes": {
+            "maximum": 1000000000.0,
+            "minimum": 1.0,
+            "title": "Nodes",
+            "type": "integer"
+          },
+          "pv": {
+            "items": {
+              "maxLength": 5,
+              "pattern": "^[a-h][1-8][a-h][1-8][qrbn]?$",
+              "type": "string"
+            },
+            "maxItems": 64,
+            "minItems": 1,
+            "title": "Pv",
+            "type": "array"
+          },
+          "score": {
+            "$ref": "#/components/schemas/BrowserScore"
+          },
+          "time_ms": {
+            "maximum": 10000.0,
+            "minimum": 0.0,
+            "title": "Time Ms",
+            "type": "integer"
+          },
+          "wdl": {
+            "anyOf": [
+              {
+                "items": {
+                  "maximum": 1000.0,
+                  "minimum": 0.0,
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wdl"
+          }
+        },
+        "required": [
+          "score",
+          "wdl",
+          "depth",
+          "nodes",
+          "time_ms",
+          "pv",
+          "bounded"
+        ],
+        "title": "BrowserLine",
+        "type": "object"
+      },
+      "BrowserPly": {
+        "additionalProperties": false,
+        "properties": {
+          "best": {
+            "$ref": "#/components/schemas/BrowserLine"
+          },
+          "played": {
+            "$ref": "#/components/schemas/BrowserLine"
+          },
+          "ply": {
+            "maximum": 300.0,
+            "minimum": 1.0,
+            "title": "Ply",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "ply",
+          "best",
+          "played"
+        ],
+        "title": "BrowserPly",
+        "type": "object"
+      },
+      "BrowserScore": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "enum": [
+              "cp",
+              "mate"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "value": {
+            "maximum": 1000000.0,
+            "minimum": -1000000.0,
+            "title": "Value",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "kind",
+          "value"
+        ],
+        "title": "BrowserScore",
+        "type": "object"
+      },
+      "CentipawnScore": {
+        "additionalProperties": false,
+        "properties": {
+          "centipawns": {
+            "title": "Centipawns",
+            "type": "integer"
+          },
+          "kind": {
+            "const": "cp",
+            "default": "cp",
+            "title": "Kind",
+            "type": "string"
+          },
+          "pov": {
+            "enum": [
+              "white",
+              "black"
+            ],
+            "title": "Pov",
+            "type": "string"
+          }
+        },
+        "required": [
+          "centipawns",
+          "pov"
+        ],
+        "title": "CentipawnScore",
+        "type": "object"
+      },
+      "EngineLine": {
+        "additionalProperties": false,
+        "properties": {
+          "bounded": {
+            "default": false,
+            "title": "Bounded",
+            "type": "boolean"
+          },
+          "depth": {
+            "title": "Depth",
+            "type": "integer"
+          },
+          "mover_score": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CentipawnScore"
+              },
+              {
+                "$ref": "#/components/schemas/MateScore"
+              }
+            ],
+            "title": "Mover Score"
+          },
+          "nodes": {
+            "title": "Nodes",
+            "type": "integer"
+          },
+          "pv": {
+            "items": {
+              "$ref": "#/components/schemas/VariationMove"
+            },
+            "title": "Pv",
+            "type": "array"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CentipawnScore"
+              },
+              {
+                "$ref": "#/components/schemas/MateScore"
+              }
+            ],
+            "title": "Score"
+          },
+          "time_ms": {
+            "title": "Time Ms",
+            "type": "integer"
+          },
+          "wdl": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Wdl"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "score",
+          "mover_score",
+          "wdl",
+          "depth",
+          "nodes",
+          "time_ms",
+          "pv"
+        ],
+        "title": "EngineLine",
         "type": "object"
       },
       "ErrorResponse": {
@@ -249,6 +682,137 @@
         "title": "HealthResponse",
         "type": "object"
       },
+      "JsonValue": {},
+      "MateScore": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "mate",
+            "default": "mate",
+            "title": "Kind",
+            "type": "string"
+          },
+          "moves": {
+            "title": "Moves",
+            "type": "integer"
+          },
+          "pov": {
+            "enum": [
+              "white",
+              "black"
+            ],
+            "title": "Pov",
+            "type": "string"
+          }
+        },
+        "required": [
+          "moves",
+          "pov"
+        ],
+        "title": "MateScore",
+        "type": "object"
+      },
+      "MoveEvidence": {
+        "additionalProperties": false,
+        "properties": {
+          "automatic_reason_after": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Automatic Reason After"
+          },
+          "automatic_result_after": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Automatic Result After"
+          },
+          "before_ply": {
+            "title": "Before Ply",
+            "type": "integer"
+          },
+          "best": {
+            "items": {
+              "$ref": "#/components/schemas/EngineLine"
+            },
+            "title": "Best",
+            "type": "array"
+          },
+          "claimable_draw_before": {
+            "title": "Claimable Draw Before",
+            "type": "boolean"
+          },
+          "expected_loss": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Loss"
+          },
+          "mover": {
+            "enum": [
+              "white",
+              "black"
+            ],
+            "title": "Mover",
+            "type": "string"
+          },
+          "played": {
+            "$ref": "#/components/schemas/EngineLine"
+          },
+          "played_uci": {
+            "title": "Played Uci",
+            "type": "string"
+          },
+          "ply": {
+            "title": "Ply",
+            "type": "integer"
+          },
+          "root_fen": {
+            "title": "Root Fen",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "usable",
+              "insufficient",
+              "unstable"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ply",
+          "before_ply",
+          "root_fen",
+          "mover",
+          "played_uci",
+          "best",
+          "played",
+          "status",
+          "expected_loss",
+          "claimable_draw_before",
+          "automatic_result_after",
+          "automatic_reason_after"
+        ],
+        "title": "MoveEvidence",
+        "type": "object"
+      },
       "Player": {
         "additionalProperties": false,
         "properties": {
@@ -334,6 +898,63 @@
         ],
         "title": "PositionResponse",
         "type": "object"
+      },
+      "VariationMove": {
+        "additionalProperties": false,
+        "properties": {
+          "fen": {
+            "title": "Fen",
+            "type": "string"
+          },
+          "san": {
+            "title": "San",
+            "type": "string"
+          },
+          "uci": {
+            "title": "Uci",
+            "type": "string"
+          }
+        },
+        "required": [
+          "uci",
+          "san",
+          "fen"
+        ],
+        "title": "VariationMove",
+        "type": "object"
+      },
+      "Wdl": {
+        "additionalProperties": false,
+        "properties": {
+          "draws": {
+            "title": "Draws",
+            "type": "integer"
+          },
+          "losses": {
+            "title": "Losses",
+            "type": "integer"
+          },
+          "pov": {
+            "enum": [
+              "white",
+              "black"
+            ],
+            "title": "Pov",
+            "type": "string"
+          },
+          "wins": {
+            "title": "Wins",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "wins",
+          "draws",
+          "losses",
+          "pov"
+        ],
+        "title": "Wdl",
+        "type": "object"
       }
     }
   },
@@ -343,6 +964,344 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/analyses": {
+      "post": {
+        "operationId": "create_analysis",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalysisRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Create"
+      }
+    },
+    "/api/v1/analyses/{analysis_id}": {
+      "get": {
+        "operationId": "read_analysis",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "analysis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Analysis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Read"
+      }
+    },
+    "/api/v1/analyses/{analysis_id}/cancel": {
+      "post": {
+        "operationId": "cancel_analysis",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "analysis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Analysis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Cancel"
+      }
+    },
     "/api/v1/games/{game_id}": {
       "get": {
         "operationId": "imported_game",
@@ -441,6 +1400,76 @@
           }
         },
         "summary": "Game"
+      }
+    },
+    "/api/v1/games/{game_id}/browser-evidence": {
+      "post": {
+        "operationId": "validate_browser_evidence",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "game_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Game Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BrowserBatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrowserEvidence"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Validate"
       }
     },
     "/api/v1/health/live": {

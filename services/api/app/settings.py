@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Literal, Self
 from urllib.parse import urlsplit
 
@@ -20,6 +21,10 @@ class Settings(BaseSettings):
         default=None, min_length=10, max_length=300, pattern=r"^[\x20-\x7e]+$"
     )
     dependency_timeout_seconds: float = Field(default=2, ge=0.1, le=5)
+    session_secret: SecretStr = SecretStr("local-development-session-key-change-before-hosting")
+    analysis_ip_jobs_per_hour: int = Field(default=20, ge=1, le=10000)
+    engine_path: Path = Path("bin/stockfish")
+    engine_platform: Literal["darwin-arm64", "linux-x86_64"] | None = None
 
     @field_validator("pubapi_user_agent", mode="before")
     @classmethod
@@ -66,4 +71,9 @@ class Settings(BaseSettings):
                 raise ValueError("Production requires explicit database credentials")
             if any(not origin.startswith("https://") for origin in self.allowed_origins):
                 raise ValueError("Production origins must use HTTPS")
+            secret = self.session_secret.get_secret_value()
+            if len(secret) < 32 or secret.startswith("local-development"):
+                raise ValueError(
+                    "Production requires a private session signing key of at least 32 characters"
+                )
         return self

@@ -1,10 +1,11 @@
 """PRD §6 summaries and §8 completed-only final conclusions; plan.md S4."""
 
-from typing import NamedTuple
+from typing import NamedTuple, cast
 
 import pytest
 
 from tests.unit.future_sprints.contracts import policy
+from tests.unit.future_sprints.results import SummaryResult
 
 
 class ClassifiedMove(NamedTuple):
@@ -23,10 +24,10 @@ MOVES = (
 )
 
 
-def summary(**changes: object):
+def summary(**changes: object) -> SummaryResult:
     inputs: dict[str, object] = {"state": "completed", "total_plies": 4, "moves": MOVES}
     inputs.update(changes)
-    return policy("services.core.classification", "summarize_game")(**inputs)
+    return cast(SummaryResult, policy("services.core.classification", "summarize_game")(**inputs))
 
 
 def test_counts_and_loss_averages_are_separate_for_each_player():

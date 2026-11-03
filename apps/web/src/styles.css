@@ -343,6 +343,22 @@ button:disabled {
 .piece-credit a {
   text-decoration: underline;
 }
+.analysis-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.engine-panel progress {
+  width: 100%;
+}
+.engine-evidence li {
+  margin-block: 12px;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+.engine-provenance {
+  font-size: 12px;
+}
 @media (max-width: 767px) {
   .replay-panel {
     padding: 12px;

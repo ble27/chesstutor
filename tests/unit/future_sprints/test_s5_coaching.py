@@ -4,12 +4,13 @@ No engine or language model service is called. The optional interpreter is a fak
 external boundary. Result blocks must carry reviewed template IDs and evidence.
 """
 
-from typing import NamedTuple
+from typing import NamedTuple, cast
 
 import chess
 import pytest
 
 from tests.unit.future_sprints.contracts import policy
+from tests.unit.future_sprints.results import CoachingResult
 
 REFUSAL = (
     "I can help with chess moves, positions, rules, and improvement. "
@@ -30,7 +31,7 @@ class Evidence(NamedTuple):
 EVIDENCE = Evidence("hanging-d5", "hanging_piece", 1, FEN, ("c4", "d5"), ("c4d5",))
 
 
-def coach(**changes: object):
+def coach(**changes: object) -> CoachingResult:
     arguments: dict[str, object] = {
         "game_id": "fixture-game",
         "analysis_id": "fixture-analysis",
@@ -51,11 +52,11 @@ def coach(**changes: object):
         "pgn_comments": "",
     }
     arguments.update(changes)
-    return policy("services.core.coaching", "coach")(**arguments)
+    return cast(CoachingResult, policy("services.core.coaching", "coach")(**arguments))
 
 
-def render(result) -> str:
-    return policy("services.core.coaching", "render_coaching")(result)
+def render(result: CoachingResult) -> str:
+    return cast(str, policy("services.core.coaching", "render_coaching")(result))
 
 
 @pytest.mark.parametrize(
@@ -229,3 +230,90 @@ def test_model_selected_chess_intent_cannot_authorize_a_mixed_request():
     result = coach(intent=None, question="Explain this move and write a soup recipe.", model=model)
     assert result.status == "refused"
     assert render(result) == REFUSAL
+
+
+class RenderBlock(NamedTuple):
+    template_id: str
+    evidence_ids: tuple[str, ...]
+    values: dict[str, object]
+
+
+class RenderInput(NamedTuple):
+    blocks: tuple[RenderBlock, ...]
+
+
+def render_input(result: CoachingResult) -> RenderInput:
+    return RenderInput(
+        tuple(
+            RenderBlock(block.template_id, block.evidence_ids, dict(block.values))
+            for block in result.blocks
+        )
+    )
+
+
+def test_renderer_accepts_reviewed_blocks_with_typed_chess_substitutions():
+    result = coach(intent="better_move")
+    assert result.status == "grounded"
+    assert result.blocks
+    assert policy("services.core.coaching", "render_coaching")(render_input(result)) == render(
+        result
+    )
+
+
+@pytest.mark.parametrize("poison", ["unknown_template", "unsafe_square", "raw_prose"])
+def test_renderer_rejects_unknown_templates_and_untyped_raw_substitutions(poison):
+    result = render_input(coach(intent="better_move"))
+    assert result.blocks
+    block = result.blocks[0]
+    if poison == "unknown_template":
+        block = block._replace(template_id="unreviewed-template")
+    elif poison == "unsafe_square":
+        block = block._replace(values={**block.values, "square": "<script>run()</script>"})
+    else:
+        block = block._replace(values={**block.values, "prose": "Visit https://evil.example"})
+    with pytest.raises(ValueError):
+        policy("services.core.coaching", "render_coaching")(
+            RenderInput((block, *result.blocks[1:]))
+        )
+
+
+class ModelClock:
+    def __init__(self) -> None:
+        self.seconds = 0.0
+
+    def now(self) -> float:
+        return self.seconds
+
+
+class RetryingModel:
+    def __init__(self, clock: ModelClock, first_elapsed: float) -> None:
+        self.clock = clock
+        self.first_elapsed = first_elapsed
+        self.timeouts: list[float] = []
+
+    def __call__(self, question: str, *, timeout_seconds: float, max_tokens: int) -> object:
+        self.timeouts.append(timeout_seconds)
+        if len(self.timeouts) == 1:
+            self.clock.seconds += self.first_elapsed
+            return "invalid schema"
+        self.clock.seconds += timeout_seconds
+        return {"intent": "explain_move", "evidence_ids": [EVIDENCE.id]}
+
+
+def test_schema_retry_uses_only_the_remaining_ten_second_deadline():
+    clock = ModelClock()
+    model = RetryingModel(clock, first_elapsed=6)
+    result = coach(question="Why is the queen hanging?", model=model, clock=clock.now)
+    assert model.timeouts == [10, 4]
+    assert clock.seconds <= 10
+    assert result.status in {"grounded", "uncertain"}
+    assert render(result)
+
+
+def test_expired_model_deadline_falls_back_without_starting_a_retry():
+    clock = ModelClock()
+    model = RetryingModel(clock, first_elapsed=10)
+    result = coach(question="Why is the queen hanging?", model=model, clock=clock.now)
+    assert model.timeouts == [10]
+    assert result.status in {"grounded", "uncertain"}
+    assert render(result)

@@ -5,6 +5,7 @@ from fastapi.testclient import TestClient
 
 from services.api.app.main import create_app
 from services.api.app.settings import Settings
+from tests.unit.analysis_fakes import Service
 
 
 class FakeProbe:
@@ -19,7 +20,7 @@ class FakeProbe:
 
 def test_liveness_is_independent_of_dependencies() -> None:
     probe = FakeProbe(False)
-    with TestClient(create_app(Settings(_env_file=None), probe)) as client:
+    with TestClient(create_app(Settings(_env_file=None), probe, analysis=Service())) as client:
         response = client.get("/api/v1/health/live")
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
@@ -29,7 +30,9 @@ def test_liveness_is_independent_of_dependencies() -> None:
 
 @pytest.mark.parametrize("available", [True, False])
 def test_readiness_reflects_dependencies(available: bool) -> None:
-    with TestClient(create_app(Settings(_env_file=None), FakeProbe(available))) as client:
+    with TestClient(
+        create_app(Settings(_env_file=None), FakeProbe(available), analysis=Service())
+    ) as client:
         response = client.get("/api/v1/health/ready")
     assert response.status_code == (200 if available else 503)
     if available:
@@ -42,7 +45,9 @@ def test_readiness_reflects_dependencies(available: bool) -> None:
 
 
 def test_not_found_uses_safe_error_envelope() -> None:
-    with TestClient(create_app(Settings(_env_file=None), FakeProbe(True))) as client:
+    with TestClient(
+        create_app(Settings(_env_file=None), FakeProbe(True), analysis=Service())
+    ) as client:
         response = client.get("/not-a-route?secret=do-not-echo")
     assert response.status_code == 404
     assert response.json()["message"] == "Resource not found"
@@ -50,7 +55,9 @@ def test_not_found_uses_safe_error_envelope() -> None:
 
 
 def test_cors_allows_only_configured_origins() -> None:
-    with TestClient(create_app(Settings(_env_file=None), FakeProbe(True))) as client:
+    with TestClient(
+        create_app(Settings(_env_file=None), FakeProbe(True), analysis=Service())
+    ) as client:
         allowed = client.get("/api/v1/health/live", headers={"Origin": "http://localhost:5173"})
         blocked = client.get("/api/v1/health/live", headers={"Origin": "https://untrusted.example"})
     assert allowed.headers["Access-Control-Allow-Origin"] == "http://localhost:5173"
@@ -63,10 +70,41 @@ def test_unexpected_errors_do_not_expose_dependency_details() -> None:
             raise RuntimeError("database-password-private")
 
     with TestClient(
-        create_app(Settings(_env_file=None), BrokenProbe()), raise_server_exceptions=False
+        create_app(Settings(_env_file=None), BrokenProbe(), analysis=Service()),
+        raise_server_exceptions=False,
     ) as client:
         response = client.get("/api/v1/health/ready")
     assert response.status_code == 500
     assert response.json()["code"] == "internal_error"
     assert response.json()["request_id"] == response.headers["X-Request-ID"]
     assert "database-password-private" not in response.text
+
+
+@pytest.mark.parametrize("enabled", [False, True])
+def test_validation_only_app_can_leave_background_analysis_reconciliation_disabled(
+    monkeypatch, enabled
+):
+    from services.api.app import main
+    from tests.unit.analysis_fakes import Service
+
+    actions = []
+
+    class Resources:
+        def __init__(self, *args):
+            self.service = Service()
+
+        def start(self):
+            actions.append("start")
+
+        async def close(self):
+            actions.append("close")
+
+    monkeypatch.setattr(main, "AnalysisResources", Resources)
+    application = (
+        main.create_app(probe=FakeProbe(True))
+        if enabled
+        else main.create_app(probe=FakeProbe(True), reconcile_analyses=False)
+    )
+    with TestClient(application) as client:
+        assert client.get("/api/v1/health/live").status_code == 200
+    assert actions == (["start", "close"] if enabled else ["close"])

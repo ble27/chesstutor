@@ -112,6 +112,18 @@ def test_migration_upgrade_rollback_and_reapply(monkeypatch):
             command.upgrade(config, "head")
             with psycopg.connect(url) as connection:
                 assert connection.execute("SELECT to_regclass('games')").fetchone()[0] == "games"
+                assert (
+                    connection.execute("SELECT to_regclass('analyses')").fetchone()[0] == "analyses"
+                )
+            command.downgrade(config, "0001")
+            with psycopg.connect(url) as connection:
+                assert connection.execute("SELECT to_regclass('analyses')").fetchone()[0] is None
+                assert (
+                    connection.execute("SELECT to_regclass('analysis_evidence')").fetchone()[0]
+                    is None
+                )
+                assert connection.execute("SELECT to_regclass('games')").fetchone()[0] == "games"
+            command.upgrade(config, "head")
             command.downgrade(config, "base")
             with psycopg.connect(url) as connection:
                 assert connection.execute("SELECT to_regclass('games')").fetchone()[0] is None
@@ -119,7 +131,7 @@ def test_migration_upgrade_rollback_and_reapply(monkeypatch):
             with psycopg.connect(url) as connection:
                 assert (
                     connection.execute("SELECT version_num FROM alembic_version").fetchone()[0]
-                    == "0001"
+                    == "0002"
                 )
         finally:
             admin.execute(sql.SQL("DROP DATABASE {}").format(sql.Identifier(name)))

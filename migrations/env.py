@@ -1,7 +1,7 @@
 from alembic import context
 from sqlalchemy import create_engine
 
-from services.adapters.game_store import metadata
+from services.adapters.analysis_tables import metadata
 from services.api.app.settings import Settings
 
 

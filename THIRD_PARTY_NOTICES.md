@@ -8,6 +8,7 @@ exact Python and JavaScript dependency graph; retain notices when distributing.
 | --- | --- | --- |
 | python-chess (`chess`) | GPL-3.0-or-later | https://github.com/niklasf/python-chess |
 | Stockfish 17.1 | GPL-3.0 | https://github.com/official-stockfish/Stockfish/tree/sf_17.1 |
+| Stockfish.js 17.1.0 (full WASM experiment) | GPL-3.0, Chess.com LLC / Stockfish contributors | https://github.com/nmrugg/stockfish.js/tree/v17.1.0 |
 | FastAPI, Pydantic, Uvicorn | MIT / MIT / BSD-3-Clause | See locked package metadata |
 | HTTPX | BSD-3-Clause | https://github.com/encode/httpx |
 | SQLAlchemy, Alembic | MIT | https://github.com/sqlalchemy/sqlalchemy ; https://github.com/sqlalchemy/alembic |
@@ -23,10 +24,21 @@ Stockfish archives and executable checksums are pinned in
 [engines/stockfish.json](engines/stockfish.json). The selected official release
 executables embed their NNUE data, covered by the executable checksum. Their
 matching source is linked in that manifest. No engine binaries or model weights
-are committed or bundled in the S0 application images. Engine installation and
-execution are a Sprint 3 deliverable. A future redistributable engine package must
-include its notices and corresponding source/build provenance, including the
-network data needed for that exact build.
+are committed. The S3 engine-worker image installs the checksum-verified official
+Linux x86-64 executable, its `Copying.txt` as `bin/stockfish-LICENSE.txt`, and exact
+release/source/embedded-network provenance as `bin/stockfish-provenance.json`.
+Native installation preserves the same sidecars. API images do not install the
+engine. Retain these files and provide corresponding source for the exact build
+when distributing; the manifest links the official release source and artifacts.
+
+The browser experiment pins npm `stockfish@17.1.0` by package integrity plus
+individual full-build JS/WASM checksums in
+[the browser manifest](engines/stockfish-browser.json). Build preparation verifies
+those checksums and copies both full single/threaded builds, the package's exact
+GPLv3 license and provenance into ignored `public/engine` assets. A retained
+[license copy](docs/licenses/stockfish-js.txt) and the exact modified source/build
+tag are included in this branch. No lite engine is exposed or selected by the browser;
+embedded network identities are recorded separately from native executable hashes.
 
 The board uses the default SVG piece artwork repackaged by react-chessboard.
 Its shapes match Cburnett's Wikimedia chess set (for example,

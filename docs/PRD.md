@@ -4,10 +4,24 @@ Version 1.0 · 2026-11-02 · Ready for implementation planning.
 
 Sprint 0 establishes the foundation; Sprint 1 adds discovery and safe import.
 Actual checks and implementation limits are recorded in [S0](sprints/S0.md) and
-[S1](sprints/S1.md). Replay implementation and pending manual acceptance are
-recorded in [S2](sprints/S2.md); later product features remain planned.
+[S1](sprints/S1.md). User-accepted replay is recorded in [S2](sprints/S2.md).
+Stockfish implementation and gate status are recorded in [S3](sprints/S3.md);
+classification and later product features remain planned.
 Numerical budgets below require measurement and are not
 verified performance claims.
+
+Branch experiment: the user authorized a browser-first execution prototype on
+`experiment/browser-stockfish`, based on the cross-platform research. Its opt-in
+`?engine=browser` view uses full Stockfish 17.1 WASM, bounded node screening and
+selected-position refinement. Browser evidence is explicitly client-unverified,
+kept locally and legally revalidated by the API; it does not enter the trusted
+server cache. This permits client UCI transport without duplicating chess rules
+or classification in TypeScript. Existing S3 server budgets and contracts remain
+the production baseline. Experimental execution, trust and performance evidence
+are in [the branch record](sprints/browser-experiment.md); cross-device and
+accuracy gates must pass before adopting it as product policy. On 2026-11-03
+the user authorized merging this opt-in experiment into main after direct engine
+execution verification; merging does not waive those adoption gates.
 
 ## 1. Purpose and success
 

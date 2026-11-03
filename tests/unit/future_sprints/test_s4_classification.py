@@ -1,20 +1,15 @@
 """PRD §6 independent policy v1; plan.md S4 numerical and evidence cases."""
 
-from typing import NamedTuple
+from typing import cast
 
 import pytest
 
+from services.core.analysis.values import Wdl
 from tests.unit.future_sprints.contracts import policy
+from tests.unit.future_sprints.results import ClassificationResult
 
 
-class Wdl(NamedTuple):
-    wins: int
-    draws: int
-    losses: int
-    pov: str
-
-
-def classify(**changes: object):
+def classify(**changes: object) -> ClassificationResult:
     arguments: dict[str, object] = {
         "best_wdl": Wdl(8000, 0, 2000, "white"),
         "played_wdl": Wdl(8000, 0, 2000, "white"),
@@ -28,7 +23,9 @@ def classify(**changes: object):
         "played_score": ("cp", 200, "white"),
     }
     arguments.update(changes)
-    return policy("services.core.classification", "classify_move")(**arguments)
+    return cast(
+        ClassificationResult, policy("services.core.classification", "classify_move")(**arguments)
+    )
 
 
 @pytest.mark.parametrize("mover", ["white", "black"])

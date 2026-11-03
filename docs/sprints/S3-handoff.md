@@ -1,16 +1,17 @@
 # S3 handoff — Bounded Stockfish jobs
 
-Status: prepared; S3 implementation has not started.
+Status: handed off; user accepted S2 and requested S3 implementation.
+This is the historical S2-to-S3 handoff. Current implementation and verification
+are tracked in [S3](S3.md); the starting-point descriptions below describe S2.
 Reviewed S2 layout checkpoint: `050f439` (205 tests and the full automated gate
 passed; whole-sprint Standards and Spec review reported no remaining findings).
 
 ## Entry gate
 
-The [S2 record](S2.md) tracks the automated checks and the user-requested layout
-follow-up. Required manual keyboard and screen-reader acceptance remains pending.
-Record actual tester/browser/screen-reader results there before marking S2
-complete or beginning dependent S3 implementation. Automated accessibility-tree
-assertions and screenshots do not replace that gate.
+The user confirmed S2 was “working and as planned” and authorized S3. The
+[S2 record](S2.md) records this acceptance without inventing browser or
+screen-reader versions or a detailed manual test log. Automated accessibility-tree
+assertions and screenshots are not presented as a screen-reader session.
 
 When the gate is satisfied, record the then-current commit as the S3 baseline in
 `docs/sprints/S3.md` before editing. Do not reuse S2's baseline or compare HEAD to

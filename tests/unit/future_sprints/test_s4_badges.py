@@ -3,12 +3,15 @@
 These cases test badge decisions, not the still-required engine/detector proof.
 """
 
+from typing import cast
+
 import pytest
 
 from tests.unit.future_sprints.contracts import policy
+from tests.unit.future_sprints.results import BadgeResult
 
 
-def badges(**changes: object):
+def badges(**changes: object) -> BadgeResult:
     facts: dict[str, object] = {
         "evidence_ids": ("verified-line-1",),
         "base_label": "best",
@@ -35,7 +38,7 @@ def badges(**changes: object):
         "deadline_remaining_ms": 1,
     }
     facts.update(changes)
-    return policy("services.core.classification", "award_badges")(**facts)
+    return cast(BadgeResult, policy("services.core.classification", "award_badges")(**facts))
 
 
 def test_deep_unique_best_with_verified_runner_up_gets_great():

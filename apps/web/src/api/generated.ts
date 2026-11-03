@@ -4,6 +4,57 @@
  */
 
 export interface paths {
+    "/api/v1/analyses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create */
+        post: operations["create_analysis"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analyses/{analysis_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read */
+        get: operations["read_analysis"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analyses/{analysis_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel */
+        post: operations["cancel_analysis"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/games/{game_id}": {
         parameters: {
             query?: never;
@@ -15,6 +66,23 @@ export interface paths {
         get: operations["imported_game"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/games/{game_id}/browser-evidence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Validate */
+        post: operations["validate_browser_evidence"];
         delete?: never;
         options?: never;
         head?: never;
@@ -93,6 +161,76 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AnalysisRequest */
+        AnalysisRequest: {
+            /**
+             * Game Id
+             * Format: uuid
+             */
+            game_id: string;
+            /**
+             * Mode
+             * @enum {string}
+             */
+            mode: "quick" | "deep";
+        };
+        /** AnalysisResponse */
+        AnalysisResponse: {
+            /** Attempts */
+            attempts: number;
+            /** Cached */
+            cached: boolean;
+            /** Can Cancel */
+            can_cancel: boolean;
+            /** Completed Plies */
+            completed_plies: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Deadline At */
+            deadline_at: string | null;
+            /** Dispatch Pending */
+            dispatch_pending: boolean;
+            /** Engine */
+            engine: {
+                [key: string]: components["schemas"]["JsonValue"];
+            };
+            /** Error Code */
+            error_code: string | null;
+            /** Evidence */
+            evidence: components["schemas"]["MoveEvidence"][];
+            /**
+             * Game Id
+             * Format: uuid
+             */
+            game_id: string;
+            /** Game Version */
+            game_version: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Mode
+             * @enum {string}
+             */
+            mode: "quick" | "deep";
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "queued" | "running" | "cancel_requested" | "cancelled" | "completed" | "failed";
+            /** Total Plies */
+            total_plies: number;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
         /** ArchivesResponse */
         ArchivesResponse: {
             /**
@@ -106,6 +244,96 @@ export interface components {
             stale: boolean;
             /** Username */
             username: string;
+        };
+        /** BrowserBatch */
+        BrowserBatch: {
+            /** Game Version */
+            game_version: number;
+            /** Pgn Hash */
+            pgn_hash: string;
+            /** Positions */
+            positions: components["schemas"]["BrowserPly"][];
+        };
+        /** BrowserEvidence */
+        BrowserEvidence: {
+            /** Evidence */
+            evidence: components["schemas"]["MoveEvidence"][];
+            /**
+             * Trust
+             * @default client_unverified
+             * @constant
+             */
+            trust: "client_unverified";
+        };
+        /** BrowserLine */
+        BrowserLine: {
+            /** Bounded */
+            bounded: boolean;
+            /** Depth */
+            depth: number;
+            /** Nodes */
+            nodes: number;
+            /** Pv */
+            pv: string[];
+            score: components["schemas"]["BrowserScore"];
+            /** Time Ms */
+            time_ms: number;
+            /** Wdl */
+            wdl: number[] | null;
+        };
+        /** BrowserPly */
+        BrowserPly: {
+            best: components["schemas"]["BrowserLine"];
+            played: components["schemas"]["BrowserLine"];
+            /** Ply */
+            ply: number;
+        };
+        /** BrowserScore */
+        BrowserScore: {
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "cp" | "mate";
+            /** Value */
+            value: number;
+        };
+        /** CentipawnScore */
+        CentipawnScore: {
+            /** Centipawns */
+            centipawns: number;
+            /**
+             * Kind
+             * @default cp
+             * @constant
+             */
+            kind: "cp";
+            /**
+             * Pov
+             * @enum {string}
+             */
+            pov: "white" | "black";
+        };
+        /** EngineLine */
+        EngineLine: {
+            /**
+             * Bounded
+             * @default false
+             */
+            bounded: boolean;
+            /** Depth */
+            depth: number;
+            /** Mover Score */
+            mover_score: components["schemas"]["CentipawnScore"] | components["schemas"]["MateScore"];
+            /** Nodes */
+            nodes: number;
+            /** Pv */
+            pv: components["schemas"]["VariationMove"][];
+            /** Score */
+            score: components["schemas"]["CentipawnScore"] | components["schemas"]["MateScore"];
+            /** Time Ms */
+            time_ms: number;
+            wdl: components["schemas"]["Wdl"] | null;
         };
         /** ErrorResponse */
         ErrorResponse: {
@@ -182,6 +410,55 @@ export interface components {
              */
             status: "ok" | "ready";
         };
+        JsonValue: unknown;
+        /** MateScore */
+        MateScore: {
+            /**
+             * Kind
+             * @default mate
+             * @constant
+             */
+            kind: "mate";
+            /** Moves */
+            moves: number;
+            /**
+             * Pov
+             * @enum {string}
+             */
+            pov: "white" | "black";
+        };
+        /** MoveEvidence */
+        MoveEvidence: {
+            /** Automatic Reason After */
+            automatic_reason_after: string | null;
+            /** Automatic Result After */
+            automatic_result_after: string | null;
+            /** Before Ply */
+            before_ply: number;
+            /** Best */
+            best: components["schemas"]["EngineLine"][];
+            /** Claimable Draw Before */
+            claimable_draw_before: boolean;
+            /** Expected Loss */
+            expected_loss: number | null;
+            /**
+             * Mover
+             * @enum {string}
+             */
+            mover: "white" | "black";
+            played: components["schemas"]["EngineLine"];
+            /** Played Uci */
+            played_uci: string;
+            /** Ply */
+            ply: number;
+            /** Root Fen */
+            root_fen: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "usable" | "insufficient" | "unstable";
+        };
         /** Player */
         Player: {
             /** Rating */
@@ -202,6 +479,29 @@ export interface components {
             /** Uci */
             uci: string | null;
         };
+        /** VariationMove */
+        VariationMove: {
+            /** Fen */
+            fen: string;
+            /** San */
+            san: string;
+            /** Uci */
+            uci: string;
+        };
+        /** Wdl */
+        Wdl: {
+            /** Draws */
+            draws: number;
+            /** Losses */
+            losses: number;
+            /**
+             * Pov
+             * @enum {string}
+             */
+            pov: "white" | "black";
+            /** Wins */
+            wins: number;
+        };
     };
     responses: never;
     parameters: never;
@@ -211,6 +511,299 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    create_analysis: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AnalysisRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalysisResponse"];
+                };
+            };
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalysisResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Content Too Large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    read_analysis: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                analysis_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalysisResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Content Too Large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    cancel_analysis: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                analysis_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalysisResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Content Too Large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     imported_game: {
         parameters: {
             query?: never;
@@ -287,6 +880,59 @@ export interface operations {
             };
             /** @description Service Unavailable */
             503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    validate_browser_evidence: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BrowserBatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BrowserEvidence"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
                 headers: {
                     [name: string]: unknown;
                 };
