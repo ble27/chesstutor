@@ -26,8 +26,9 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await expect(
       page.getByRole("heading", { name: "Game imported" }),
     ).toBeVisible();
-    await page.getByText("Validated move list").click();
-    await expect(page.getByText("e4", { exact: true })).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "1. White: e4" }),
+    ).toBeVisible();
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= window.innerWidth,

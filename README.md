@@ -4,12 +4,14 @@ Free, independent review of completed public Chess.com games. The product plan
 combines Stockfish analysis, replay for both players, and chess-only guidance.
 
 Sprint 1 adds public username/month lookup, monthly filtering and pagination,
-and validated, versioned game import to the Sprint 0 foundation. Replay, engine
-execution, labels, and coaching remain S2–S5 work.
+and validated, versioned game import to the Sprint 0 foundation. S2 adds exact
+both-player replay; its required manual acceptance remains pending. Engine
+execution, labels, and coaching remain S3–S5 work.
 
 - [PRD and sequential sprint gates](docs/PRD.md)
 - [Sprint 0 evidence](docs/sprints/S0.md)
 - [Sprint 1 evidence](docs/sprints/S1.md)
+- [Sprint 2 implementation and acceptance status](docs/sprints/S2.md)
 - [Integration research](docs/research.md)
 - [Contributor conventions](AGENTS.md)
 
@@ -77,8 +79,13 @@ Compose forwards this setting to its API.
 Enter a public Chess.com username. The newest archive month opens by default;
 choose another month or filter by player color, exact opponent username, and time
 class. Filters apply only to that month. Open a game to validate and persist its
-main line and inspect the imported move list. No board or analysis is available
-in this sprint. Source links open Chess.com; no password or provider key is used.
+main line and replay it immediately. Click either player's SAN or use
+first/previous/next/last controls. Focus the replay area for Left/Right arrows,
+Home, and End; these keys do not intercept typing in input fields. Flip changes
+orientation without changing the selected ply. Expand “Text position and FEN”
+for occupied squares and the exact imported position. The game remains read-only;
+engine analysis and coaching are not available yet. Source links open Chess.com;
+no password or provider key is used.
 
 Limits: 300 plies, 1 MiB UTF-8 PGN, 50 MiB monthly JSON, and 1 MiB archive index.
 Downloads request uncompressed responses and reject unexpected content encoding

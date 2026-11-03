@@ -113,6 +113,7 @@ p {
 .insights {
   display: grid;
   gap: 24px;
+  align-content: start;
 }
 .insights p:last-child {
   font-size: 14px;
@@ -125,7 +126,7 @@ footer {
     grid-template-columns: minmax(0, 1fr);
   }
   .insights {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 @media (max-width: 767px) {
@@ -225,4 +226,84 @@ button:focus-visible {
 .imported {
   border-top: 1px solid #555;
   margin-top: 24px;
+}
+.replay-board {
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 4px;
+}
+.replay-panel > section:focus-visible {
+  outline: 2px solid #eeeeee;
+  outline-offset: 6px;
+}
+.replay-panel nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.move-list {
+  list-style: none;
+  padding: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+  border: 1px solid #555;
+  border-radius: 8px;
+}
+.move-list li {
+  display: grid;
+  grid-template-columns: 3ch minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0;
+}
+.move-list button {
+  background: #303030;
+  color: #eeeeee;
+  overflow-wrap: anywhere;
+  font-weight: 400;
+}
+.move-list [aria-current="step"] {
+  background: #e0e0e0;
+  color: #181818;
+  outline: 2px solid #eac96a;
+  outline-offset: -3px;
+  font-weight: 700;
+}
+.position-text summary {
+  cursor: pointer;
+  min-height: 44px;
+  padding: 12px 0;
+}
+.position-text summary:focus-visible {
+  outline: 2px solid #eeeeee;
+}
+.position-text table {
+  border-collapse: collapse;
+  width: 100%;
+}
+.position-text th,
+.position-text td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #555;
+}
+.fen {
+  font-family: ui-monospace, monospace;
+}
+.piece-credit {
+  font-size: 12px;
+}
+.piece-credit a {
+  text-decoration: underline;
+}
+@media (max-width: 767px) {
+  .replay-panel {
+    padding: 12px;
+  }
 }

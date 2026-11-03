@@ -1,5 +1,6 @@
 import type { components } from "./generated";
 import { isRecord } from "./validation";
+import { positionFen, validateMove } from "./replayValidation";
 
 type Schemas = components["schemas"];
 export type Archives = Schemas["ArchivesResponse"];
@@ -108,11 +109,14 @@ export function parseGame(input: unknown): Game {
   const positions = array(value.positions, 301).map((input, index) => {
     const position = record(input);
     const ply = integer(position.ply, index, index);
+    const san = nullableText(position.san);
+    const uci = nullableText(position.uci);
+    validateMove(ply, san, uci);
     return {
       ply,
-      fen: text(position.fen, 200),
-      san: nullableText(position.san),
-      uci: nullableText(position.uci),
+      fen: positionFen(text(position.fen, 200)),
+      san,
+      uci,
     };
   });
   if (positions.length < 2 || positions[0]?.fen !== value.initial_fen)

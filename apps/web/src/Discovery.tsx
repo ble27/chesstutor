@@ -3,6 +3,7 @@ import type { ApiError } from "./api/client";
 import type { Filters } from "./api/discovery";
 import type { Summary } from "./api/discoveryValidation";
 import { useDiscovery } from "./useDiscovery";
+import { Workspace } from "./Workspace";
 
 function Failure({ error }: { error: ApiError }) {
   return (
@@ -128,37 +129,42 @@ export function Discovery() {
   const state = useDiscovery();
   const [username, setUsername] = useState("");
   return (
-    <section className="panel discovery" aria-labelledby="discovery-title">
-      <h2 id="discovery-title">Find a public game</h2>
-      <p>
-        Completed standard chess only. Import limits: 300 plies, 1 MiB per PGN,
-        50 MiB per monthly archive.
-      </p>
-      <form
-        className="search"
-        onSubmit={(event) => {
-          event.preventDefault();
-          void state.search(username);
-        }}
-      >
-        <label>
-          Chess.com username
-          <input
-            required
-            minLength={3}
-            maxLength={25}
-            autoCapitalize="none"
-            autoCorrect="off"
-            value={username}
-            onChange={(event) => setUsername(event.target.value)}
-          />
-        </label>
-        <button>Find games</button>
-      </form>
-      <ArchiveControls state={state} />
-      <GameResults state={state} />
-      <ImportedGame state={state} />
-    </section>
+    <>
+      <section className="panel discovery" aria-labelledby="discovery-title">
+        <h2 id="discovery-title">Find a public game</h2>
+        <p>
+          Completed standard chess only. Import limits: 300 plies, 1 MiB per
+          PGN, 50 MiB per monthly archive.
+        </p>
+        <form
+          className="search"
+          onSubmit={(event) => {
+            event.preventDefault();
+            void state.search(username);
+          }}
+        >
+          <label>
+            Chess.com username
+            <input
+              required
+              minLength={3}
+              maxLength={25}
+              autoCapitalize="none"
+              autoCorrect="off"
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
+            />
+          </label>
+          <button>Find games</button>
+        </form>
+        <ArchiveControls state={state} />
+        <GameResults state={state} />
+        <ImportedGame state={state} />
+      </section>
+      <Workspace
+        game={state.game.status === "ready" ? state.game.data : null}
+      />
+    </>
   );
 }
 
@@ -281,18 +287,9 @@ function ImportedGame({ state }: { state: DiscoveryState }) {
             {state.game.data.positions.length - 1} plies
           </p>
           <p>
-            Every main-line move was validated. Replay is coming in the next
-            sprint.
+            Every main-line move was validated. Replay both players’ moves
+            below.
           </p>
-          <details>
-            <summary>Validated move list</summary>
-            <p>
-              {state.game.data.positions
-                .map((position) => position.san)
-                .filter(Boolean)
-                .join(" ")}
-            </p>
-          </details>
         </section>
       )}
     </>

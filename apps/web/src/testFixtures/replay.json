@@ -1,0 +1,302 @@
+[
+  {
+    "name": "castling",
+    "result": "1-0",
+    "white": "win",
+    "black": "resigned",
+    "positions": [
+      {
+        "ply": 0,
+        "fen": "r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1",
+        "san": null,
+        "uci": null
+      },
+      {
+        "ply": 1,
+        "fen": "r3k2r/8/8/8/8/8/8/R4RK1 b kq - 1 1",
+        "san": "O-O",
+        "uci": "e1g1"
+      },
+      {
+        "ply": 2,
+        "fen": "2kr3r/8/8/8/8/8/8/R4RK1 w - - 2 2",
+        "san": "O-O-O",
+        "uci": "e8c8"
+      }
+    ],
+    "pgn": "[SetUp \"1\"]\n[FEN \"r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1\"]\n[Result \"1-0\"]\n\n1. O-O O-O-O 1-0\n"
+  },
+  {
+    "name": "en passant",
+    "result": "1-0",
+    "white": "win",
+    "black": "resigned",
+    "positions": [
+      {
+        "ply": 0,
+        "fen": "4k3/3p4/8/4P3/8/8/8/4K3 b - - 0 12",
+        "san": null,
+        "uci": null
+      },
+      {
+        "ply": 1,
+        "fen": "4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 13",
+        "san": "d5",
+        "uci": "d7d5"
+      },
+      {
+        "ply": 2,
+        "fen": "4k3/8/3P4/8/8/8/8/4K3 b - - 0 13",
+        "san": "exd6",
+        "uci": "e5d6"
+      }
+    ],
+    "pgn": "[SetUp \"1\"]\n[FEN \"4k3/3p4/8/4P3/8/8/8/4K3 b - - 0 12\"]\n[Result \"1-0\"]\n\n12... d5 13. exd6 1-0\n"
+  },
+  {
+    "name": "promotion",
+    "result": "1-0",
+    "white": "win",
+    "black": "resigned",
+    "positions": [
+      {
+        "ply": 0,
+        "fen": "k7/4P3/8/8/8/8/8/7K w - - 0 35",
+        "san": null,
+        "uci": null
+      },
+      {
+        "ply": 1,
+        "fen": "k3Q3/8/8/8/8/8/8/7K b - - 0 35",
+        "san": "e8=Q+",
+        "uci": "e7e8q"
+      }
+    ],
+    "pgn": "[SetUp \"1\"]\n[FEN \"k7/4P3/8/8/8/8/8/7K w - - 0 35\"]\n[Result \"1-0\"]\n\n35. e8=Q+ 1-0\n"
+  },
+  {
+    "name": "underpromotion",
+    "result": "1/2-1/2",
+    "white": "insufficient",
+    "black": "insufficient",
+    "positions": [
+      {
+        "ply": 0,
+        "fen": "k7/4P3/8/8/8/8/8/7K w - - 0 35",
+        "san": null,
+        "uci": null
+      },
+      {
+        "ply": 1,
+        "fen": "k3N3/8/8/8/8/8/8/7K b - - 0 35",
+        "san": "e8=N",
+        "uci": "e7e8n"
+      }
+    ],
+    "pgn": "[SetUp \"1\"]\n[FEN \"k7/4P3/8/8/8/8/8/7K w - - 0 35\"]\n[Result \"1/2-1/2\"]\n\n35. e8=N 1/2-1/2\n"
+  },
+  {
+    "name": "mate",
+    "result": "0-1",
+    "white": "checkmated",
+    "black": "win",
+    "positions": [
+      {
+        "ply": 0,
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/6P1/5P2/PPPPP2P/RNBQKBNR b KQkq - 0 2",
+        "san": null,
+        "uci": null
+      },
+      {
+        "ply": 1,
+        "fen": "rnb1kbnr/pppp1ppp/8/4p3/6Pq/5P2/PPPPP2P/RNBQKBNR w KQkq - 1 3",
+        "san": "Qh4#",
+        "uci": "d8h4"
+      }
+    ],
+    "pgn": "[SetUp \"1\"]\n[FEN \"rnbqkbnr/pppp1ppp/8/4p3/6P1/5P2/PPPPP2P/RNBQKBNR b KQkq - 0 2\"]\n[Result \"0-1\"]\n\n2... Qh4# 0-1\n"
+  },
+  {
+    "name": "stalemate",
+    "result": "1/2-1/2",
+    "white": "stalemate",
+    "black": "stalemate",
+    "positions": [
+      {
+        "ply": 0,
+        "fen": "k7/2Q5/2K5/8/8/8/8/8 w - - 0 62",
+        "san": null,
+        "uci": null
+      },
+      {
+        "ply": 1,
+        "fen": "k7/8/1QK5/8/8/8/8/8 b - - 1 62",
+        "san": "Qb6",
+        "uci": "c7b6"
+      }
+    ],
+    "pgn": "[SetUp \"1\"]\n[FEN \"k7/2Q5/2K5/8/8/8/8/8 w - - 0 62\"]\n[Result \"1/2-1/2\"]\n\n62. Qb6 1/2-1/2\n"
+  },
+  {
+    "name": "Black-to-move setup",
+    "result": "0-1",
+    "white": "resigned",
+    "black": "win",
+    "positions": [
+      {
+        "ply": 0,
+        "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 17",
+        "san": null,
+        "uci": null
+      },
+      {
+        "ply": 1,
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 18",
+        "san": "e5",
+        "uci": "e7e5"
+      },
+      {
+        "ply": 2,
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 18",
+        "san": "Nf3",
+        "uci": "g1f3"
+      }
+    ],
+    "pgn": "[SetUp \"1\"]\n[FEN \"rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 17\"]\n[Result \"0-1\"]\n\n17... e5 18. Nf3 0-1\n"
+  },
+  {
+    "name": "opening",
+    "result": "1-0",
+    "white": "win",
+    "black": "resigned",
+    "pgn": "[Result \"1-0\"]\n\n1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O 9. h3 Nb8 10. d4 Nbd7 1-0\n",
+    "positions": [
+      {
+        "ply": 0,
+        "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+        "san": null,
+        "uci": null
+      },
+      {
+        "ply": 1,
+        "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+        "san": "e4",
+        "uci": "e2e4"
+      },
+      {
+        "ply": 2,
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+        "san": "e5",
+        "uci": "e7e5"
+      },
+      {
+        "ply": 3,
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2",
+        "san": "Nf3",
+        "uci": "g1f3"
+      },
+      {
+        "ply": 4,
+        "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3",
+        "san": "Nc6",
+        "uci": "b8c6"
+      },
+      {
+        "ply": 5,
+        "fen": "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3",
+        "san": "Bb5",
+        "uci": "f1b5"
+      },
+      {
+        "ply": 6,
+        "fen": "r1bqkbnr/1ppp1ppp/p1n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4",
+        "san": "a6",
+        "uci": "a7a6"
+      },
+      {
+        "ply": 7,
+        "fen": "r1bqkbnr/1ppp1ppp/p1n5/4p3/B3P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 1 4",
+        "san": "Ba4",
+        "uci": "b5a4"
+      },
+      {
+        "ply": 8,
+        "fen": "r1bqkb1r/1ppp1ppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 2 5",
+        "san": "Nf6",
+        "uci": "g8f6"
+      },
+      {
+        "ply": 9,
+        "fen": "r1bqkb1r/1ppp1ppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQ1RK1 b kq - 3 5",
+        "san": "O-O",
+        "uci": "e1g1"
+      },
+      {
+        "ply": 10,
+        "fen": "r1bqk2r/1pppbppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQ1RK1 w kq - 4 6",
+        "san": "Be7",
+        "uci": "f8e7"
+      },
+      {
+        "ply": 11,
+        "fen": "r1bqk2r/1pppbppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQR1K1 b kq - 5 6",
+        "san": "Re1",
+        "uci": "f1e1"
+      },
+      {
+        "ply": 12,
+        "fen": "r1bqk2r/2ppbppp/p1n2n2/1p2p3/B3P3/5N2/PPPP1PPP/RNBQR1K1 w kq - 0 7",
+        "san": "b5",
+        "uci": "b7b5"
+      },
+      {
+        "ply": 13,
+        "fen": "r1bqk2r/2ppbppp/p1n2n2/1p2p3/4P3/1B3N2/PPPP1PPP/RNBQR1K1 b kq - 1 7",
+        "san": "Bb3",
+        "uci": "a4b3"
+      },
+      {
+        "ply": 14,
+        "fen": "r1bqk2r/2p1bppp/p1np1n2/1p2p3/4P3/1B3N2/PPPP1PPP/RNBQR1K1 w kq - 0 8",
+        "san": "d6",
+        "uci": "d7d6"
+      },
+      {
+        "ply": 15,
+        "fen": "r1bqk2r/2p1bppp/p1np1n2/1p2p3/4P3/1BP2N2/PP1P1PPP/RNBQR1K1 b kq - 0 8",
+        "san": "c3",
+        "uci": "c2c3"
+      },
+      {
+        "ply": 16,
+        "fen": "r1bq1rk1/2p1bppp/p1np1n2/1p2p3/4P3/1BP2N2/PP1P1PPP/RNBQR1K1 w - - 1 9",
+        "san": "O-O",
+        "uci": "e8g8"
+      },
+      {
+        "ply": 17,
+        "fen": "r1bq1rk1/2p1bppp/p1np1n2/1p2p3/4P3/1BP2N1P/PP1P1PP1/RNBQR1K1 b - - 0 9",
+        "san": "h3",
+        "uci": "h2h3"
+      },
+      {
+        "ply": 18,
+        "fen": "rnbq1rk1/2p1bppp/p2p1n2/1p2p3/4P3/1BP2N1P/PP1P1PP1/RNBQR1K1 w - - 1 10",
+        "san": "Nb8",
+        "uci": "c6b8"
+      },
+      {
+        "ply": 19,
+        "fen": "rnbq1rk1/2p1bppp/p2p1n2/1p2p3/3PP3/1BP2N1P/PP3PP1/RNBQR1K1 b - - 0 10",
+        "san": "d4",
+        "uci": "d2d4"
+      },
+      {
+        "ply": 20,
+        "fen": "r1bq1rk1/2pnbppp/p2p1n2/1p2p3/3PP3/1BP2N1P/PP3PP1/RNBQR1K1 w - - 1 11",
+        "san": "Nbd7",
+        "uci": "b8d7"
+      }
+    ]
+  }
+]

@@ -29,33 +29,6 @@ export function App() {
         </p>
       </section>
       <Discovery />
-      <div className="workspace">
-        <section className="panel game-space" aria-labelledby="game-title">
-          <span className="workspace-mark" aria-hidden="true">
-            ♘
-          </span>
-          <h2 id="game-title">Your game, in focus</h2>
-          <p>A space to replay both sides and discover the turning points.</p>
-        </section>
-        <aside className="insights" aria-label="Game insights">
-          <section className="panel" aria-labelledby="engine-title">
-            <p className="eyebrow">The position</p>
-            <h2 id="engine-title">Engine analysis</h2>
-            <p>
-              Best moves and alternative lines, with a choice of quick or deeper
-              review.
-            </p>
-          </section>
-          <section className="panel" aria-labelledby="coach-title">
-            <p className="eyebrow">The lesson</p>
-            <h2 id="coach-title">Chess guidance</h2>
-            <p>
-              Clear explanations and practical ideas to carry into your next
-              game.
-            </p>
-          </section>
-        </aside>
-      </div>
       <footer>
         Free, independent analysis. Not affiliated with Chess.com.
       </footer>
