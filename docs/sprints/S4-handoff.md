@@ -1,7 +1,8 @@
 # S4 handoff — Move labels and game summary
 
 Status: prepared from the reviewed S3 implementation; S4 has not started.
-Reviewed implementation checkpoint: pending the S3 commit; see [S3](S3.md).
+Reviewed implementation checkpoint: `71fd90c92ffb6d845909ef98e8f05c07a8104a14`;
+see [S3](S3.md) for 291 passing tests, final gate and review dispositions.
 
 ## Entry and scope
 
