@@ -35,3 +35,5 @@ bin/stockfish*
 .DS_Store
 .idea/
 .vscode/
+# Browser experiment assets copied from the checksum-locked npm package
+apps/web/public/engine/

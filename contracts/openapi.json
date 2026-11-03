@@ -195,6 +195,177 @@
         "title": "ArchivesResponse",
         "type": "object"
       },
+      "BrowserBatch": {
+        "additionalProperties": false,
+        "properties": {
+          "game_version": {
+            "minimum": 1.0,
+            "title": "Game Version",
+            "type": "integer"
+          },
+          "pgn_hash": {
+            "pattern": "^[a-f0-9]{64}$",
+            "title": "Pgn Hash",
+            "type": "string"
+          },
+          "positions": {
+            "items": {
+              "$ref": "#/components/schemas/BrowserPly"
+            },
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Positions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "game_version",
+          "pgn_hash",
+          "positions"
+        ],
+        "title": "BrowserBatch",
+        "type": "object"
+      },
+      "BrowserEvidence": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/MoveEvidence"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "trust": {
+            "const": "client_unverified",
+            "default": "client_unverified",
+            "title": "Trust",
+            "type": "string"
+          }
+        },
+        "required": [
+          "evidence"
+        ],
+        "title": "BrowserEvidence",
+        "type": "object"
+      },
+      "BrowserLine": {
+        "additionalProperties": false,
+        "properties": {
+          "bounded": {
+            "title": "Bounded",
+            "type": "boolean"
+          },
+          "depth": {
+            "maximum": 1000.0,
+            "minimum": 1.0,
+            "title": "Depth",
+            "type": "integer"
+          },
+          "nodes": {
+            "maximum": 1000000000.0,
+            "minimum": 1.0,
+            "title": "Nodes",
+            "type": "integer"
+          },
+          "pv": {
+            "items": {
+              "maxLength": 5,
+              "pattern": "^[a-h][1-8][a-h][1-8][qrbn]?$",
+              "type": "string"
+            },
+            "maxItems": 64,
+            "minItems": 1,
+            "title": "Pv",
+            "type": "array"
+          },
+          "score": {
+            "$ref": "#/components/schemas/BrowserScore"
+          },
+          "time_ms": {
+            "maximum": 10000.0,
+            "minimum": 0.0,
+            "title": "Time Ms",
+            "type": "integer"
+          },
+          "wdl": {
+            "anyOf": [
+              {
+                "items": {
+                  "maximum": 1000.0,
+                  "minimum": 0.0,
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wdl"
+          }
+        },
+        "required": [
+          "score",
+          "wdl",
+          "depth",
+          "nodes",
+          "time_ms",
+          "pv",
+          "bounded"
+        ],
+        "title": "BrowserLine",
+        "type": "object"
+      },
+      "BrowserPly": {
+        "additionalProperties": false,
+        "properties": {
+          "best": {
+            "$ref": "#/components/schemas/BrowserLine"
+          },
+          "played": {
+            "$ref": "#/components/schemas/BrowserLine"
+          },
+          "ply": {
+            "maximum": 300.0,
+            "minimum": 1.0,
+            "title": "Ply",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "ply",
+          "best",
+          "played"
+        ],
+        "title": "BrowserPly",
+        "type": "object"
+      },
+      "BrowserScore": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "enum": [
+              "cp",
+              "mate"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "value": {
+            "maximum": 1000000.0,
+            "minimum": -1000000.0,
+            "title": "Value",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "kind",
+          "value"
+        ],
+        "title": "BrowserScore",
+        "type": "object"
+      },
       "CentipawnScore": {
         "additionalProperties": false,
         "properties": {
@@ -1229,6 +1400,76 @@
           }
         },
         "summary": "Game"
+      }
+    },
+    "/api/v1/games/{game_id}/browser-evidence": {
+      "post": {
+        "operationId": "validate_browser_evidence",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "game_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Game Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BrowserBatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrowserEvidence"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Validate"
       }
     },
     "/api/v1/health/live": {

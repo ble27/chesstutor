@@ -12,3 +12,4 @@ data
 models
 
 bin
+apps/web/public/engine

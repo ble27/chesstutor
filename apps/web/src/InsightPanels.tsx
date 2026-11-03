@@ -1,5 +1,6 @@
 import type { Game } from "./api/discoveryValidation";
 import { EnginePanel } from "./features/review/EnginePanel";
+import { BrowserExperiment } from "./features/browserExperiment/BrowserExperiment";
 
 export function InsightPanels({
   game,
@@ -11,7 +12,12 @@ export function InsightPanels({
   return (
     <>
       {game ? (
-        <EnginePanel game={game} selectedPly={selectedPly} />
+        new URLSearchParams(window.location.search).get("engine") ===
+        "browser" ? (
+          <BrowserExperiment game={game} selectedPly={selectedPly} />
+        ) : (
+          <EnginePanel game={game} selectedPly={selectedPly} />
+        )
       ) : (
         <section className="panel" aria-labelledby="engine-title">
           <p className="eyebrow">The position</p>

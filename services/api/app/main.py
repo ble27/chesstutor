@@ -18,6 +18,7 @@ from services.adapters.pubapi import PubAPI, RedisProviderCache
 from services.adapters.readiness import ReadinessProbe, ServiceReadiness
 from services.api.app.analysis_routes import analysis_router
 from services.api.app.analysis_security import AnalysisBodyLimit
+from services.api.app.browser_routes import browser_router
 from services.api.app.game_routes import discovery_router
 from services.api.app.schemas import ErrorResponse, HealthResponse
 from services.api.app.settings import Settings
@@ -43,6 +44,7 @@ def create_app(
     probe: ReadinessProbe | None = None,
     discovery: Discovery | None = None,
     analysis: AnalysisService | None = None,
+    reconcile_analyses: bool = True,
 ) -> FastAPI:
     config = settings if settings is not None else Settings()
     readiness = (
@@ -64,7 +66,7 @@ def create_app(
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         try:
-            if analysis_resources is not None:
+            if analysis_resources is not None and reconcile_analyses:
                 analysis_resources.start()
             yield
         finally:
@@ -82,6 +84,7 @@ def create_app(
     service = discovery if discovery is not None else resources.discovery if resources else None
     assert service is not None
     app.include_router(discovery_router(service))
+    app.include_router(browser_router(service, config))
     analysis_service = (
         analysis
         if analysis is not None

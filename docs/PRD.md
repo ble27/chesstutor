@@ -10,6 +10,17 @@ classification and later product features remain planned.
 Numerical budgets below require measurement and are not
 verified performance claims.
 
+Branch experiment: the user authorized a browser-first execution prototype on
+`experiment/browser-stockfish`, based on the cross-platform research. Its opt-in
+`?engine=browser` view uses full Stockfish 17.1 WASM, bounded node screening and
+selected-position refinement. Browser evidence is explicitly client-unverified,
+kept locally and legally revalidated by the API; it does not enter the trusted
+server cache. This permits client UCI transport without duplicating chess rules
+or classification in TypeScript. Existing S3 server budgets and contracts remain
+the production baseline. Experimental execution, trust and performance evidence
+are in [the branch record](sprints/browser-experiment.md); cross-device and
+accuracy gates must pass before adopting it as product policy.
+
 ## 1. Purpose and success
 
 Create a free tool for reviewing completed, public Chess.com games, including

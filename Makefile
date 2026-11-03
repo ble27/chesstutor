@@ -59,3 +59,7 @@ up:
 
 down:
 	docker compose down
+
+.PHONY: browser-experiment
+browser-experiment:
+	$(UV) python -m scripts.run_browser_experiment

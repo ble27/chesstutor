@@ -1,5 +1,33 @@
 # Chess Tutor
 
+This branch includes a **browser Stockfish experiment**, separate from the S3
+server workflow. With dependencies installed and local PostgreSQL/Redis running:
+
+```sh
+make browser-experiment
+```
+
+Open http://127.0.0.1:5175/?engine=browser, find/open a game and select
+**Browser Quick review**. The full pinned Stockfish 17.1 engine runs in a Web
+Worker on your device. The first full-engine download is approximately 70 MiB;
+later starts use browser caching. Use **Deepen selected move** for more work on
+one position. Cancellation retains locally cached positions for resume. A
+lightweight API on port 8001 validates legal variations against imported history;
+this experiment still needs that API and is not an offline application.
+
+Results remain provisional personal evidence; they do not populate the trusted
+server analysis cache or receive server-verified badges. Screening uses smaller
+node budgets than S3 Deep. Closing the tab stops computation. A two-thread cap
+is available with browser isolation support; otherwise use the single-thread
+fallback. Hardware/browser quality and performance gates remain open.
+
+The original Docker stack on http://127.0.0.1:5173 is left intact for comparison.
+The experiment's `?engine=server` view requires a matching native worker; use the
+original stack to compare its existing Linux workers. See the
+[experiment evidence](docs/sprints/browser-experiment.md) for measured results,
+the reproduced Quick defect and limitations. This is not an S4 implementation
+or a production rollout.
+
 Free, independent review of completed public Chess.com games. The product plan
 combines Stockfish analysis, replay for both players, and chess-only guidance.
 

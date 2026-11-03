@@ -14,12 +14,16 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "contracts": "openapi-typescript ../../contracts/openapi.json -o src/api/generated.ts"
+    "contracts": "openapi-typescript ../../contracts/openapi.json -o src/api/generated.ts",
+    "engine:prepare": "node scripts/prepare-browser-engine.mjs",
+    "predev": "npm run engine:prepare",
+    "prebuild": "npm run engine:prepare"
   },
   "dependencies": {
     "react": "19.3.1",
     "react-chessboard": "5.12.1",
-    "react-dom": "19.3.1"
+    "react-dom": "19.3.1",
+    "stockfish": "17.1.0"
   },
   "devDependencies": {
     "@eslint/js": "9.39.1",
@@ -32,6 +36,7 @@
     "@vitejs/plugin-react": "6.2.1",
     "eslint": "9.39.1",
     "eslint-plugin-react-hooks": "7.1.1",
+    "fake-indexeddb": "6.2.7",
     "jsdom": "29.1.1",
     "openapi-typescript": "7.13.0",
     "prettier": "3.9.10",

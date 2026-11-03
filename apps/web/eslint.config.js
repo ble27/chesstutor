@@ -6,6 +6,7 @@ export default tseslint.config(
   {
     ignores: [
       "dist/**",
+      "public/engine/**",
       "src/api/generated.ts",
       "playwright-report/**",
       "test-results/**",

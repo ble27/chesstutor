@@ -95,7 +95,10 @@ class AnalysisBodyLimit:
         if (
             scope["type"] != "http"
             or scope["method"] != "POST"
-            or not scope["path"].startswith("/api/v1/analyses")
+            or not (
+                scope["path"].startswith("/api/v1/analyses")
+                or scope["path"].endswith("/browser-evidence")
+            )
         ):
             await self.app(scope, receive, send)
             return
@@ -105,12 +108,13 @@ class AnalysisBodyLimit:
             if message["type"] == "http.disconnect":
                 return
             body.extend(message.get("body", b""))
-            if len(body) > 4096:
+            maximum = 65536 if scope["path"].endswith("/browser-evidence") else 4096
+            if len(body) > maximum:
                 response = JSONResponse(
                     status_code=413,
                     content={
                         "code": "request_too_large",
-                        "message": "Analysis requests must not exceed 4 KiB.",
+                        "message": "Analysis request exceeds its size limit.",
                         "retryable": False,
                         "request_id": scope.get("state", {}).get("request_id", "unknown"),
                     },

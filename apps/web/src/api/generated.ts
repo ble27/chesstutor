@@ -72,6 +72,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/games/{game_id}/browser-evidence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Validate */
+        post: operations["validate_browser_evidence"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/health/live": {
         parameters: {
             query?: never;
@@ -227,6 +244,59 @@ export interface components {
             stale: boolean;
             /** Username */
             username: string;
+        };
+        /** BrowserBatch */
+        BrowserBatch: {
+            /** Game Version */
+            game_version: number;
+            /** Pgn Hash */
+            pgn_hash: string;
+            /** Positions */
+            positions: components["schemas"]["BrowserPly"][];
+        };
+        /** BrowserEvidence */
+        BrowserEvidence: {
+            /** Evidence */
+            evidence: components["schemas"]["MoveEvidence"][];
+            /**
+             * Trust
+             * @default client_unverified
+             * @constant
+             */
+            trust: "client_unverified";
+        };
+        /** BrowserLine */
+        BrowserLine: {
+            /** Bounded */
+            bounded: boolean;
+            /** Depth */
+            depth: number;
+            /** Nodes */
+            nodes: number;
+            /** Pv */
+            pv: string[];
+            score: components["schemas"]["BrowserScore"];
+            /** Time Ms */
+            time_ms: number;
+            /** Wdl */
+            wdl: number[] | null;
+        };
+        /** BrowserPly */
+        BrowserPly: {
+            best: components["schemas"]["BrowserLine"];
+            played: components["schemas"]["BrowserLine"];
+            /** Ply */
+            ply: number;
+        };
+        /** BrowserScore */
+        BrowserScore: {
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "cp" | "mate";
+            /** Value */
+            value: number;
         };
         /** CentipawnScore */
         CentipawnScore: {
@@ -810,6 +880,59 @@ export interface operations {
             };
             /** @description Service Unavailable */
             503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    validate_browser_evidence: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BrowserBatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BrowserEvidence"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
                 headers: {
                     [name: string]: unknown;
                 };

@@ -78,3 +78,33 @@ def test_unexpected_errors_do_not_expose_dependency_details() -> None:
     assert response.json()["code"] == "internal_error"
     assert response.json()["request_id"] == response.headers["X-Request-ID"]
     assert "database-password-private" not in response.text
+
+
+@pytest.mark.parametrize("enabled", [False, True])
+def test_validation_only_app_can_leave_background_analysis_reconciliation_disabled(
+    monkeypatch, enabled
+):
+    from services.api.app import main
+    from tests.unit.analysis_fakes import Service
+
+    actions = []
+
+    class Resources:
+        def __init__(self, *args):
+            self.service = Service()
+
+        def start(self):
+            actions.append("start")
+
+        async def close(self):
+            actions.append("close")
+
+    monkeypatch.setattr(main, "AnalysisResources", Resources)
+    application = (
+        main.create_app(probe=FakeProbe(True))
+        if enabled
+        else main.create_app(probe=FakeProbe(True), reconcile_analyses=False)
+    )
+    with TestClient(application) as client:
+        assert client.get("/api/v1/health/live").status_code == 200
+    assert actions == (["start", "close"] if enabled else ["close"])

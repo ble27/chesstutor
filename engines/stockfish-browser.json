@@ -1,0 +1,28 @@
+{
+  "package": "stockfish@17.1.0",
+  "engine": "Stockfish.js 17.1",
+  "quality": "full",
+  "source": "https://github.com/nmrugg/stockfish.js/tree/v17.1.0",
+  "files": {
+    "stockfish-17.1-8e4d048-part-0.wasm": "cc2c5216a520c68908b022ae02500564a736f06a844f0b3aae065507ed0047ac",
+    "stockfish-17.1-8e4d048-part-1.wasm": "1c3a19973acb5755cafa051d4ab3c96395a117bd7fd98121fd6fe502e80706f0",
+    "stockfish-17.1-8e4d048-part-2.wasm": "a70ae5c6de8e19f5d316a7ba3292e4783e86b7b70ca4c4ccf9579ceed734f11e",
+    "stockfish-17.1-8e4d048-part-3.wasm": "3a0a3b6725e189b63def319271ed5cf6c988c6f8875ae34a4475089862d17ffc",
+    "stockfish-17.1-8e4d048-part-4.wasm": "46dfb2892113ef23f673a55e32cca7d63090c140a60e4bdd0bb46de011706a58",
+    "stockfish-17.1-8e4d048-part-5.wasm": "d11822a14253957eccc2c13def49d08d44f537205687974c2e89044fe37f4f4c",
+    "stockfish-17.1-8e4d048.js": "5b174767f9bc72af6b2bc148a1686848310bca11756dd12edf06ec46818bd6b0",
+    "stockfish-17.1-single-a496a04-part-0.wasm": "c31da0e4486d44f96d6a36787e21350552bbfaff45cb92ed42c325db0d8b3b1e",
+    "stockfish-17.1-single-a496a04-part-1.wasm": "a72af33113066c20b383159d9658e3cefa69c216af56be7ce475a9fe1ac88ed2",
+    "stockfish-17.1-single-a496a04-part-2.wasm": "1f1fa6a4ddd6d3fffa2eb07522f830465b4dea1f860ea8a66f14832069a27d14",
+    "stockfish-17.1-single-a496a04-part-3.wasm": "01fdc89fe79d53d7194bb9947279da43021e3762f6f20def5f5c2bd7fc791864",
+    "stockfish-17.1-single-a496a04-part-4.wasm": "dacae3ba1bc2af5035e8c887bd2f4431a9013db009cfe7f12e3ffebb6d31b8ec",
+    "stockfish-17.1-single-a496a04-part-5.wasm": "eb0c62461e6d19c169aaf576a459f7d3feeb2b483e4533140514bf85f3a5c1a9",
+    "stockfish-17.1-single-a496a04.js": "562a55d9189ad013f6c6c55b8d347a37f490ce9542a34abdb06ef56a72f9d1db"
+  },
+  "artifact_id": "bba30f138967ed11601ff7ad81a546866181de2c2bcd704096c4755e5256bd6e",
+  "nnue": [
+    "nn-1c0000000000.nnue",
+    "nn-37f18f62d772.nnue"
+  ],
+  "npm_integrity": "sha512-LvxdOzngaMjwdDKkZML4riABX9EWUkIE2ZJUsNvR2yFnM4WLiM6ggEXcBY8v53dK7uAfbxdJFcBiKTIQyGg6Zg=="
+}
