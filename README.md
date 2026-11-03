@@ -82,7 +82,10 @@ class. Filters apply only to that month. Open a game to validate and persist its
 main line and replay it immediately. Click either player's SAN or use
 first/previous/next/last controls. Focus the replay area for Left/Right arrows,
 Home, and End; these keys do not intercept typing in input fields. Flip changes
-orientation without changing the selected ply. Expand “Text position and FEN”
+orientation without changing the selected ply; player names and piece-color
+labels swap with their sides. Desktop shows recorded moves and analysis panels
+beside the board; smaller screens stack them below. The board caps at 640 CSS px
+and shrinks to fit shorter desktop windows. Expand “Text position and FEN”
 for occupied squares and the exact imported position. The game remains read-only;
 engine analysis and coaching are not available yet. Source links open Chess.com;
 no password or provider key is used.

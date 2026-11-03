@@ -4,6 +4,31 @@ import { imported } from "../../testFixtures/discovery";
 import { replayFixtures } from "../../testFixtures/replay";
 import { Replay } from "./Replay";
 
+it("keeps player names and piece colors at the matching board edges when flipped", () => {
+  render(<Replay game={imported} />);
+  const top = screen.getByRole("group", { name: "Top player" });
+  const bottom = screen.getByRole("group", { name: "Bottom player" });
+  expect(within(top).getByText("bobby")).toBeVisible();
+  expect(within(top).getByText("Black pieces")).toBeVisible();
+  expect(within(bottom).getByText("alice")).toBeVisible();
+  expect(within(bottom).getByText(/White pieces/)).toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Next move" }));
+  fireEvent.click(screen.getByRole("button", { name: "Flip board" }));
+  expect(within(top).getByText("alice")).toBeVisible();
+  expect(within(top).getByText(/White pieces/)).toBeVisible();
+  expect(within(bottom).getByText("bobby")).toBeVisible();
+  expect(within(bottom).getByText("Black pieces")).toBeVisible();
+  expect(screen.getByRole("button", { name: "1. White: e4" })).toHaveAttribute(
+    "aria-current",
+    "step",
+  );
+  expect(
+    screen.getByRole("img", { name: "Chessboard, Black at bottom" }),
+  ).toHaveAccessibleDescription(/alice.*White pieces.*bobby.*Black pieces/);
+  fireEvent.click(screen.getByRole("button", { name: "Flip board" }));
+  expect(within(top).getByText("bobby")).toBeVisible();
+});
+
 it("starts at the imported initial position and bounds forward/backward navigation", () => {
   render(<Replay game={imported} />);
   expect(screen.getByLabelText("Position FEN")).toHaveTextContent(

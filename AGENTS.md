@@ -105,8 +105,10 @@ product authority.
 3. Run `make verify` and all sprint-specific acceptance checks before marking a
    sprint complete. Human chess review and required manual accessibility checks
    remain explicit gates; automated checks do not replace them.
-4. Run `/diff`, then `/review`, against the whole sprint: all committed and pending
-   changes since the recorded sprint-start commit, including new files.
+4. After verifying each requested feature, automatically run `/diff`, then
+   `/review`, against the whole sprint: all committed and pending changes since
+   the recorded sprint-start commit, including new files. Repeat before marking
+   the sprint complete.
 5. If slash commands cannot be invoked, explicitly report the limitation and
    provide the equivalent Git diff and code review against this file, the PRD,
    and sprint acceptance criteria. Compare the recorded baseline to the complete
@@ -121,6 +123,9 @@ product authority.
    dispositions, limitations, and manual evidence in `docs/sprints/S<n>.md`.
    If the evidence commit cannot name itself, record the final implementation
    commit and identify the evidence commit through Git history.
+9. Prepare a handoff for the next approved sprint with the reviewed checkpoint,
+   implementation starting points, remaining limitations, and entry gates.
+   Carry forward unresolved gates explicitly; a handoff does not waive them.
 
 ## Git discipline
 

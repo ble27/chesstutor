@@ -109,13 +109,17 @@ Quality indicators require text/icons as well as color.
 
 | Viewport | Layout |
 | --- | --- |
-| Desktop, >=1024 CSS px | Grid `minmax(0, 2fr) minmax(320px, 1fr)`, gap 24px. Left: large square board, controls, move history. Right: engine on top, guidance below. |
-| Tablet, 768–1023 CSS px | Board/controls/moves first; full-width engine and coaching panels below. |
+| Desktop, >=1024 CSS px | Grid `minmax(0, 2fr) minmax(320px, 1fr)`, gap 24px. Left: square board, player labels, controls and textual position. Right: recorded game moves, engine analysis and guidance in distinct panels. |
+| Tablet, 768–1023 CSS px | Board/player labels/controls first; full-width moves, engine and coaching panels below. |
 | Mobile, 320–767 CSS px | Single column: game header, board, controls, compact moves, engine, coaching. Gutters 12–16px and touch targets >=44px. |
 
 The wide-screen workspace allocates approximately two thirds left and one third
-right, excluding the gap. The board fills most of the left column and stays
-square; page scrolling is acceptable. Long names, SAN, and variations wrap or
+right, excluding the gap. The board stays square, caps at 640 CSS px, and on
+desktop also shrinks with viewport height so it and the replay controls can fit
+in the visible workspace. Page scrolling to reach the workspace is acceptable.
+Show each player's name and piece color above/below their side of the board;
+flipping swaps these labels with the pieces and preserves the selected ply.
+The recorded move list is distinct from computed engine analysis. Long names, SAN, and variations wrap or
 scroll inside panels without horizontal page overflow.
 
 Replay supports first/previous/next/last, clicking either side's SAN, board flip,

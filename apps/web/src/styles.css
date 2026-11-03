@@ -233,7 +233,48 @@ button:focus-visible {
   overflow: hidden;
   border-radius: 4px;
 }
-.replay-panel > section:focus-visible {
+.board-frame {
+  width: min(100%, 640px);
+  margin-inline: auto;
+}
+.replay-panel {
+  align-self: start;
+}
+.player-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  margin-block: 8px;
+  overflow-wrap: anywhere;
+}
+.player-label > div {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+.player-label span:not(.piece-color) {
+  color: #b8b8b8;
+  font-size: 13px;
+}
+.piece-color {
+  flex: 0 0 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #b8b8b8;
+}
+.piece-color.white {
+  background: #eeeeee;
+}
+.piece-color.black {
+  background: #181818;
+}
+@media (min-width: 1024px) {
+  .board-frame {
+    width: min(100%, 640px, max(160px, calc(100dvh - 360px)));
+  }
+}
+.replay-workspace:focus-visible {
   outline: 2px solid #eeeeee;
   outline-offset: 6px;
 }

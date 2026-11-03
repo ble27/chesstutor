@@ -5,10 +5,12 @@ export function Board({
   fen,
   orientation,
   lastMove,
+  describedBy,
 }: {
   fen: string;
   orientation: "white" | "black";
   lastMove: string | null;
+  describedBy: string;
 }) {
   const squareStyles: Record<string, CSSProperties> = {};
   if (lastMove) {
@@ -22,6 +24,7 @@ export function Board({
       className="replay-board"
       role="img"
       aria-label={`Chessboard, ${orientation === "white" ? "White" : "Black"} at bottom`}
+      aria-describedby={describedBy}
     >
       <div aria-hidden="true" inert style={{ height: "100%" }}>
         <Chessboard
