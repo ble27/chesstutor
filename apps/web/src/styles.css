@@ -151,3 +151,78 @@ footer {
     min-height: 300px;
   }
 }
+.discovery {
+  margin-bottom: 24px;
+}
+label {
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+  min-width: 0;
+}
+input,
+select,
+button {
+  font: inherit;
+  color: inherit;
+  background: #303030;
+  border: 1px solid #666;
+  border-radius: 8px;
+  min-height: 44px;
+  padding: 10px 12px;
+  max-width: 100%;
+}
+button {
+  cursor: pointer;
+  background: #e0e0e0;
+  color: #181818;
+  font-weight: 600;
+}
+input:focus-visible,
+select:focus-visible,
+button:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 3px;
+}
+.search,
+.filters {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 20px 0;
+}
+.search label,
+.filters label {
+  flex: 1 1 170px;
+}
+.game-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 16px;
+}
+.game-card {
+  padding: 20px;
+  border: 1px solid #555;
+  border-radius: 12px;
+  min-width: 0;
+}
+.game-card h3 {
+  font-size: 16px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.game-card a {
+  display: inline-block;
+  text-decoration: underline;
+  margin: 0 16px 16px 0;
+}
+.freshness {
+  font-size: 12px;
+}
+.imported {
+  border-top: 1px solid #555;
+  margin-top: 24px;
+}

@@ -8,6 +8,7 @@ export class ApiError extends Error {
     public readonly retryable: boolean,
     public readonly status: number = 0,
     public readonly requestId: string | null = null,
+    public readonly retryAfterSeconds: number | null = null,
   ) {
     super(message);
     this.name = "ApiError";
@@ -37,17 +38,18 @@ function responseError(response: Response, value: unknown): ApiError {
     error?.retryable ?? (response.status === 429 || response.status >= 500),
     response.status,
     error?.request_id ?? null,
+    error?.retry_after_seconds ?? null,
   );
 }
 
 export async function request<T>(
-  path: keyof paths,
+  path: keyof paths | `/api/v1/${string}`,
   decode: (value: unknown) => T,
   options: RequestOptions = {},
 ): Promise<T> {
   const timeoutMs = options.timeoutMs ?? 5000;
-  if (!Number.isFinite(timeoutMs) || timeoutMs < 1 || timeoutMs > 30000) {
-    throw new RangeError("Request timeout must be between 1 and 30000ms");
+  if (!Number.isFinite(timeoutMs) || timeoutMs < 1 || timeoutMs > 120000) {
+    throw new RangeError("Request timeout must be between 1 and 120000ms");
   }
   const timeout = new AbortController();
   const signal = options.signal

@@ -9,6 +9,8 @@ exact Python and JavaScript dependency graph; retain notices when distributing.
 | python-chess (`chess`) | GPL-3.0-or-later | https://github.com/niklasf/python-chess |
 | Stockfish 17.1 | GPL-3.0 | https://github.com/official-stockfish/Stockfish/tree/sf_17.1 |
 | FastAPI, Pydantic, Uvicorn | MIT / MIT / BSD-3-Clause | See locked package metadata |
+| HTTPX | BSD-3-Clause | https://github.com/encode/httpx |
+| SQLAlchemy, Alembic | MIT | https://github.com/sqlalchemy/sqlalchemy ; https://github.com/sqlalchemy/alembic |
 | psycopg / psycopg-binary | LGPL-3.0 / LGPL-3.0 plus bundled library notices | https://www.psycopg.org/ |
 | redis-py, RQ | MIT / BSD-2-Clause | https://github.com/redis/redis-py ; https://github.com/rq/rq |
 | React, Vite, TypeScript | MIT | See locked package metadata |

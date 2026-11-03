@@ -3,12 +3,13 @@
 Free, independent review of completed public Chess.com games. The product plan
 combines Stockfish analysis, replay for both players, and chess-only guidance.
 
-Sprint 0 implements the API/frontend foundation and verification tooling. Username
-lookup, replay, engine execution, and coaching follow in S1–S5; the current page
-is a service-connected shell and does not claim to review games yet.
+Sprint 1 adds public username/month lookup, monthly filtering and pagination,
+and validated, versioned game import to the Sprint 0 foundation. Replay, engine
+execution, labels, and coaching remain S2–S5 work.
 
 - [PRD and sequential sprint gates](docs/PRD.md)
 - [Sprint 0 evidence](docs/sprints/S0.md)
+- [Sprint 1 evidence](docs/sprints/S1.md)
 - [Integration research](docs/research.md)
 - [Contributor conventions](AGENTS.md)
 
@@ -46,15 +47,56 @@ uv run --frozen uvicorn services.api.app.main:create_app --factory --reload
 npm --prefix apps/web run dev
 ```
 
+Run `make migrate` before starting the API outside Compose. Compose runs its
+migration service before starting the API.
+
 Defaults match the local data services. Copy `.env.example` to `.env` only when
 overriding configuration. API settings use the `CHESS_` prefix and reject invalid
 URLs/origins and unsafe production defaults. The frontend proxies `/api` to the
 local API; no backend secrets enter its bundle.
 
+## Public game lookup
+
+Set `CHESS_PUBAPI_USER_AGENT` in `.env` to an identifying User-Agent with your
+real operator contact email or project contact URL, then run `make up`.
+For example, replace the example contact in `.env.example`; it is commented out
+so a fake contact is never sent upstream. Without this setting the page explains
+that public lookup is not configured. Health checks and fixture tests still work.
+A host-run API also reads `.env`; Compose forwards this setting to its API.
+
+Enter a public Chess.com username. The newest archive month opens by default;
+choose another month or filter by player color, exact opponent username, and time
+class. Filters apply only to that month. Open a game to validate and persist its
+main line and inspect the imported move list. No board or analysis is available
+in this sprint. Source links open Chess.com; no password or provider key is used.
+
+Limits: 300 plies, 1 MiB UTF-8 PGN, 50 MiB monthly JSON, and 1 MiB archive index.
+Downloads request uncompressed responses and reject unexpected content encoding
+before reading the body. Stale cached data is explicitly labeled; source cache
+entries are retained up to seven days, subject to provider directives. Cache
+freshness is separate from the game's end time. All redirects are rejected.
+
+## Database migration and recovery
+
+`make migrate` applies Alembic revision `0001`. It creates pending provider records
+and canonical game versions; unchanged PGN imports reuse a version. Row locks
+serialize imports, and an import rejects a provider update that raced validation.
+PGN text/hash, metadata, starting FEN, SAN/UCI, and every resulting position are
+stored. Comments remain data and are excluded from the position sequence.
+
+Back up the database before rollback, for example using your PostgreSQL backup
+process. Stop API writers, then run `uv run --frozen alembic downgrade base` only
+when intentionally removing the Sprint 1 tables and their imported games.
+Restore a backup to recover those games, or rerun `make migrate` and discover and
+import them again from public archives. The integration gate verifies upgrade,
+rollback, and reapply in a disposable database; it never rolls back your app data.
+Automated retention/purge and broader backup/restore proof remain Sprint 7 work.
+
 ## Verification
 
 | Command | Checks |
 | --- | --- |
+| `make migrate` | Apply versioned PostgreSQL schema |
 | `make contracts` | Export FastAPI OpenAPI and regenerate TypeScript types |
 | `make contracts-check` | Regenerate contracts and reject unstaged drift |
 | `make check` | Ruff, formatting, mypy, TypeScript, ESLint, function-length limits |
@@ -63,6 +105,8 @@ local API; no backend secrets enter its bundle.
 | `make test-e2e` | Fixture-backed browser shell at five viewport sizes |
 | `make build` | Python source/wheel and frontend production bundle |
 | `make verify` | All the above, stopping at the first failure |
+
+Browser tests use port 5174 so they can run alongside the app on port 5173.
 
 The GitHub Actions workflow defines the same gate plus Compose build/startup.
 Local success does not mean hosted CI has run. See sprint evidence for actual

@@ -3,12 +3,15 @@ export npm_config_cache := $(CURDIR)/.cache/npm
 UV := uv run --frozen
 WEB := npm --prefix apps/web
 
-.PHONY: setup check test-unit test-integration test-e2e build contracts contracts-check verify up down
+.PHONY: migrate setup check test-unit test-integration test-e2e build contracts contracts-check verify up down
 
 setup:
 	uv sync --frozen
 	$(WEB) ci
 	cd apps/web && npx playwright install chromium
+
+migrate:
+	$(UV) alembic upgrade head
 
 contracts:
 	$(UV) python -m scripts.export_openapi
@@ -19,8 +22,8 @@ contracts-check:
 	git diff --exit-code -- contracts/openapi.json apps/web/src/api/generated.ts
 
 check:
-	$(UV) ruff check services scripts tests
-	$(UV) ruff format --check services scripts tests
+	$(UV) ruff check services scripts tests migrations
+	$(UV) ruff format --check services scripts tests migrations
 	$(UV) mypy
 	$(UV) python scripts/check_function_lengths.py
 	$(WEB) run check
@@ -30,7 +33,7 @@ test-unit:
 	$(UV) pytest tests/unit
 	$(WEB) test
 
-test-integration:
+test-integration: migrate
 	$(UV) pytest tests/integration
 
 test-e2e:

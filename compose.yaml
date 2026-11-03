@@ -25,15 +25,24 @@ services:
       interval: 2s
       timeout: 2s
       retries: 30
+  migrate:
+    build: .
+    command: [".venv/bin/alembic", "upgrade", "head"]
+    environment:
+      CHESS_DATABASE_URL: postgresql://chess:local-development@postgres:5432/chesstutor
+    depends_on:
+      postgres: {condition: service_healthy}
   api:
     build: .
     environment:
       CHESS_DATABASE_URL: postgresql://chess:local-development@postgres:5432/chesstutor
+      CHESS_PUBAPI_USER_AGENT: ${CHESS_PUBAPI_USER_AGENT:-}
       CHESS_REDIS_URL: redis://redis:6379/0
     ports: ["127.0.0.1:8000:8000"]
     networks: [default, backend]
     depends_on:
       postgres: {condition: service_healthy}
+      migrate: {condition: service_completed_successfully}
       redis: {condition: service_healthy}
     healthcheck:
       test: ["CMD", ".venv/bin/python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health/ready', timeout=5)"]

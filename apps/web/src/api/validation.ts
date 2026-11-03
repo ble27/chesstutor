@@ -29,5 +29,11 @@ export function parseServerError(value: unknown): ServerError | null {
     message: value.message,
     retryable: value.retryable,
     request_id: value.request_id,
+    retry_after_seconds:
+      typeof value.retry_after_seconds === "number" &&
+      Number.isInteger(value.retry_after_seconds) &&
+      value.retry_after_seconds >= 0
+        ? value.retry_after_seconds
+        : null,
   };
 }

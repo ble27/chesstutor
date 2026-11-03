@@ -53,3 +53,16 @@ def test_explicit_production_configuration(monkeypatch: pytest.MonkeyPatch) -> N
     monkeypatch.setenv("CHESS_DATABASE_URL", "postgresql://app:secret@database/chess")
     monkeypatch.setenv("CHESS_ALLOWED_ORIGINS", '["https://chess.example"]')
     assert Settings(_env_file=None).allowed_origins == ("https://chess.example",)
+
+
+def test_pubapi_user_agent_is_optional_and_empty_compose_value_is_unconfigured():
+    assert Settings(_env_file=None, pubapi_user_agent="").pubapi_user_agent is None
+    assert Settings(
+        _env_file=None, pubapi_user_agent="ChessTutor (contact: operator@example.test)"
+    ).pubapi_user_agent
+
+
+@pytest.mark.parametrize("value", ["short", "ChessTutor\r\nInjected: bad", "x" * 301])
+def test_pubapi_user_agent_rejects_unbounded_or_header_injection_values(value):
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None, pubapi_user_agent=value)

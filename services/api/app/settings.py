@@ -16,7 +16,15 @@ class Settings(BaseSettings):
     )
     redis_url: SecretStr = SecretStr("redis://127.0.0.1:6380/0")
     allowed_origins: tuple[str, ...] = ("http://localhost:5173", "http://127.0.0.1:5173")
+    pubapi_user_agent: str | None = Field(
+        default=None, min_length=10, max_length=300, pattern=r"^[\x20-\x7e]+$"
+    )
     dependency_timeout_seconds: float = Field(default=2, ge=0.1, le=5)
+
+    @field_validator("pubapi_user_agent", mode="before")
+    @classmethod
+    def empty_user_agent(cls, value: object) -> object:
+        return None if value == "" else value
 
     @field_validator("database_url")
     @classmethod

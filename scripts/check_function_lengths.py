@@ -20,7 +20,7 @@ def violations(path: Path) -> list[str]:
 def main() -> None:
     paths = [
         path
-        for directory in ("services", "scripts", "tests")
+        for directory in ("services", "scripts", "tests", "migrations")
         for path in Path(directory).rglob("*.py")
     ]
     errors = [error for path in paths for error in violations(path)]

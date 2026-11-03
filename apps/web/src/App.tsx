@@ -1,3 +1,4 @@
+import { Discovery } from "./Discovery";
 import { useServiceStatus } from "./useServiceStatus";
 
 const statusText = {
@@ -27,6 +28,7 @@ export function App() {
           {statusText[status]}
         </p>
       </section>
+      <Discovery />
       <div className="workspace">
         <section className="panel game-space" aria-labelledby="game-title">
           <span className="workspace-mark" aria-hidden="true">

@@ -7,6 +7,8 @@ COPY pyproject.toml uv.lock .python-version ./
 COPY LICENSE THIRD_PARTY_NOTICES.md ./
 COPY engines ./engines
 COPY services ./services
+COPY alembic.ini ./
+COPY migrations ./migrations
 RUN uv sync --frozen --no-dev && useradd --create-home chess
 USER chess
 EXPOSE 8000

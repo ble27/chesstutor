@@ -2,9 +2,9 @@
 
 Version 1.0 · 2026-11-02 · Ready for implementation planning.
 
-Sprint 0 implementation establishes the application foundation; current status
-and actual checks are recorded in [sprint evidence](sprints/S0.md). Later product
-features remain planned. Numerical budgets below require measurement and are not
+Sprint 0 establishes the foundation; Sprint 1 adds discovery and safe import.
+Actual checks and implementation limits are recorded in [S0](sprints/S0.md) and
+[S1](sprints/S1.md). Replay and later product features remain planned. Numerical budgets below require measurement and are not
 verified performance claims.
 
 ## 1. Purpose and success
