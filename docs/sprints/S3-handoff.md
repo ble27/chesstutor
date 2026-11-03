@@ -1,6 +1,8 @@
 # S3 handoff — Bounded Stockfish jobs
 
 Status: prepared; S3 implementation has not started.
+Reviewed S2 layout checkpoint: `050f439` (205 tests and the full automated gate
+passed; whole-sprint Standards and Spec review reported no remaining findings).
 
 ## Entry gate
 
