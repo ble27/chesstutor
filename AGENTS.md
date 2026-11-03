@@ -3,6 +3,8 @@
 These rules apply throughout this repository. Product scope and acceptance
 criteria are in [docs/PRD.md](docs/PRD.md). Sprint 0 establishes the application
 foundation; see `Makefile` and `docs/sprints/S0.md` for commands and gate evidence.
+The remaining sprint sequence is in [plan.md](plan.md); the PRD remains the
+product authority.
 
 ## Scope and workflow
 
@@ -91,6 +93,34 @@ foundation; see `Makefile` and `docs/sprints/S0.md` for commands and gate eviden
   length exceptions, and commit IDs in `docs/sprints/S<n>.md`.
 - For documentation-only work, check consistency, links, and whitespace; do not
   invent runtime test results or add trivial tests merely to claim coverage.
+
+## Sprint completion workflow
+
+1. Before editing, record the sprint-start commit in `docs/sprints/S<n>.md`.
+   Use that fixed commit throughout sprint review, including after intermediate
+   commits; never use current HEAD as its own comparison baseline.
+2. Write meaningful failing tests first to demonstrate missing behavior, implement
+   the behavior, and confirm those tests pass. Committed checkpoints must pass.
+   Documentation-only changes follow the documentation checks above.
+3. Run `make verify` and all sprint-specific acceptance checks before marking a
+   sprint complete. Human chess review and required manual accessibility checks
+   remain explicit gates; automated checks do not replace them.
+4. Run `/diff`, then `/review`, against the whole sprint: all committed and pending
+   changes since the recorded sprint-start commit, including new files.
+5. If slash commands cannot be invoked, explicitly report the limitation and
+   provide the equivalent Git diff and code review against this file, the PRD,
+   and sprint acceptance criteria. Compare the recorded baseline to the complete
+   working tree, accounting for untracked files as well as tracked changes.
+6. Resolve review findings, rerun affected checks, and repeat the full gate after
+   code changes. Failed or unavailable required checks block completion and
+   dependent sprint work; record limitations rather than claiming success.
+7. Commit atomically by coherent behavior, including necessary tests and docs.
+   Stage explicit paths, inspect the staged diff, and exclude personal
+   configuration.
+8. Record baseline/final commit IDs, commands, results, review findings and their
+   dispositions, limitations, and manual evidence in `docs/sprints/S<n>.md`.
+   If the evidence commit cannot name itself, record the final implementation
+   commit and identify the evidence commit through Git history.
 
 ## Git discipline
 
