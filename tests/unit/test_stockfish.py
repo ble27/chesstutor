@@ -78,6 +78,14 @@ def test_missing_wdl_is_preserved_as_missing_evidence():
     assert line.wdl is None
 
 
+def test_variation_ends_at_automatic_draw_instead_of_failing_the_job():
+    board = chess.Board("7k/8/8/8/8/8/2n5/1B5K w - - 0 1")
+    raw = info(board, pv=[chess.Move.from_uci("b1c2"), chess.Move.from_uci("h8g8")])
+    (line,) = asyncio.run(UciEngine(Protocol([raw])).search(board, 0.1, 1, None, checkpoint))
+    assert [step.san for step in line.pv] == ["Bxc2"]
+    assert chess.Board(line.pv[-1].fen).is_insufficient_material()
+
+
 def test_deadline_checkpoint_interrupts_a_hung_analysis_handshake():
     class HungProtocol:
         async def analysis(self, *args, **kwargs):

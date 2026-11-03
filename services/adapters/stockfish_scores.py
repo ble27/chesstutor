@@ -27,11 +27,15 @@ def typed_score(value: chess.engine.Score, pov: Color) -> Score:
 
 
 def legal_variation(board: chess.Board, moves: list[chess.Move]) -> tuple[VariationMove, ...]:
-    if not moves or len(moves) > 300:
+    if board.is_game_over() or not moves or len(moves) > 300:
         raise ValueError("Missing or oversized engine variation")
     replay, result = board.copy(), []
     for move in moves:
-        if replay.is_game_over() or move not in replay.legal_moves:
+        # UCI may continue a line beyond an automatic draw (notably K+B vs K).
+        # Only the prefix up to that terminal position belongs in a game replay.
+        if replay.is_game_over():
+            break
+        if move not in replay.legal_moves:
             raise ValueError("Illegal engine variation")
         san = replay.san(move)
         replay.push(move)
