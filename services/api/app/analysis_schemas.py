@@ -5,6 +5,8 @@ from pydantic import Field, JsonValue, model_validator
 
 from services.api.app.game_schemas import StrictModel
 from services.core.analysis.values import JobState, Mode, MoveEvidence
+from services.core.classification.review import ReviewedMove
+from services.core.classification.summary import ClassificationSummary
 
 
 class AnalysisRequest(StrictModel):
@@ -30,6 +32,8 @@ class AnalysisResponse(StrictModel):
     can_cancel: bool
     engine: dict[str, JsonValue]
     evidence: list[MoveEvidence]
+    classifications: list[ReviewedMove] = Field(default_factory=list)
+    summary: ClassificationSummary | None = None
 
     @model_validator(mode="after")
     def validate_coverage(self) -> AnalysisResponse:

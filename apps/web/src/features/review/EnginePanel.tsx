@@ -2,6 +2,7 @@ import { active } from "../../api/analysis";
 import type { Game } from "../../api/discoveryValidation";
 import { useAnalysis } from "./useAnalysis";
 import { EngineEvidence } from "./EngineEvidence";
+import { ClassificationPanel } from "./ClassificationPanel";
 
 const statuses = {
   queued: "Queued",
@@ -112,6 +113,7 @@ function EngineSession({
                 : "Evidence for this move is pending."}
             </p>
           )}
+          <ClassificationPanel job={job} selectedPly={selectedPly} />
           <p className="engine-provenance">
             Stockfish {String(job.engine.version)} · NNUE embedded · Threads 1 ·
             Hash 128 MiB

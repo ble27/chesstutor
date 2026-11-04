@@ -182,6 +182,8 @@ export interface components {
             cached: boolean;
             /** Can Cancel */
             can_cancel: boolean;
+            /** Classifications */
+            classifications?: components["schemas"]["ReviewedMove"][];
             /** Completed Plies */
             completed_plies: number;
             /**
@@ -223,6 +225,7 @@ export interface components {
              * @enum {string}
              */
             state: "queued" | "running" | "cancel_requested" | "cancelled" | "completed" | "failed";
+            summary?: components["schemas"]["ClassificationSummary"] | null;
             /** Total Plies */
             total_plies: number;
             /**
@@ -313,6 +316,57 @@ export interface components {
              * @enum {string}
              */
             pov: "white" | "black";
+        };
+        /** Classification */
+        Classification: {
+            /**
+             * Base Label
+             * @enum {string}
+             */
+            base_label: "forced" | "best" | "good" | "inaccuracy" | "mistake" | "blunder" | "unclassified";
+            /** Expected Loss */
+            expected_loss: number | null;
+            /**
+             * Policy Version
+             * @default v1
+             */
+            policy_version: string;
+        };
+        /** ClassificationSummary */
+        ClassificationSummary: {
+            coverage: components["schemas"]["Coverage"];
+            /** Critical Moments */
+            critical_moments: components["schemas"]["CriticalMoment"][];
+            /** Game Conclusions */
+            game_conclusions: string[];
+            /** Is Final */
+            is_final: boolean;
+            /** Players */
+            players: {
+                [key: string]: components["schemas"]["PlayerSummary"];
+            };
+            /** Practice Themes */
+            practice_themes: components["schemas"]["PracticeTheme"][];
+        };
+        /** Coverage */
+        Coverage: {
+            /** Analyzed Plies */
+            analyzed_plies: number;
+            /** Classified Plies */
+            classified_plies: number;
+            /** Total Plies */
+            total_plies: number;
+        };
+        /** CriticalMoment */
+        CriticalMoment: {
+            /** Expected Loss */
+            expected_loss: number;
+            /** Label */
+            label: string;
+            /** Mover */
+            mover: string;
+            /** Ply */
+            ply: number;
         };
         /** EngineLine */
         EngineLine: {
@@ -468,6 +522,15 @@ export interface components {
             /** Username */
             username: string;
         };
+        /** PlayerSummary */
+        PlayerSummary: {
+            /** Average Expected Loss */
+            average_expected_loss: number | null;
+            /** Counts */
+            counts: {
+                [key: string]: number;
+            };
+        };
         /** PositionResponse */
         PositionResponse: {
             /** Fen */
@@ -478,6 +541,28 @@ export interface components {
             san: string | null;
             /** Uci */
             uci: string | null;
+        };
+        /** PracticeTheme */
+        PracticeTheme: {
+            /** Name */
+            name: string;
+            /** Supporting Plies */
+            supporting_plies: number[];
+        };
+        /** ReviewedMove */
+        ReviewedMove: {
+            /** Badges */
+            badges: string[];
+            classification: components["schemas"]["Classification"];
+            /**
+             * Mover
+             * @enum {string}
+             */
+            mover: "white" | "black";
+            /** Ply */
+            ply: number;
+            /** Provisional */
+            provisional: boolean;
         };
         /** VariationMove */
         VariationMove: {

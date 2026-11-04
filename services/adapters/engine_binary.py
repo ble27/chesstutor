@@ -62,7 +62,7 @@ def engine_identity(artifact: Artifact) -> dict[str, object]:
         "nnue": "embedded; covered by binary_sha256",
         "options": {"Threads": 1, "Hash": 128, "UCI_ShowWDL": True},
         "analysis_version": "s3-v1",
-        "classification_version": "pending-v1",
+        "classification_version": "v1",
         "feature_version": "none-v1",
         "presets": {
             mode: {

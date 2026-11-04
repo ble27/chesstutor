@@ -50,7 +50,7 @@ class AnalysisService:
             await self.dispatch_job(job)
             job = await asyncio.to_thread(self.store.get, job.id)
         job, evidence = await asyncio.to_thread(self.store.snapshot, job.id)
-        return job.response(owner, evidence, cached)
+        return await asyncio.to_thread(job.response, owner, evidence, cached)
 
     async def read(self, identifier: UUID, owner: str) -> AnalysisResponse:
         job = await asyncio.to_thread(self.store.get, identifier)
@@ -60,12 +60,12 @@ class AnalysisService:
             await self.dispatch_job(job)
             job = await asyncio.to_thread(self.store.get, identifier)
         job, evidence = await asyncio.to_thread(self.store.snapshot, identifier)
-        return job.response(owner, evidence)
+        return await asyncio.to_thread(job.response, owner, evidence)
 
     async def cancel(self, identifier: UUID, owner: str) -> AnalysisResponse:
         job = await asyncio.to_thread(self.store.cancel, identifier, owner, self.now())
         job, evidence = await asyncio.to_thread(self.store.snapshot, identifier)
-        return job.response(owner, evidence)
+        return await asyncio.to_thread(job.response, owner, evidence)
 
     async def dispatch_job(self, job: StoredJob) -> None:
         try:

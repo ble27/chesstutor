@@ -20,6 +20,17 @@ def test_pinned_engine_completes_durable_job_with_legal_white_pov_lines(mode):
         assert job.state == "completed", job.error_code
         assert job.completed_plies == job.total_plies == 4
         assert len(evidence) == 4
+        response = job.response(queued.owner, evidence)
+        assert len(response.classifications) == 4
+        assert response.summary is not None
+        assert response.summary.is_final
+        assert response.summary.coverage.analyzed_plies == 4
+        for classification, move_evidence in zip(response.classifications, evidence, strict=True):
+            assert classification.ply == move_evidence.ply
+            assert classification.mover == move_evidence.mover
+            assert classification.provisional is (mode == "quick")
+            if move_evidence.status != "usable":
+                assert classification.classification.base_label == "unclassified"
         for review in evidence:
             assert review.played.score.pov == "white"
             assert review.played.mover_score.pov == review.mover

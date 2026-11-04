@@ -1,4 +1,5 @@
 import asyncio
+from collections.abc import Mapping
 from pathlib import Path
 from time import monotonic
 from uuid import UUID
@@ -32,6 +33,16 @@ def execute(identifier: str, token: str) -> None:
         database.close()
 
 
+def compatible_engine_identity(current: Mapping[str, object], stored: Mapping[str, object]) -> bool:
+    if current == stored:
+        return True
+    # S3 jobs can resume with the same engine; their old cache identity is retained.
+    return (
+        stored.get("classification_version") == "pending-v1"
+        and {**stored, "classification_version": current.get("classification_version")} == current
+    )
+
+
 async def run_job(
     store: PostgresAnalyses, identifier: UUID, token: UUID, path: Path, artifact: Artifact
 ) -> None:
@@ -40,7 +51,7 @@ async def run_job(
         return
     try:
         identity = await asyncio.to_thread(verify_binary, path, artifact)
-        if identity != job.engine:
+        if not compatible_engine_identity(identity, job.engine):
             raise ValueError("Analysis engine identity changed")
         await search_job(store, job, path)
     except AnalysisCancelled:

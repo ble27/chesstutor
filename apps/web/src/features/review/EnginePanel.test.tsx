@@ -280,3 +280,61 @@ it("stops the session challenge after one retry when cookies are blocked", async
   );
   expect(fetcher).toHaveBeenCalledTimes(2);
 });
+
+it("shows independent provisional move labels and complete coverage for Quick reviews", async () => {
+  const original = completedAnalysis.evidence[0];
+  if (!original || !original.played.wdl) throw new Error("Missing fixture");
+  const response = {
+    ...completedAnalysis,
+    evidence: [
+      {
+        ...original,
+        expected_loss: 0.1,
+        played: {
+          ...original.played,
+          wdl: { wins: 400, draws: 500, losses: 100, pov: "white" },
+        },
+      },
+    ],
+    classifications: [
+      {
+        ply: 1,
+        mover: "white",
+        classification: {
+          base_label: "mistake",
+          expected_loss: 0.1,
+          policy_version: "v1",
+        },
+        badges: [],
+        provisional: true,
+      },
+    ],
+    summary: {
+      players: {
+        white: { counts: { mistake: 1 }, average_expected_loss: 0.1 },
+        black: { counts: {}, average_expected_loss: null },
+      },
+      coverage: { analyzed_plies: 1, classified_plies: 1, total_plies: 1 },
+      is_final: true,
+      game_conclusions: [],
+      critical_moments: [
+        { ply: 1, mover: "white", label: "mistake", expected_loss: 0.1 },
+      ],
+      practice_themes: [],
+    },
+  };
+  vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json(response)));
+  render(<EnginePanel game={imported} selectedPly={1} />);
+  fireEvent.click(screen.getByRole("button", { name: "Quick review" }));
+  expect(
+    await screen.findByText(/Independent classification: Mistake/),
+  ).toBeVisible();
+  expect(screen.getByText(/provisional relative to Deep/i)).toBeVisible();
+  expect(screen.getByText(/1 of 1 moves classified/)).toBeVisible();
+  expect(screen.getByText(/White: mistake 1/)).toBeVisible();
+  expect(screen.getByText(/Black: no classified moves/)).toBeVisible();
+  expect(screen.getByText(/Critical moment: ply 1/)).toBeVisible();
+  expect(
+    screen.getByText(/badge verification is not available/i),
+  ).toBeVisible();
+});

@@ -1,6 +1,7 @@
 import type { components } from "./generated";
 import { ApiError, request } from "./client";
 import { evidence } from "./analysisEvidence";
+import { review, summary, validateReview } from "./classification";
 import {
   array,
   date,
@@ -46,6 +47,22 @@ export function parseAnalysis(input: unknown): Analysis {
     lines.some((item, index) => item.ply !== index + 1)
   )
     throw new Error("Invalid coverage");
+  const classifications =
+    value.classifications === undefined
+      ? []
+      : array(value.classifications, 300).map(review);
+  const classificationSummary =
+    value.summary === undefined || value.summary === null
+      ? null
+      : summary(value.summary);
+  validateReview(
+    classifications,
+    classificationSummary,
+    lines,
+    mode,
+    state,
+    total,
+  );
   const engine = object(value.engine),
     options = object(engine.options);
   if (
@@ -73,6 +90,8 @@ export function parseAnalysis(input: unknown): Analysis {
     cached: flag(value.cached),
     can_cancel: flag(value.can_cancel),
     evidence: lines,
+    classifications,
+    summary: classificationSummary,
     engine: {
       version: text(engine.version, 30),
       binary_sha256: checksum,

@@ -6,6 +6,8 @@ from pydantic import Field, JsonValue
 from services.api.app.analysis_schemas import AnalysisResponse
 from services.api.app.game_schemas import GameResponse, StrictModel
 from services.core.analysis.values import ACTIVE_STATES, JobState, Mode, MoveEvidence
+from services.core.classification.review import classify_evidence
+from services.core.classification.summary import summarize_game
 
 
 class StoredJob(StrictModel):
@@ -32,6 +34,13 @@ class StoredJob(StrictModel):
     def response(
         self, owner: str, evidence: list[MoveEvidence], cached: bool = False
     ) -> AnalysisResponse:
+        compatible = self.engine.get("classification_version") == "v1"
+        classified = [classify_evidence(item, self.mode) for item in evidence] if compatible else []
+        summary = (
+            summarize_game(state=self.state, total_plies=self.total_plies, moves=classified)
+            if compatible
+            else None
+        )
         return AnalysisResponse(
             id=self.id,
             game_id=self.game_id,
@@ -50,4 +59,6 @@ class StoredJob(StrictModel):
             can_cancel=self.owner == owner and self.state in ACTIVE_STATES,
             engine=self.engine,
             evidence=evidence,
+            classifications=classified,
+            summary=summary,
         )

@@ -42,6 +42,13 @@
             "title": "Can Cancel",
             "type": "boolean"
           },
+          "classifications": {
+            "items": {
+              "$ref": "#/components/schemas/ReviewedMove"
+            },
+            "title": "Classifications",
+            "type": "array"
+          },
           "completed_plies": {
             "maximum": 300.0,
             "minimum": 0.0,
@@ -127,6 +134,16 @@
             ],
             "title": "State",
             "type": "string"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClassificationSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "total_plies": {
             "maximum": 300.0,
@@ -393,6 +410,149 @@
           "pov"
         ],
         "title": "CentipawnScore",
+        "type": "object"
+      },
+      "Classification": {
+        "additionalProperties": false,
+        "properties": {
+          "base_label": {
+            "enum": [
+              "forced",
+              "best",
+              "good",
+              "inaccuracy",
+              "mistake",
+              "blunder",
+              "unclassified"
+            ],
+            "title": "Base Label",
+            "type": "string"
+          },
+          "expected_loss": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Loss"
+          },
+          "policy_version": {
+            "default": "v1",
+            "title": "Policy Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "base_label",
+          "expected_loss"
+        ],
+        "title": "Classification",
+        "type": "object"
+      },
+      "ClassificationSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "coverage": {
+            "$ref": "#/components/schemas/Coverage"
+          },
+          "critical_moments": {
+            "items": {
+              "$ref": "#/components/schemas/CriticalMoment"
+            },
+            "title": "Critical Moments",
+            "type": "array"
+          },
+          "game_conclusions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Game Conclusions",
+            "type": "array"
+          },
+          "is_final": {
+            "title": "Is Final",
+            "type": "boolean"
+          },
+          "players": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PlayerSummary"
+            },
+            "title": "Players",
+            "type": "object"
+          },
+          "practice_themes": {
+            "items": {
+              "$ref": "#/components/schemas/PracticeTheme"
+            },
+            "title": "Practice Themes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "players",
+          "coverage",
+          "is_final",
+          "game_conclusions",
+          "critical_moments",
+          "practice_themes"
+        ],
+        "title": "ClassificationSummary",
+        "type": "object"
+      },
+      "Coverage": {
+        "additionalProperties": false,
+        "properties": {
+          "analyzed_plies": {
+            "title": "Analyzed Plies",
+            "type": "integer"
+          },
+          "classified_plies": {
+            "title": "Classified Plies",
+            "type": "integer"
+          },
+          "total_plies": {
+            "title": "Total Plies",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "analyzed_plies",
+          "classified_plies",
+          "total_plies"
+        ],
+        "title": "Coverage",
+        "type": "object"
+      },
+      "CriticalMoment": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_loss": {
+            "title": "Expected Loss",
+            "type": "number"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "mover": {
+            "title": "Mover",
+            "type": "string"
+          },
+          "ply": {
+            "title": "Ply",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "ply",
+          "mover",
+          "label",
+          "expected_loss"
+        ],
+        "title": "CriticalMoment",
         "type": "object"
       },
       "EngineLine": {
@@ -854,6 +1014,35 @@
         "title": "Player",
         "type": "object"
       },
+      "PlayerSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "average_expected_loss": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Average Expected Loss"
+          },
+          "counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Counts",
+            "type": "object"
+          }
+        },
+        "required": [
+          "counts",
+          "average_expected_loss"
+        ],
+        "title": "PlayerSummary",
+        "type": "object"
+      },
       "PositionResponse": {
         "additionalProperties": false,
         "properties": {
@@ -897,6 +1086,68 @@
           "uci"
         ],
         "title": "PositionResponse",
+        "type": "object"
+      },
+      "PracticeTheme": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "supporting_plies": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Supporting Plies",
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "supporting_plies"
+        ],
+        "title": "PracticeTheme",
+        "type": "object"
+      },
+      "ReviewedMove": {
+        "additionalProperties": false,
+        "properties": {
+          "badges": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Badges",
+            "type": "array"
+          },
+          "classification": {
+            "$ref": "#/components/schemas/Classification"
+          },
+          "mover": {
+            "enum": [
+              "white",
+              "black"
+            ],
+            "title": "Mover",
+            "type": "string"
+          },
+          "ply": {
+            "title": "Ply",
+            "type": "integer"
+          },
+          "provisional": {
+            "title": "Provisional",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "ply",
+          "mover",
+          "classification",
+          "badges",
+          "provisional"
+        ],
+        "title": "ReviewedMove",
         "type": "object"
       },
       "VariationMove": {
