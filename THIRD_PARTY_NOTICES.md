@@ -53,3 +53,10 @@ This is a direct-dependency inventory, not a complete distributable
 third-party notice bundle. Complete transitive/bundled notices and verify the
 selected deployment distribution before public release in Sprint 7. No local
 language model is selected or installed in Sprint 0.
+
+The development-only security override pins `minimatch@11.0.1` (BlueOak-1.0.0,
+[retained license](docs/licenses/minimatch.txt)) beneath
+`@typescript-eslint/typescript-estree`. It adds
+`@isaacs/nonrecursive-glob-match@1.0.3` (BlueOak-1.0.0); its
+[retained license](docs/licenses/nonrecursive-glob-match.txt) accompanies the
+locked package metadata. These lint dependencies are not frontend runtime code.

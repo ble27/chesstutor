@@ -14,6 +14,7 @@ __pycache__/
 .ruff_cache/
 *.egg-info/
 .coverage
+.coverage.*
 htmlcov/
 
 # TypeScript and browser tooling
@@ -26,9 +27,9 @@ test-results/
 
 # Local runtime artifacts; keep source fixtures and lockfiles tracked
 .cache/
-data/
-models/
-bin/stockfish*
+/data/
+/models/
+/bin/stockfish*
 *.log
 
 # Editor and operating-system files

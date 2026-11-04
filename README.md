@@ -1,40 +1,13 @@
 # Chess Tutor
 
-This branch includes a **browser Stockfish experiment**, separate from the S3
-server workflow. With dependencies installed and local PostgreSQL/Redis running:
-
-```sh
-make browser-experiment
-```
-
-Open http://127.0.0.1:5175/?engine=browser, find/open a game and select
-**Browser Quick review**. The full pinned Stockfish 17.1 engine runs in a Web
-Worker on your device. The first full-engine download is approximately 70 MiB;
-later starts use browser caching. Use **Deepen selected move** for more work on
-one position. Cancellation retains locally cached positions for resume. A
-lightweight API on port 8001 validates legal variations against imported history;
-this experiment still needs that API and is not an offline application.
-
-Results remain provisional personal evidence; they do not populate the trusted
-server analysis cache or receive server-verified badges. Screening uses smaller
-node budgets than S3 Deep. Closing the tab stops computation. A two-thread cap
-is available with browser isolation support; otherwise use the single-thread
-fallback. Hardware/browser quality and performance gates remain open.
-
-The original Docker stack on http://127.0.0.1:5173 is left intact for comparison.
-The experiment's `?engine=server` view requires a matching native worker; use the
-original stack to compare its existing Linux workers. See the
-[experiment evidence](docs/sprints/browser-experiment.md) for measured results,
-the reproduced Quick defect and limitations. This is not an S4 implementation
-or a production rollout.
-
 Free, independent review of completed public Chess.com games. The product plan
 combines Stockfish analysis, replay for both players, and chess-only guidance.
 
 Sprint 1 adds public username/month lookup, monthly filtering and pagination,
 and validated, versioned game import to the Sprint 0 foundation. S2 adds exact
 both-player replay, accepted by the user. S3 adds bounded Stockfish jobs and
-persisted evidence; see its gate status below. Labels and coaching remain S4–S5.
+persisted evidence; see its gate status below. S4 classification is in progress;
+coaching remains S5.
 
 - [PRD and sequential sprint gates](docs/PRD.md)
 - [Sprint 0 evidence](docs/sprints/S0.md)
@@ -43,6 +16,16 @@ persisted evidence; see its gate status below. Labels and coaching remain S4–S
 - [Sprint 3 implementation and gate evidence](docs/sprints/S3.md)
 - [Integration research](docs/research.md)
 - [Contributor conventions](AGENTS.md)
+
+## Current status
+
+This is a local development project, not a production release. Current S4 work
+adds independent move labels, per-player counts, and coverage-aware summaries.
+Quick labels are provisional. Badge verification searches, practice themes,
+coaching, and remaining accessibility and production gates are incomplete.
+Previously committed S5–S7 specifications intentionally fail until implemented;
+`make verify` therefore does not currently pass. See [S4 evidence](docs/sprints/S4.md)
+and the [repository security review](docs/security-review.md) for checks and limits.
 
 ## Local setup
 
@@ -139,13 +122,15 @@ using its original deadline. Polling does not reset replay selection.
 
 Select a recorded move to see its pre-move alternatives and White-perspective
 evaluation. Mate distance is separate from centipawns. WDL and PV evidence is
-stored; missing or unstable comparisons remain uncertain. These are engine
-variations, not S4 move classifications or coaching. Completed cached Deep
+stored; missing or unstable comparisons remain uncertain. Compatible v1 server
+results also show independent move labels and
+coverage-aware summaries. Legacy cached results retain their original provenance
+and do not receive new labels. Coaching remains unavailable. Completed cached Deep
 results offered for Quick retain their Deep label and consume no engine quota.
 
 A signed anonymous HttpOnly session owns active jobs and cancellation; retain
-the browser cookie while a job runs. Mutations require the configured frontend
-Origin. Limits are one active job/session, five Quick and two Deep jobs per
+the browser cookie while a job runs. Analysis submission and cancellation require
+the configured frontend Origin. Limits are one active job/session, five Quick and two Deep jobs per
 rolling hour/session, 20 jobs/hour/IP by default, 50 queued and two running.
 Shared-network limits show retry feedback. General readiness checks PostgreSQL
 and Redis; submissions separately require a verified, live engine worker.
@@ -162,6 +147,36 @@ Downloads request uncompressed responses and reject unexpected content encoding
 before reading the body. Stale cached data is explicitly labeled; source cache
 entries are retained up to seven days, subject to provider directives. Cache
 freshness is separate from the game's end time. All redirects are rejected.
+
+## Browser engine experiment
+
+This branch includes a **browser Stockfish experiment**, separate from the S3
+server workflow. With dependencies installed and local PostgreSQL/Redis running:
+
+```sh
+make browser-experiment
+```
+
+Open http://127.0.0.1:5175/?engine=browser, find/open a game and select
+**Browser Quick review**. The full pinned Stockfish 17.1 engine runs in a Web
+Worker on your device. The first full-engine download is approximately 70 MiB;
+later starts use browser caching. Use **Deepen selected move** for more work on
+one position. Cancellation retains locally cached positions for resume. A
+lightweight API on port 8001 validates legal variations against imported history;
+this experiment still needs that API and is not an offline application.
+
+Results remain provisional personal evidence; they do not populate the trusted
+server analysis cache or receive server-verified badges. Screening uses smaller
+node budgets than S3 Deep. Closing the tab stops computation. A two-thread cap
+is available with browser isolation support; otherwise use the single-thread
+fallback. Hardware/browser quality and performance gates remain open.
+
+The original Docker stack on http://127.0.0.1:5173 is left intact for comparison.
+The experiment's `?engine=server` view requires a matching native worker; use the
+original stack to compare its existing Linux workers. See the
+[experiment evidence](docs/sprints/browser-experiment.md) for measured results,
+the reproduced Quick defect and limitations. This is not an S4 implementation
+or a production rollout.
 
 ## Database migration and recovery
 
@@ -205,6 +220,37 @@ results. A failed sprint blocks dependent implementation.
 
 Stop the local stack with `make down`; volumes are retained. Deleting volumes
 with `docker compose down --volumes` removes local data and should be deliberate.
+
+## API and security boundaries
+
+All application endpoints use `/api/v1`. The authoritative contract is
+[OpenAPI](contracts/openapi.json); FastAPI serves interactive docs at `/docs`.
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| GET | `/api/v1/health/live`, `/api/v1/health/ready` | Process and dependency health |
+| GET | `/api/v1/players/{username}/archives` | Public archive months |
+| GET | `/api/v1/players/{username}/games` | Monthly games; requires `year` and `month` |
+| GET | `/api/v1/games/{game_id}` | Validate/import and retrieve a discovered public game |
+| POST | `/api/v1/analyses` | Start bounded Quick/Deep analysis |
+| GET | `/api/v1/analyses/{analysis_id}` | Read analysis evidence and progress |
+| POST | `/api/v1/analyses/{analysis_id}/cancel` | Owner-only cancellation |
+| POST | `/api/v1/games/{game_id}/browser-evidence` | Experimental legal-line validation; scores remain untrusted |
+
+Analysis submission/cancellation and browser-evidence POSTs require an exact
+configured Origin. Analysis submission also requires
+a signed session-cookie roundtrip; cancellation checks ownership. Public game
+records are public data. Inputs are validated at API, provider, and chess-domain
+boundaries; external text is rendered through React text escaping. The server
+constructs allowlisted Chess.com URLs and rejects redirects.
+
+Keep credentials in ignored `.env` files or server environment variables. Never
+put secrets in `VITE_*` variables, source, fixtures, URLs, or Git remotes. The
+checked-in `.env.example` contains local development placeholders. Git ignore
+rules do not remove secrets already committed; rotate exposed credentials and
+handle history remediation separately if an exposure is found. Production
+proxy/security headers, abuse testing, retention, and release checks remain S7
+gates. See [the audit record](docs/security-review.md) for the actual review scope.
 
 ## Distribution
 
