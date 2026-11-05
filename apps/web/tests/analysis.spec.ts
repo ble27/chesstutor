@@ -99,12 +99,8 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await expect(
       page.getByRole("button", { name: "1. White: e4" }),
     ).toHaveAttribute("aria-current", "step");
-    await expect(
-      page.getByText("White evaluation: +1.2", { exact: true }),
-    ).toBeVisible();
-    await expect(
-      page.getByText("Before selected move · Position ply 0"),
-    ).toBeVisible();
+    await expect(page.locator(".position-score strong")).toBeVisible();
+    await expect(page.getByText("White evaluation · after e4")).toBeVisible();
     await page.getByRole("button", { name: "Deep review" }).click();
     await expect(status).toContainText("Deep · Queued");
     await page.getByRole("button", { name: "Cancel analysis" }).click();

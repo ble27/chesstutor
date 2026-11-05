@@ -1,6 +1,29 @@
 import type { Analysis } from "../../api/analysis";
 import { ClassificationSummary } from "./ClassificationSummary";
 
+export function SelectedMoveClassification({
+  job,
+  selectedPly,
+}: {
+  job: Analysis;
+  selectedPly: number;
+}) {
+  const move = job.classifications?.find((item) => item.ply === selectedPly);
+  if (!move) return null;
+  return (
+    <p className="selected-classification">
+      Independent classification: {move.classification.base_label}
+      {move.provisional && " · Quick is provisional relative to Deep"}
+      {move.badges.map((badge) => (
+        <span key={badge}>
+          {" "}
+          · {badge === "brilliant" ? "Brilliant (heuristic)" : badge}
+        </span>
+      ))}
+    </p>
+  );
+}
+
 export function ClassificationPanel({
   job,
   selectedPly,

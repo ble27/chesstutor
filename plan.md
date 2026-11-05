@@ -5,6 +5,17 @@ remaining work; it does not change product scope or certify acceptance gates.
 Follow [AGENTS.md](AGENTS.md) for implementation and completion workflow and the
 [Makefile](Makefile) for verification commands.
 
+## Approved review workspace correction
+
+Implement [the review workspace plan](docs/unified-review-plan.md) on
+`design/unified-review`, starting at `198f997`. Preserve the original teal/cream
+board colors. The brown-board screenshot is a layout reference only. Desktop
+uses approximately 60% board / 40% analysis workspace, never equal columns.
+The right workspace owns Analysis, Review, and future Chess guidance tabs,
+recorded moves, and persistent navigation. Display only engine-supplied scores
+for the matching position; never insert illustrative evaluation numbers.
+This explicitly requested UI work does not certify S4/S6 or waive open gates.
+
 ## Baseline and execution
 
 At planning baseline `13ebdc9`, S0–S1 are complete and S2–S7 are unimplemented.

@@ -1,10 +1,9 @@
 import type { Game } from "../../api/discoveryValidation";
 import { useReplay } from "./useReplay";
-import { MoveList } from "./MoveList";
+import { ReviewWorkspace } from "../review/ReviewWorkspace";
 import { BoardFrame } from "./BoardFrame";
 import { PositionText } from "./PositionText";
 import { moveLabel } from "./moves";
-import { CoachInsight, EngineInsight } from "../../InsightPanels";
 
 export function Replay({ game }: { game: Game }) {
   return (
@@ -34,8 +33,15 @@ function ReplaySession({ game }: { game: Game }) {
       onKeyDown={onKeyDown}
     >
       <section className="panel replay-panel" aria-labelledby="game-title">
-        <h2 id="game-title">Replay both sides</h2>
-        <p role="status" aria-label="Replay position" aria-atomic="true">
+        <h2 id="game-title" className="visually-hidden">
+          Replay both sides
+        </h2>
+        <p
+          role="status"
+          aria-label="Replay position"
+          aria-atomic="true"
+          className="replay-position"
+        >
           {selectedMove} ·{" "}
           {position.fen.split(" ")[1] === "w" ? "White" : "Black"} to move ·{" "}
           {orientation === "white" ? "White" : "Black"} at bottom
@@ -46,69 +52,16 @@ function ReplaySession({ game }: { game: Game }) {
           orientation={orientation}
           lastMove={position.uci}
         />
-        <ReplayControls
-          selectedPly={selectedPly}
-          lastPly={lastPly}
-          select={select}
-          flip={flip}
-        />
         <PositionText fen={position.fen} />
         <PieceCredit />
       </section>
-      <aside className="insights" aria-label="Game insights">
-        <section className="panel review-panel" aria-label="Game review">
-          <EngineInsight game={game} selectedPly={selectedPly} />
-          <div className="review-moves">
-            <h2 id="moves-title">Game moves</h2>
-            <p id="replay-help">
-              Select a move, or use Left/Right arrows, Home, or End in the
-              replay area. Gold outlines mark the last played move.
-            </p>
-            <MoveList game={game} selectedPly={selectedPly} select={select} />
-          </div>
-        </section>
-        <CoachInsight />
-      </aside>
+      <ReviewWorkspace
+        game={game}
+        selectedPly={selectedPly}
+        select={select}
+        flip={flip}
+      />
     </section>
-  );
-}
-
-function ReplayControls({
-  selectedPly,
-  lastPly,
-  select,
-  flip,
-}: {
-  selectedPly: number;
-  lastPly: number;
-  select: (ply: number) => void;
-  flip: () => void;
-}) {
-  return (
-    <nav aria-label="Replay controls">
-      <button disabled={selectedPly === 0} onClick={() => select(0)}>
-        First position
-      </button>
-      <button
-        disabled={selectedPly === 0}
-        onClick={() => select(selectedPly - 1)}
-      >
-        Previous move
-      </button>
-      <button
-        disabled={selectedPly === lastPly}
-        onClick={() => select(selectedPly + 1)}
-      >
-        Next move
-      </button>
-      <button
-        disabled={selectedPly === lastPly}
-        onClick={() => select(lastPly)}
-      >
-        Last position
-      </button>
-      <button onClick={flip}>Flip board</button>
-    </nav>
   );
 }
 

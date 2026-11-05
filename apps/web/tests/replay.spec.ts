@@ -41,7 +41,7 @@ for (const { width, height } of [
   { width: 2560, height: 1080 },
   { width: 3440, height: 1440 },
 ]) {
-  test(`caps a wide-screen board and keeps controls visible at ${width}x${height}`, async ({
+  test(`fits the board in a 60/40 workspace and keeps controls visible at ${width}x${height}`, async ({
     page,
   }) => {
     await page.setViewportSize({ width, height });
@@ -52,8 +52,13 @@ for (const { width, height } of [
     const board = page.getByRole("img", { name: /Chessboard/ });
     const size = await board.boundingBox();
     if (!size) throw new Error("Missing board");
-    expect(size.width).toBeLessThanOrEqual(640);
-    expect(size.height).toBeLessThanOrEqual(height - 300);
+    const reviewSize = await page
+      .getByRole("region", { name: "Game review" })
+      .boundingBox();
+    if (!reviewSize) throw new Error("Missing review frame");
+    expect(size.width / reviewSize.width).toBeCloseTo(1.5, 1);
+    expect(size.height).toBeLessThanOrEqual(height - 180);
+    if (width === 1440) expect(size.width).toBeGreaterThan(640);
     expect(Math.abs(size.width - size.height)).toBeLessThan(1);
     await expect(board).toBeInViewport({ ratio: 1 });
     await expect(
@@ -83,13 +88,13 @@ test("puts recorded moves beside the board and distinguishes them from engine an
     .getByRole("heading", { name: "Engine analysis" })
     .boundingBox();
   const movesBox = await review
-    .getByRole("heading", { name: "Game moves" })
+    .getByRole("list", { name: "Game moves" })
     .boundingBox();
   if (!engineBox || !movesBox) throw new Error("Missing review headings");
   expect(engineBox.y).toBeLessThan(movesBox.y);
   await expect(
     insights.getByRole("heading", { name: "Game moves" }),
-  ).toBeVisible();
+  ).toHaveCount(0);
   await expect(
     insights.getByRole("heading", { name: "Engine analysis" }),
   ).toBeVisible();
@@ -135,6 +140,9 @@ test("keeps selected moves visible inside a scrollable move list", async ({
     (listBounds?.y ?? 0) + (listBounds?.height ?? 0),
   );
   await page.getByRole("button", { name: "First position" }).click();
+  await expect(
+    page.getByRole("button", { name: "1. White: e4" }),
+  ).toBeInViewport();
   await page.getByRole("button", { name: "Next move" }).click();
   await expect(
     page.getByRole("button", { name: "1. White: e4" }),
@@ -220,7 +228,7 @@ test("keyboard navigation stays in replay and flip preserves the selected move",
   const region = page.getByRole("region", { name: "Game replay" });
   await region.focus();
   await page.keyboard.press("Tab");
-  await expect(page.getByRole("button", { name: "Next move" })).toBeFocused();
+  await expect(page.getByText("Text position and FEN")).toBeFocused();
   await region.focus();
   await page.keyboard.press("ArrowLeft");
   await expect(

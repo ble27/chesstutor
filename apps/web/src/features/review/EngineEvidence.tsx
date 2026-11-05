@@ -4,10 +4,10 @@ import type { components } from "../../api/generated";
 type Score =
   components["schemas"]["CentipawnScore"] | components["schemas"]["MateScore"];
 
-function formatScore(score: Score): string {
+export function formatScore(score: Score, digits = 1): string {
   if (score.kind === "mate")
     return `${score.moves < 0 ? "-" : ""}M${Math.abs(score.moves)}`;
-  return `${score.centipawns >= 0 ? "+" : ""}${(score.centipawns / 100).toFixed(1)}`;
+  return `${score.centipawns >= 0 ? "+" : ""}${(score.centipawns / 100).toFixed(digits)}`;
 }
 
 export function EngineEvidence({ evidence }: { evidence: Evidence }) {

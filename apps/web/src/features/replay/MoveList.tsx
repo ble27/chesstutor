@@ -35,6 +35,10 @@ export function MoveList({
   const list = useRef<HTMLOListElement>(null);
   useEffect(() => {
     const container = list.current;
+    if (container && selectedPly === 0) {
+      container.scrollTop = 0;
+      return;
+    }
     const selected = container?.querySelector('[aria-current="step"]');
     if (!container || !selected) return;
     const bounds = container.getBoundingClientRect();

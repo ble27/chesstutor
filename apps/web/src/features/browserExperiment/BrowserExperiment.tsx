@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { Game } from "../../api/discoveryValidation";
-import { EngineEvidence } from "../review/EngineEvidence";
+import { PositionEvidence } from "../review/PositionEvidence";
 import { useBrowserReview } from "./useBrowserReview";
 
 export function BrowserExperiment({
@@ -44,7 +44,6 @@ function BrowserSession({
     game,
     threads,
   );
-  const selected = values.find((item) => item.ply === selectedPly);
   return (
     <section
       className="panel engine-panel"
@@ -102,11 +101,11 @@ function BrowserSession({
           {error} Completed local positions are retained for retry.
         </p>
       )}
-      {selected ? (
-        <EngineEvidence evidence={selected} />
-      ) : (
-        <p>Select a reviewed move to see its pre-move alternatives.</p>
-      )}
+      <PositionEvidence
+        game={game}
+        selectedPly={selectedPly}
+        evidence={values}
+      />
       <p className="engine-provenance">
         Full WASM 17.1 · Threads {threads} · Hash 128 MiB · browser-policy1 ·
         local unverified evidence.{" "}

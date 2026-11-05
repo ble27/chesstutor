@@ -1,0 +1,147 @@
+import { useState } from "react";
+import type { ReactNode } from "react";
+import type { Game } from "../../api/discoveryValidation";
+import { MoveList } from "../replay/MoveList";
+import { ReplayControls } from "../replay/ReplayControls";
+import { BrowserExperiment } from "../browserExperiment/BrowserExperiment";
+import { useAnalysis } from "./useAnalysis";
+import { EngineView } from "./EnginePanel";
+import { ClassificationSummary } from "./ClassificationSummary";
+import { ReviewTabs } from "./ReviewTabs";
+import type { ReviewTab } from "./ReviewTabs";
+
+type Props = {
+  game: Game;
+  selectedPly: number;
+  select: (ply: number) => void;
+  flip: () => void;
+};
+
+export function ReviewWorkspace(props: Props) {
+  return new URLSearchParams(window.location.search).get("engine") ===
+    "browser" ? (
+    <ReviewShell
+      {...props}
+      analysis={
+        <BrowserExperiment game={props.game} selectedPly={props.selectedPly} />
+      }
+      review={() => (
+        <p>
+          Browser evidence is provisional. Server-verified game summaries are
+          unavailable in this experiment.
+        </p>
+      )}
+    />
+  ) : (
+    <ServerWorkspace {...props} />
+  );
+}
+
+function ServerWorkspace(props: Props) {
+  const session = useAnalysis(props.game);
+  const summary = session.state.job?.summary;
+  return (
+    <ReviewShell
+      {...props}
+      analysis={
+        <EngineView
+          game={props.game}
+          selectedPly={props.selectedPly}
+          session={session}
+          workspace
+        />
+      }
+      review={(selectMoment) =>
+        summary ? (
+          <>
+            <p>
+              {summary.coverage.classified_plies} of{" "}
+              {summary.coverage.total_plies} plies classified
+              {!summary.is_final && " · analysis incomplete"}
+            </p>
+            <ClassificationSummary summary={summary} />
+            {summary.critical_moments.map((moment) => (
+              <button key={moment.ply} onClick={() => selectMoment(moment.ply)}>
+                Inspect ply {moment.ply} · {moment.label}
+              </button>
+            ))}
+          </>
+        ) : (
+          <p>
+            Run a review to see game summaries, mistakes, and blunders. Partial
+            analysis will show its coverage.
+          </p>
+        )
+      }
+    />
+  );
+}
+
+function ReviewShell({
+  game,
+  selectedPly,
+  select,
+  flip,
+  analysis,
+  review,
+}: Props & {
+  analysis: ReactNode;
+  review: (selectMoment: (ply: number) => void) => ReactNode;
+}) {
+  const [tab, setTab] = useState<ReviewTab>("Analysis");
+  const selectMoment = (ply: number) => {
+    select(ply);
+    setTab("Analysis");
+    document.getElementById("tab-analysis")?.focus();
+  };
+  return (
+    <aside className="insights" aria-label="Game insights">
+      <section className="panel review-panel" aria-label="Game review">
+        <ReviewTabs selected={tab} select={setTab} />
+        <div
+          id="view-analysis"
+          role="tabpanel"
+          aria-labelledby="tab-analysis"
+          hidden={tab !== "Analysis"}
+          className="analysis-tab"
+        >
+          <div className="analysis-region">{analysis}</div>
+          <div className="review-moves">
+            <MoveList game={game} selectedPly={selectedPly} select={select} />
+          </div>
+        </div>
+        <div
+          id="view-review"
+          role="tabpanel"
+          aria-labelledby="tab-review"
+          hidden={tab !== "Review"}
+          className="review-tab-content"
+        >
+          {review(selectMoment)}
+        </div>
+        <div
+          id="view-chess-guidance"
+          role="tabpanel"
+          aria-labelledby="tab-chess-guidance"
+          hidden={tab !== "Chess guidance"}
+          className="review-tab-content"
+        >
+          <h2>Chess guidance</h2>
+          <p>Chess guidance is not available yet.</p>
+        </div>
+        <div className="review-footer">
+          <ReplayControls
+            selectedPly={selectedPly}
+            lastPly={game.positions.length - 1}
+            select={select}
+            flip={flip}
+          />
+          <p id="replay-help">
+            Ply {selectedPly} of {game.positions.length - 1} · Use Left/Right,
+            Home or End in the replay area.
+          </p>
+        </div>
+      </section>
+    </aside>
+  );
+}

@@ -47,7 +47,7 @@ passing. Merely documenting a requirement does not establish that it passes.
 | R4 | Independent move classifications and missed opportunities | Boundary and tactical fixtures |
 | R5 | Position guidance and overall game improvement | Evidence validation and coaching rubric |
 | R6 | Chess-only questions and responses | Domain policy and adversarial corpus |
-| R7 | Gray gradient; 2:1 desktop workspace; responsive mobile | Viewport and accessibility checks |
+| R7 | Gray gradient; 60/40 desktop workspace; responsive mobile | Viewport and accessibility checks |
 | R8 | Modular code, unit tests per sprint, logical commits | CI and recorded sprint gates |
 
 V1 excludes live/unfinished games, move assistance during play, private data,
@@ -123,14 +123,21 @@ Quality indicators require text/icons as well as color.
 
 | Viewport | Layout |
 | --- | --- |
-| Desktop, >=1024 CSS px | Grid `minmax(0, 2fr) minmax(320px, 1fr)`, gap 24px. Left: square board, player labels, controls and textual position. Right: recorded game moves, engine analysis and guidance in distinct panels. |
-| Tablet, 768–1023 CSS px | Board/player labels/controls first; full-width moves, engine and coaching panels below. |
-| Mobile, 320–767 CSS px | Single column: game header, board, controls, compact moves, engine, coaching. Gutters 12–16px and touch targets >=44px. |
+| Desktop, >=1024 CSS px | Approximately 60% board / 40% right review workspace, gap 24px. Board anchored on the left; one tabbed frame on the right contains Analysis, Review, and future Chess guidance, with persistent move navigation in its footer. |
+| Tablet, 768–1023 CSS px | Board/player labels first; the same tabbed review workspace below. |
+| Mobile, 320–767 CSS px | Single column: game header, board, tabbed review workspace including navigation. Gutters 12–16px and touch targets >=44px. |
 
-The wide-screen workspace allocates approximately two thirds left and one third
-right, excluding the gap. The board stays square, caps at 640 CSS px, and on
-desktop also shrinks with viewport height so it and the replay controls can fit
-in the visible workspace. Page scrolling to reach the workspace is acceptable.
+The board stays square and uses the existing teal/cream colors. The brown-board
+reference supplies composition guidance only. Replace the previous 640 CSS px
+cap with viewport-height/available-width sizing; desktop board width is larger
+than the review frame, approximately 60/40 rather than equal columns. Page
+scrolling to reach the workspace is acceptable. Once reached, the board remains
+anchored while analysis and recorded moves scroll within the right frame.
+Analysis shows actual engine evaluations and legal current-position variations
+above both players' recorded moves, without a visible “Game moves” heading.
+Review contains coverage-aware game summaries and classifications; Chess guidance
+is a future tab with an explicit unavailable state. First/previous/next/last and
+board flip controls remain in the same frame across tabs.
 Show each player's name and piece color above/below their side of the board;
 flipping swaps these labels with the pieces and preserves the selected ply.
 The recorded move list is distinct from computed engine analysis. Long names, SAN, and variations wrap or
@@ -145,8 +152,12 @@ zoom support. Target WCAG 2.2 AA, including normal-text contrast >=4.5:1.
 
 The engine panel shows mode, status, best move, explicitly White-perspective
 evaluation (`+1.2` or `M3`), achieved depth, and up to three legal lines. Label
-whether evidence describes the position before or after the selected move.
-The lower panel explains the move, alternative, plan, and follow-up questions.
+whether evidence describes the displayed position or a played-line evaluation
+after the selected move. Match current-position lines by root FEN and pre-move
+ply; do not show a preceding root's candidate moves as current-position lines.
+When the final position has no unrestricted search, label the actual played-line
+score and omit unavailable candidates. Never insert illustrative engine scores.
+Future Chess guidance explains the move, alternative, plan, and follow-up questions.
 Pending or incomplete evidence must appear as pending rather than a guessed score.
 
 ## 5. Stack and modular architecture
