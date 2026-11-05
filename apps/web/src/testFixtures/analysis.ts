@@ -72,3 +72,68 @@ export const completedAnalysis: components["schemas"]["AnalysisResponse"] = {
     },
   ],
 };
+
+const classifiedEvidence = completedAnalysis.evidence[0];
+if (!classifiedEvidence || !classifiedEvidence.best[0])
+  throw new Error("Missing analysis fixture");
+const runnerUp = {
+  ...classifiedEvidence.best[0],
+  score: { kind: "cp", centipawns: 0, pov: "white" },
+  mover_score: { kind: "cp", centipawns: 0, pov: "white" },
+  wdl: { wins: 300, draws: 400, losses: 300, pov: "white" },
+  pv: [
+    {
+      uci: "d2d4",
+      san: "d4",
+      fen: "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
+    },
+  ],
+} satisfies components["schemas"]["EngineLine"];
+
+export const verifiedGreatAnalysis: components["schemas"]["AnalysisResponse"] =
+  {
+    ...completedAnalysis,
+    mode: "deep",
+    evidence: [
+      { ...classifiedEvidence, best: [...classifiedEvidence.best, runnerUp] },
+    ],
+    classifications: [
+      {
+        ply: 1,
+        mover: "white",
+        provisional: false,
+        badges: ["great"],
+        classification: {
+          base_label: "best",
+          expected_loss: 0,
+          policy_version: "v1",
+        },
+        proofs: [
+          {
+            id: "v1:1:great",
+            badge: "great",
+            motif: "unique_move",
+            ply: 1,
+            root_fen: classifiedEvidence.root_fen,
+            line: runnerUp,
+            reserved_ms: 850,
+            offered_material_points: 0,
+            verified_followup_plies: 1,
+            expected_score_after_reply: 0.5,
+            policy_version: "v1",
+          },
+        ],
+      },
+    ],
+    summary: {
+      players: {
+        white: { counts: { best: 1 }, average_expected_loss: 0 },
+        black: { counts: {}, average_expected_loss: null },
+      },
+      coverage: { analyzed_plies: 1, classified_plies: 1, total_plies: 1 },
+      is_final: true,
+      game_conclusions: [],
+      critical_moments: [],
+      practice_themes: [{ name: "calculation", supporting_plies: [1] }],
+    },
+  };

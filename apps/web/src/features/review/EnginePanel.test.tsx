@@ -334,7 +334,19 @@ it("shows independent provisional move labels and complete coverage for Quick re
   expect(screen.getByText(/White: mistake 1/)).toBeVisible();
   expect(screen.getByText(/Black: no classified moves/)).toBeVisible();
   expect(screen.getByText(/Critical moment: ply 1/)).toBeVisible();
-  expect(
-    screen.getByText(/badge verification is not available/i),
-  ).toBeVisible();
+  expect(screen.getByText(/Brilliant is a heuristic/i)).toBeVisible();
+});
+
+it("shows the checked line behind a verified badge and a supported practice theme", async () => {
+  const { verifiedGreatAnalysis } = await import("../../testFixtures/analysis");
+  vi.stubGlobal(
+    "fetch",
+    vi.fn().mockResolvedValue(Response.json(verifiedGreatAnalysis)),
+  );
+  render(<EnginePanel game={imported} selectedPly={1} />);
+  fireEvent.click(screen.getByRole("button", { name: "Deep review" }));
+  expect(await screen.findByText("Great")).toBeVisible();
+  expect(screen.getByText(/Checked supporting line: d4/)).toBeVisible();
+  expect(screen.getByText(/Practice: calculation/)).toBeVisible();
+  expect(screen.getByText(/Brilliant is a heuristic/)).toBeVisible();
 });

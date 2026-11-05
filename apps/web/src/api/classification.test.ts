@@ -185,3 +185,25 @@ it("does not call a zero-loss move a critical moment", () => {
     }),
   ).toThrow();
 });
+
+it("accepts a verified Deep badge and its evidence-supported practice theme", async () => {
+  const { verifiedGreatAnalysis } = await import("../testFixtures/analysis");
+  const result = parseAnalysis(verifiedGreatAnalysis);
+  expect(result.classifications?.[0]?.badges).toEqual(["great"]);
+  expect(result.classifications?.[0]?.proofs[0]?.line.pv[0]?.san).toBe("d4");
+  expect(result.summary?.practice_themes[0]?.name).toBe("calculation");
+});
+
+it("rejects Great when an initial competing candidate is equally good", async () => {
+  const { verifiedGreatAnalysis } = await import("../testFixtures/analysis");
+  const item = verifiedGreatAnalysis.evidence[0];
+  if (!item || !item.best[0] || !item.best[1])
+    throw new Error("Missing fixture");
+  const conflicting = { ...item.best[1], wdl: item.best[0].wdl };
+  expect(() =>
+    parseAnalysis({
+      ...verifiedGreatAnalysis,
+      evidence: [{ ...item, best: [item.best[0], conflicting] }],
+    }),
+  ).toThrow();
+});

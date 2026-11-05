@@ -24,7 +24,7 @@ function score(input: unknown): Score {
     };
   throw new Error("Invalid score");
 }
-function line(input: unknown): Line {
+export function engineLine(input: unknown): Line {
   const value = object(input);
   const white = score(value.score),
     mover = score(value.mover_score);
@@ -65,8 +65,8 @@ export function evidence(input: unknown): Evidence {
   const value = object(input),
     ply = integer(value.ply, 1, 300);
   const mover = color(value.mover),
-    played = line(value.played);
-  const best = array(value.best, 3).map(line);
+    played = engineLine(value.played);
+  const best = array(value.best, 3).map(engineLine);
   const status = value.status;
   if (status !== "usable" && status !== "insufficient" && status !== "unstable")
     throw new Error("Invalid evidence status");

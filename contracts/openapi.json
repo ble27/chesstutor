@@ -212,6 +212,96 @@
         "title": "ArchivesResponse",
         "type": "object"
       },
+      "BadgeProof": {
+        "additionalProperties": false,
+        "properties": {
+          "badge": {
+            "enum": [
+              "miss",
+              "great",
+              "brilliant"
+            ],
+            "title": "Badge",
+            "type": "string"
+          },
+          "expected_score_after_reply": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Score After Reply"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "line": {
+            "$ref": "#/components/schemas/EngineLine"
+          },
+          "motif": {
+            "enum": [
+              "forced_mate",
+              "material_win",
+              "unique_move",
+              "sacrifice"
+            ],
+            "title": "Motif",
+            "type": "string"
+          },
+          "offered_material_points": {
+            "default": 0,
+            "title": "Offered Material Points",
+            "type": "integer"
+          },
+          "ply": {
+            "title": "Ply",
+            "type": "integer"
+          },
+          "policy_version": {
+            "default": "v1",
+            "title": "Policy Version",
+            "type": "string"
+          },
+          "reserved_ms": {
+            "title": "Reserved Ms",
+            "type": "integer"
+          },
+          "root_fen": {
+            "title": "Root Fen",
+            "type": "string"
+          },
+          "survival_line": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EngineLine"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "verified_followup_plies": {
+            "default": 0,
+            "title": "Verified Followup Plies",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "badge",
+          "motif",
+          "ply",
+          "root_fen",
+          "line",
+          "reserved_ms"
+        ],
+        "title": "BadgeProof",
+        "type": "object"
+      },
       "BrowserBatch": {
         "additionalProperties": false,
         "properties": {
@@ -1115,6 +1205,11 @@
         "properties": {
           "badges": {
             "items": {
+              "enum": [
+                "miss",
+                "great",
+                "brilliant"
+              ],
               "type": "string"
             },
             "title": "Badges",
@@ -1134,6 +1229,14 @@
           "ply": {
             "title": "Ply",
             "type": "integer"
+          },
+          "proofs": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/BadgeProof"
+            },
+            "title": "Proofs",
+            "type": "array"
           },
           "provisional": {
             "title": "Provisional",

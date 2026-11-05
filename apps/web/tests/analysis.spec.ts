@@ -5,6 +5,7 @@ import { archive, imported, listing } from "../src/testFixtures/discovery";
 import {
   completedAnalysis,
   queuedAnalysis,
+  verifiedGreatAnalysis,
 } from "../src/testFixtures/analysis";
 
 async function openGame(page: Page) {
@@ -158,4 +159,23 @@ test("explains worker outage and shared-network quota without claiming completio
   await expect(
     page.getByRole("status", { name: "Analysis progress" }),
   ).toHaveCount(0);
+});
+
+test("verified classification proof follows the selected ply", async ({
+  page,
+}) => {
+  await mockJourney(page);
+  await page.route("**/api/v1/analyses", (route) =>
+    route.fulfill({ json: verifiedGreatAnalysis }),
+  );
+  await openGame(page);
+  await page.getByRole("button", { name: "Deep review" }).click();
+  await expect(page.getByText("Great", { exact: true })).toBeVisible();
+  await expect(page.getByText("Checked supporting line: d4")).toBeVisible();
+  await expect(page.getByText(/Practice: calculation/)).toBeVisible();
+  await expect(page.getByText(/Brilliant is a heuristic/)).toBeVisible();
+  await page.getByRole("button", { name: "First position" }).click();
+  await expect(page.getByText("Great", { exact: true })).toHaveCount(0);
+  await page.getByRole("button", { name: "Last position" }).click();
+  await expect(page.getByText("Checked supporting line: d4")).toBeVisible();
 });

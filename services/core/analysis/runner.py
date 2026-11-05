@@ -23,6 +23,8 @@ class AnalysisCancelled(Exception):
 
 
 class Engine(Protocol):
+    """Search boundary: cancellation must settle or terminate within one second."""
+
     async def search(
         self,
         board: chess.Board,

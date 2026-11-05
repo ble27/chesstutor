@@ -63,7 +63,7 @@ def engine_identity(artifact: Artifact) -> dict[str, object]:
         "options": {"Threads": 1, "Hash": 128, "UCI_ShowWDL": True},
         "analysis_version": "s3-v1",
         "classification_version": "v1",
-        "feature_version": "none-v1",
+        "feature_version": "s4-v1",
         "presets": {
             mode: {
                 "search_seconds": preset.search_seconds,

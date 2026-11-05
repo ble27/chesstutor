@@ -6,7 +6,7 @@ from pydantic import Field, JsonValue
 from services.api.app.analysis_schemas import AnalysisResponse
 from services.api.app.game_schemas import GameResponse, StrictModel
 from services.core.analysis.values import ACTIVE_STATES, JobState, Mode, MoveEvidence
-from services.core.classification.review import classify_evidence
+from services.core.classification.review import ReviewedMove, classify_evidence
 from services.core.classification.summary import summarize_game
 
 
@@ -30,12 +30,18 @@ class StoredJob(StrictModel):
     heartbeat: datetime | None
     deadline_at: datetime | None
     error_code: str | None
+    verification_reserved_ms: int = Field(default=0, ge=0)
+    persisted_reviews: list[ReviewedMove] | None = Field(default=None, exclude=True)
 
     def response(
         self, owner: str, evidence: list[MoveEvidence], cached: bool = False
     ) -> AnalysisResponse:
         compatible = self.engine.get("classification_version") == "v1"
-        classified = [classify_evidence(item, self.mode) for item in evidence] if compatible else []
+        classified = self.persisted_reviews
+        if classified is None:
+            classified = (
+                [classify_evidence(item, self.mode) for item in evidence] if compatible else []
+            )
         summary = (
             summarize_game(state=self.state, total_plies=self.total_plies, moves=classified)
             if compatible

@@ -248,6 +248,46 @@ export interface components {
             /** Username */
             username: string;
         };
+        /** BadgeProof */
+        BadgeProof: {
+            /**
+             * Badge
+             * @enum {string}
+             */
+            badge: "miss" | "great" | "brilliant";
+            /** Expected Score After Reply */
+            expected_score_after_reply?: number | null;
+            /** Id */
+            id: string;
+            line: components["schemas"]["EngineLine"];
+            /**
+             * Motif
+             * @enum {string}
+             */
+            motif: "forced_mate" | "material_win" | "unique_move" | "sacrifice";
+            /**
+             * Offered Material Points
+             * @default 0
+             */
+            offered_material_points: number;
+            /** Ply */
+            ply: number;
+            /**
+             * Policy Version
+             * @default v1
+             */
+            policy_version: string;
+            /** Reserved Ms */
+            reserved_ms: number;
+            /** Root Fen */
+            root_fen: string;
+            survival_line?: components["schemas"]["EngineLine"] | null;
+            /**
+             * Verified Followup Plies
+             * @default 0
+             */
+            verified_followup_plies: number;
+        };
         /** BrowserBatch */
         BrowserBatch: {
             /** Game Version */
@@ -552,7 +592,7 @@ export interface components {
         /** ReviewedMove */
         ReviewedMove: {
             /** Badges */
-            badges: string[];
+            badges: ("miss" | "great" | "brilliant")[];
             classification: components["schemas"]["Classification"];
             /**
              * Mover
@@ -561,6 +601,11 @@ export interface components {
             mover: "white" | "black";
             /** Ply */
             ply: number;
+            /**
+             * Proofs
+             * @default []
+             */
+            proofs: components["schemas"]["BadgeProof"][];
             /** Provisional */
             provisional: boolean;
         };

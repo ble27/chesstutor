@@ -34,7 +34,9 @@ export function ClassificationPanel({
   return (
     <section aria-label="Move classifications">
       <p>Independent classifications use Chess Tutor policy v1.</p>
-      <p>Miss, Great, and Brilliant badge verification is not available yet.</p>
+      <p>
+        Brilliant is a heuristic; badges require checked supporting evidence.
+      </p>
       {move && (
         <p>
           Independent classification:{" "}
@@ -50,10 +52,24 @@ export function ClassificationPanel({
         </p>
       )}
       {job.summary && <ClassificationSummary summary={job.summary} />}
-      {move?.badges.map((badge) => (
-        <p key={badge}>
-          {badge === "brilliant" ? "Brilliant (heuristic)" : badge}
-        </p>
+      {move?.proofs.map((proof) => (
+        <div key={proof.id}>
+          <p>
+            {proof.badge === "brilliant"
+              ? "Brilliant (heuristic)"
+              : proof.badge === "great"
+                ? "Great"
+                : "Miss"}
+          </p>
+          <p>
+            Checked supporting line:{" "}
+            {proof.line.pv.map((step) => step.san).join(" ")}
+          </p>
+          <p>
+            {proof.badge === "miss" ? "Missed opportunity" : "Verification"}:{" "}
+            {proof.motif.replaceAll("_", " ")}
+          </p>
+        </div>
       ))}
     </section>
   );

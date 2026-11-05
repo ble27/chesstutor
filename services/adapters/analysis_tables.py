@@ -35,6 +35,7 @@ analyses = Table(
     Column("heartbeat", DateTime(timezone=True)),
     Column("deadline_at", DateTime(timezone=True)),
     Column("error_code", String(40)),
+    Column("verification_reserved_ms", Integer, nullable=False, server_default="0"),
 )
 Index("ix_analyses_cache", analyses.c.cache_key, analyses.c.state)
 Index("ix_analyses_owner", analyses.c.owner, analyses.c.created_at)
@@ -50,4 +51,5 @@ reviews = Table(
     ),
     Column("ply", Integer, primary_key=True),
     Column("payload", JSONB, nullable=False),
+    Column("move_review", JSONB),
 )

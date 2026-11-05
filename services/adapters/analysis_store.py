@@ -7,6 +7,7 @@ from datetime import UTC, datetime, timedelta
 from typing import Literal
 from uuid import UUID, uuid4
 
+import chess
 from pydantic import JsonValue, TypeAdapter
 from sqlalchemy import case, func, insert, or_, select, text, update
 from sqlalchemy.engine import Connection, Engine
@@ -17,9 +18,12 @@ from services.adapters.game_store import games
 from services.api.app.game_schemas import GameResponse
 from services.core.analysis.runner import AnalysisCancelled
 from services.core.analysis.values import ACTIVE_STATES, PRESETS, AnalysisError, Mode, MoveEvidence
+from services.core.classification.review import ReviewedMove, classify_evidence
+from services.core.classification.verification import validate_verified_review
 
 GATE_LOCK = 724193301
 evidence_adapter = TypeAdapter(MoveEvidence)
+review_adapter = TypeAdapter(ReviewedMove)
 
 
 def utc_now() -> datetime:
@@ -75,14 +79,27 @@ class PostgresAnalyses:
             )
             if row is None:
                 raise AnalysisError("analysis_not_found", "Analysis not found.", 404)
-            values: Sequence[object] = connection.scalars(
-                select(reviews.c.payload)
-                .where(reviews.c.analysis_id == identifier)
-                .order_by(reviews.c.ply)
-            ).all()
-            return StoredJob.model_validate(dict(row)), [
-                evidence_adapter.validate_python(value) for value in values
-            ]
+            evidence_rows = (
+                connection.execute(
+                    select(reviews.c.payload, reviews.c.move_review)
+                    .where(reviews.c.analysis_id == identifier)
+                    .order_by(reviews.c.ply)
+                )
+                .mappings()
+                .all()
+            )
+            job = StoredJob.model_validate(dict(row))
+            evidence = [evidence_adapter.validate_python(item["payload"]) for item in evidence_rows]
+            if all(item["move_review"] is not None for item in evidence_rows):
+                persisted = [
+                    review_adapter.validate_python(item["move_review"]) for item in evidence_rows
+                ]
+                job = job.model_copy(update={"persisted_reviews": persisted})
+            if job.engine.get("feature_version") == "s4-v1" and any(
+                item["move_review"] is None for item in evidence_rows
+            ):
+                raise ValueError("Missing persisted classification")
+            return job, evidence
 
     def submit(
         self,
@@ -268,7 +285,12 @@ class PostgresAnalyses:
             )
 
     def save_ply(
-        self, identifier: UUID, token: UUID, evidence: MoveEvidence, now: datetime
+        self,
+        identifier: UUID,
+        token: UUID,
+        evidence: MoveEvidence,
+        now: datetime,
+        review: ReviewedMove | None = None,
     ) -> None:
         with self.engine.begin() as connection:
             job = locked_job(connection, identifier, token, ("running",))
@@ -276,15 +298,33 @@ class PostgresAnalyses:
                 raise AnalysisCancelled("Attempt cancelled or superseded")
             if job.deadline_at is None or now >= job.deadline_at:
                 raise TimeoutError("Job deadline exceeded")
+            if review is not None:
+                board = chess.Board(job.game_data.initial_fen)
+                for position in job.game_data.positions[1 : evidence.ply]:
+                    if position.uci is None:
+                        raise ValueError("Missing canonical history")
+                    board.push_uci(position.uci)
+                validate_verified_review(board, evidence, job.mode, review)
+                if sum(proof.reserved_ms for proof in review.proofs) > job.verification_reserved_ms:
+                    raise ValueError("Unreserved badge search")
             payload = asdict(evidence)
             if evidence.ply <= job.completed_plies:
-                previous = connection.scalar(
-                    select(reviews.c.payload).where(
-                        reviews.c.analysis_id == identifier, reviews.c.ply == evidence.ply
+                previous = (
+                    connection.execute(
+                        select(reviews.c.payload, reviews.c.move_review).where(
+                            reviews.c.analysis_id == identifier, reviews.c.ply == evidence.ply
+                        )
                     )
+                    .mappings()
+                    .one()
                 )
-                if evidence_adapter.validate_python(previous) != evidence:
+                if evidence_adapter.validate_python(previous["payload"]) != evidence:
                     raise ValueError("Conflicting retry of an evidence write")
+                if (
+                    review is not None
+                    and review_adapter.validate_python(previous["move_review"]) != review
+                ):
+                    raise ValueError("Conflicting retry of a review write")
                 return
             if evidence.ply != job.completed_plies + 1 or evidence.ply > job.total_plies:
                 raise ValueError("Evidence must be written in game order")
@@ -292,13 +332,59 @@ class PostgresAnalyses:
             if evidence.root_fen != before.fen or evidence.played_uci != after.uci:
                 raise ValueError("Evidence belongs to another position")
             connection.execute(
-                insert(reviews).values(analysis_id=identifier, ply=evidence.ply, payload=payload)
+                insert(reviews).values(
+                    analysis_id=identifier,
+                    ply=evidence.ply,
+                    payload=payload,
+                    move_review=asdict(review or classify_evidence(evidence, job.mode))
+                    if job.engine.get("classification_version") == "v1"
+                    else None,
+                )
             )
             connection.execute(
                 update(analyses)
                 .where(analyses.c.id == identifier)
                 .values(completed_plies=evidence.ply, heartbeat=now, updated_at=now)
             )
+
+    def reserve_verification(
+        self,
+        identifier: UUID,
+        token: UUID,
+        ply: int,
+        cost_ms: int,
+        current_base_ms: int,
+        now: datetime,
+    ) -> bool:
+        if cost_ms <= 0 or current_base_ms < 0:
+            raise ValueError("Invalid verification budget")
+        with self.engine.begin() as connection:
+            job = locked_job(connection, identifier, token, ("running",))
+            if job is None:
+                raise AnalysisCancelled("Attempt cancelled or superseded")
+            if job.deadline_at is None or now >= job.deadline_at:
+                raise TimeoutError("Job deadline exceeded")
+            if ply != job.completed_plies + 1:
+                raise ValueError("Verification must belong to the next unpublished ply")
+            values: Sequence[object] = connection.scalars(
+                select(reviews.c.payload).where(reviews.c.analysis_id == identifier)
+            ).all()
+            base_ms = min(current_base_ms, int(2 * PRESETS[job.mode].search_seconds * 1000))
+            for value in values:
+                evidence = evidence_adapter.validate_python(value)
+                base_ms += evidence.best[0].time_ms + evidence.played.time_ms
+            if (job.verification_reserved_ms + cost_ms) * 100 > base_ms * 15:
+                return False
+            connection.execute(
+                update(analyses)
+                .where(analyses.c.id == identifier)
+                .values(
+                    verification_reserved_ms=job.verification_reserved_ms + cost_ms,
+                    heartbeat=now,
+                    updated_at=now,
+                )
+            )
+            return True
 
     def finish(
         self,

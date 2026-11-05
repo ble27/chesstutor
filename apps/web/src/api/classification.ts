@@ -1,4 +1,5 @@
 import type { components } from "./generated";
+import { badgeProof, proofTheme, validateProofs } from "./badgeProof";
 import { array, color, flag, integer, object, text } from "./analysisFields";
 
 type Review = components["schemas"]["ReviewedMove"];
@@ -37,7 +38,6 @@ export function review(input: unknown): Review {
       throw new Error("Invalid badge");
     return item;
   });
-  if (badges.length) throw new Error("Badge verification is unavailable");
   const base_label = label(classification.base_label);
   const expected_loss = loss(classification.expected_loss);
   if ((base_label === "unclassified") !== (expected_loss === null))
@@ -46,6 +46,8 @@ export function review(input: unknown): Review {
     ply: integer(value.ply, 1, 300),
     mover: color(value.mover),
     badges,
+    proofs:
+      value.proofs === undefined ? [] : array(value.proofs, 1).map(badgeProof),
     provisional: flag(value.provisional),
     classification: {
       base_label,
@@ -135,8 +137,20 @@ function validateSummary(result: Summary, reviews: Review[]): void {
     )
       throw new Error("Inconsistent player average");
   }
-  if (result.game_conclusions.length || result.practice_themes.length)
+  if (result.game_conclusions.length)
     throw new Error("Unsupported review claims");
+  for (const theme of result.practice_themes) {
+    if (
+      !theme.supporting_plies.length ||
+      theme.supporting_plies.some(
+        (ply) =>
+          !reviews
+            .find((item) => item.ply === ply)
+            ?.proofs.some((proof) => proofTheme[proof.motif] === theme.name),
+      )
+    )
+      throw new Error("Unsupported practice theme");
+  }
   for (const moment of result.critical_moments) {
     const match = reviews.find((item) => item.ply === moment.ply);
     if (
@@ -198,5 +212,10 @@ export function validateReview(
     )
   )
     throw new Error("Classification belongs to another move");
+  reviews.forEach((item, index) => {
+    const evidence = lines[index];
+    if (!evidence) throw new Error("Missing badge evidence");
+    validateProofs(item, evidence, mode);
+  });
   validateSummary(result, reviews);
 }

@@ -5,7 +5,9 @@ from dataclasses import dataclass
 import chess
 
 from services.core.analysis.values import Color, EngineLine, JobState, Mode, MoveEvidence
+from services.core.classification.badges import Badge
 from services.core.classification.base import BaseLabel, Classification, classify_move
+from services.core.classification.proofs import BadgeProof
 from services.core.classification.summary import ClassificationSummary, summarize_game
 
 
@@ -14,8 +16,9 @@ class ReviewedMove:
     ply: int
     mover: Color
     classification: Classification
-    badges: tuple[str, ...]
+    badges: tuple[Badge, ...]
     provisional: bool
+    proofs: tuple[BadgeProof, ...] = ()
 
     @property
     def label(self) -> BaseLabel:
@@ -27,7 +30,13 @@ class ReviewedMove:
 
     @property
     def themes(self) -> tuple[str, ...]:
-        return ()
+        themes = {
+            "forced_mate": "mate_threat",
+            "material_win": "material_tactics",
+            "unique_move": "calculation",
+            "sacrifice": "sacrifices",
+        }
+        return tuple(dict.fromkeys(themes[proof.motif] for proof in self.proofs))
 
 
 def legal_line(root: chess.Board, line: EngineLine) -> bool:
@@ -39,7 +48,7 @@ def legal_line(root: chess.Board, line: EngineLine) -> bool:
             move = chess.Move.from_uci(step.uci)
         except ValueError:
             return False
-        if move not in board.legal_moves or board.san(move) != step.san:
+        if board.is_game_over() or move not in board.legal_moves or board.san(move) != step.san:
             return False
         board.push(move)
         if board.fen() != step.fen:
@@ -69,7 +78,7 @@ def classify_evidence(evidence: MoveEvidence, mode: Mode) -> ReviewedMove:
         pv_legal=legal,
         search_complete=bool(best and not best.bounded and not evidence.played.bounded),
     )
-    # S3 evidence has no independently verified badge search or motif proof.
+    # Base evidence alone never authorizes a badge; verification attaches proof.
     return ReviewedMove(evidence.ply, evidence.mover, result, (), mode == "quick")
 
 

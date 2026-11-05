@@ -106,3 +106,56 @@ def test_deadline_checkpoint_interrupts_a_hung_analysis_handshake():
             )
 
     asyncio.run(scenario())
+
+
+def test_unresponsive_handshake_cleanup_kills_and_reaps_instead_of_waiting_forever():
+    async def scenario():
+        stopped = asyncio.Event()
+        reaped = asyncio.get_running_loop().create_future()
+
+        class Transport:
+            killed = False
+
+            def get_returncode(self):
+                return -9 if self.killed else None
+
+            def kill(self):
+                self.killed = True
+                reaped.set_result(-9)
+                stopped.set()
+
+        class StubbornProtocol:
+            transport = Transport()
+            returncode = reaped
+
+            async def analysis(self, *args, **kwargs):
+                try:
+                    await asyncio.Event().wait()
+                except asyncio.CancelledError:
+                    await stopped.wait()
+
+        protocol = StubbornProtocol()
+        calls = 0
+
+        async def deadline():
+            nonlocal calls
+            calls += 1
+            if calls >= 3:
+                raise TimeoutError("fixture deadline")
+
+        task = asyncio.create_task(
+            UciEngine(protocol).search(chess.Board(), 0.1, 1, None, deadline)
+        )
+        try:
+            done, _ = await asyncio.wait({task}, timeout=2)
+            assert done, "Engine cancellation cleanup was not bounded"
+            with pytest.raises(chess.engine.EngineError, match="forced termination"):
+                await task
+            assert protocol.transport.killed
+            assert reaped.done()
+        finally:
+            stopped.set()
+            task.cancel()
+            await asyncio.gather(task, return_exceptions=True)
+
+    asyncio.run(scenario())
