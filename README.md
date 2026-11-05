@@ -14,6 +14,8 @@ coaching remains S5.
 - [Sprint 1 evidence](docs/sprints/S1.md)
 - [Sprint 2 implementation and acceptance status](docs/sprints/S2.md)
 - [Sprint 3 implementation and gate evidence](docs/sprints/S3.md)
+- [Sprint 4 implementation and open gates](docs/sprints/S4.md)
+- [S4 chess review](docs/sprints/S4-chess-review.md)
 - [Integration research](docs/research.md)
 - [Contributor conventions](AGENTS.md)
 
@@ -21,8 +23,10 @@ coaching remains S5.
 
 This is a local development project, not a production release. Current S4 work
 adds independent move labels, per-player counts, and coverage-aware summaries.
-Quick labels are provisional. Badge verification searches, practice themes,
-coaching, and remaining accessibility and production gates are incomplete.
+Quick labels are provisional. S4 now includes persisted move reviews, bounded
+badge verification with replayable proofs, and evidence-linked practice themes.
+The user accepted the S4 chess review on 2026-11-05. A passing full gate remains open, and S4 is not complete.
+Coaching and the remaining accessibility and production gates are incomplete.
 Previously committed S5–S7 specifications intentionally fail until implemented;
 `make verify` therefore does not currently pass. See [S4 evidence](docs/sprints/S4.md)
 and the [repository security review](docs/security-review.md) for checks and limits.
