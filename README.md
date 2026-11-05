@@ -112,7 +112,7 @@ no password or provider key is used.
 ## Engine analysis
 
 Run `make up` after pulling S3 to rebuild the stack. Compose starts two workers
-with verified Stockfish 17.1, one thread and 128 MiB hash each. Its pinned worker
+with verified Stockfish 19, one thread and 128 MiB hash each. Its pinned worker
 image is Linux x86-64; Docker Desktop on ARM uses emulation. Native installation
 supports macOS ARM64 and Linux x86-64 through `make engine-install`. Unsupported
 platforms fail explicitly. Workers and jobs are partitioned by executable checksum.

@@ -116,7 +116,8 @@ def archive_member(archive: tarfile.TarFile, name: str) -> bytes:
 
 def install_engine(destination: Path, artifact: Artifact, archive_path: Path | None = None) -> None:
     if archive_path is None:
-        archive_path = Path(".cache/stockfish") / f"{artifact.platform}.tar"
+        # Keyed by the pinned digest so an older release is never found after a pin change.
+        archive_path = Path(".cache/stockfish") / f"{artifact.platform}-{artifact.archive_sha256}"
         archive_path.parent.mkdir(parents=True, exist_ok=True)
         if not archive_path.is_file():
             download_archive(artifact, archive_path)

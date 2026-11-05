@@ -7,7 +7,7 @@ exact Python and JavaScript dependency graph; retain notices when distributing.
 | Direct component | License | Upstream |
 | --- | --- | --- |
 | python-chess (`chess`) | GPL-3.0-or-later | https://github.com/niklasf/python-chess |
-| Stockfish 17.1 | GPL-3.0 | https://github.com/official-stockfish/Stockfish/tree/sf_17.1 |
+| Stockfish 19 | GPL-3.0 | https://github.com/official-stockfish/Stockfish/tree/sf_19 |
 | Stockfish.js 17.1.0 (full WASM experiment) | GPL-3.0, Chess.com LLC / Stockfish contributors | https://github.com/nmrugg/stockfish.js/tree/v17.1.0 |
 | FastAPI, Pydantic, Uvicorn | MIT / MIT / BSD-3-Clause | See locked package metadata |
 | HTTPX | BSD-3-Clause | https://github.com/encode/httpx |

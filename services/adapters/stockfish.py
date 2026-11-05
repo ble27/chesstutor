@@ -19,6 +19,31 @@ async def wait_checkpoint[T](pending: asyncio.Task[T], checkpoint: Checkpoint) -
     return await pending
 
 
+def completed_iteration(info: chess.engine.InfoDict) -> bool:
+    """True for an exact score; a bound is sent while an iteration is still unresolved."""
+    return not (info.get("lowerbound") or info.get("upperbound"))
+
+
+async def collect_lines(result: chess.engine.AnalysisResult) -> list[chess.engine.InfoDict]:
+    """Keep each line's last exact message, in MultiPV order.
+
+    python-chess merges every message into one dictionary per line. A bound sent
+    when Stockfish is stopped mid-iteration would overwrite the last exact score,
+    and its flag would never clear. A line with no exact message keeps its latest
+    bound so it stays marked as unusable evidence.
+    """
+    exact: dict[int, chess.engine.InfoDict] = {}
+    bounded: dict[int, chess.engine.InfoDict] = {}
+    async for info in result:
+        if info.get("score") is None or not info.get("pv"):
+            continue  # currmove, string, and other progress messages carry no evidence
+        (exact if completed_iteration(info) else bounded)[info.get("multipv", 1)] = info
+    latest = {**bounded, **exact}
+    if sorted(latest) != list(range(1, len(latest) + 1)):
+        raise ValueError("Engine returned incomplete MultiPV lines")
+    return [latest[index] for index in sorted(latest)]
+
+
 def consume_result(pending: asyncio.Future[object]) -> None:
     if not pending.cancelled():
         pending.exception()
@@ -67,13 +92,13 @@ class UciEngine:
             handshake.cancel()
             await settle_search(handshake, self.protocol)
             raise
-        pending = asyncio.create_task(result.wait())
+        pending = asyncio.create_task(collect_lines(result))
         try:
-            await wait_checkpoint(pending, checkpoint)
+            lines = await wait_checkpoint(pending, checkpoint)
             await checkpoint()
-            if not result.multipv:
+            if not lines:
                 raise ValueError("Engine returned no lines")
-            return tuple(normalise_line(board, info) for info in result.multipv)
+            return tuple(normalise_line(board, info) for info in lines)
         finally:
             if not pending.done():
                 result.stop()
