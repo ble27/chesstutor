@@ -78,6 +78,15 @@ test("puts recorded moves beside the board and distinguishes them from engine an
   await page.setViewportSize({ width: 1440, height: 900 });
   await openFixture(page);
   const insights = page.getByRole("complementary", { name: "Game insights" });
+  const review = page.getByRole("region", { name: "Game review" });
+  const engineBox = await review
+    .getByRole("heading", { name: "Engine analysis" })
+    .boundingBox();
+  const movesBox = await review
+    .getByRole("heading", { name: "Game moves" })
+    .boundingBox();
+  if (!engineBox || !movesBox) throw new Error("Missing review headings");
+  expect(engineBox.y).toBeLessThan(movesBox.y);
   await expect(
     insights.getByRole("heading", { name: "Game moves" }),
   ).toBeVisible();

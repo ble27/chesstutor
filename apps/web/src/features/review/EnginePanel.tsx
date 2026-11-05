@@ -43,11 +43,7 @@ function EngineSession({
   return (
     <section className="panel engine-panel" aria-labelledby="engine-title">
       <h2 id="engine-title">Engine analysis</h2>
-      <p>
-        Quick: 100ms per search. Deep: 750ms per search. Limit: one active job,
-        five Quick and two Deep reviews per hour. Shared-network limits also
-        apply; cached results are free.
-      </p>
+      <AnalysisLimits />
       <div className="analysis-actions">
         <button disabled={busy} onClick={() => start("quick")}>
           Quick review
@@ -126,5 +122,18 @@ function EngineSession({
         <button onClick={retry}>Retry analysis</button>
       )}
     </section>
+  );
+}
+
+function AnalysisLimits() {
+  return (
+    <details className="analysis-limits">
+      <summary>Review settings and limits</summary>
+      <p>
+        Quick: 100ms per search. Deep: 750ms per search. Limit: one active job,
+        five Quick and two Deep reviews per hour. Shared-network limits also
+        apply; cached results are free.
+      </p>
+    </details>
   );
 }

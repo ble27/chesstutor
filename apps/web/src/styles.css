@@ -240,6 +240,40 @@ button:focus-visible {
 .replay-panel {
   align-self: start;
 }
+.review-panel {
+  padding: 0;
+  overflow: hidden;
+}
+.review-panel .engine-panel {
+  padding: 24px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.review-panel h2 {
+  margin: 0 0 12px;
+}
+.review-moves {
+  border-top: 1px solid #51483f;
+  padding: 20px 24px 24px;
+}
+.review-moves p {
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0 0 12px;
+}
+.analysis-limits {
+  color: #c9c2b9;
+  font-size: 13px;
+  margin: 0 0 16px;
+}
+.analysis-limits summary {
+  cursor: pointer;
+  padding: 6px 0;
+}
+.analysis-limits p {
+  margin: 4px 0 12px;
+}
 .player-label {
   display: flex;
   align-items: center;
@@ -273,6 +307,10 @@ button:focus-visible {
   .board-frame {
     width: min(100%, 640px, max(160px, calc(100dvh - 360px)));
   }
+  .review-panel .engine-panel {
+    max-height: min(45dvh, 400px);
+    overflow-y: auto;
+  }
 }
 .replay-workspace:focus-visible {
   outline: 2px solid #eeeeee;
@@ -290,10 +328,11 @@ button:disabled {
 }
 .move-list {
   list-style: none;
-  padding: 8px;
-  max-height: 280px;
+  padding: 4px;
+  margin: 0;
+  max-height: 320px;
   overflow-y: auto;
-  border: 1px solid #555;
+  border: 1px solid #51483f;
   border-radius: 8px;
 }
 .move-list li {
@@ -301,16 +340,24 @@ button:disabled {
   grid-template-columns: 3ch minmax(0, 1fr) minmax(0, 1fr);
   align-items: center;
   gap: 8px;
-  margin: 4px 0;
+  margin: 0;
+  padding: 2px 4px;
+  color: #c9c2b9;
+  font-variant-numeric: tabular-nums;
+}
+.move-list li:nth-child(odd) {
+  background: #302d2a;
 }
 .move-list button {
-  background: #303030;
+  background: transparent;
   color: #eeeeee;
+  border-color: transparent;
+  text-align: left;
   overflow-wrap: anywhere;
   font-weight: 400;
 }
 .move-list [aria-current="step"] {
-  background: #e0e0e0;
+  background: #eac96a;
   color: #181818;
   outline: 2px solid #eac96a;
   outline-offset: -3px;
@@ -362,5 +409,9 @@ button:disabled {
 @media (max-width: 767px) {
   .replay-panel {
     padding: 12px;
+  }
+  .review-panel .engine-panel,
+  .review-moves {
+    padding: 20px 16px;
   }
 }

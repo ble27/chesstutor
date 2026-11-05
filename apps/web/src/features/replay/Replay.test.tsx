@@ -4,6 +4,22 @@ import { imported } from "../../testFixtures/discovery";
 import { replayFixtures } from "../../testFixtures/replay";
 import { Replay } from "./Replay";
 
+it("groups engine analysis above the selectable game moves", () => {
+  render(<Replay game={imported} />);
+  const review = screen.getByRole("region", { name: "Game review" });
+  const engine = within(review).getByRole("heading", {
+    name: "Engine analysis",
+  });
+  const moves = within(review).getByRole("list", { name: "Game moves" });
+  expect(
+    engine.compareDocumentPosition(moves) & Node.DOCUMENT_POSITION_FOLLOWING,
+  ).toBeTruthy();
+  fireEvent.click(within(moves).getByRole("button", { name: "1. White: e4" }));
+  expect(screen.getByLabelText("Position FEN")).toHaveTextContent(
+    "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+  );
+});
+
 it("keeps player names and piece colors at the matching board edges when flipped", () => {
   render(<Replay game={imported} />);
   const top = screen.getByRole("group", { name: "Top player" });

@@ -4,7 +4,7 @@ import { MoveList } from "./MoveList";
 import { BoardFrame } from "./BoardFrame";
 import { PositionText } from "./PositionText";
 import { moveLabel } from "./moves";
-import { InsightPanels } from "../../InsightPanels";
+import { CoachInsight, EngineInsight } from "../../InsightPanels";
 
 export function Replay({ game }: { game: Game }) {
   return (
@@ -56,18 +56,18 @@ function ReplaySession({ game }: { game: Game }) {
         <PieceCredit />
       </section>
       <aside className="insights" aria-label="Game insights">
-        <section className="panel" aria-labelledby="moves-title">
-          <h2 id="moves-title">Game moves</h2>
-          <p>
-            Recorded moves from this game. Select a move to view its position.
-          </p>
-          <p id="replay-help">
-            Focus this replay area and use Left/Right arrows, Home, or End to
-            navigate. Gold outlines mark the last played move.
-          </p>
-          <MoveList game={game} selectedPly={selectedPly} select={select} />
+        <section className="panel review-panel" aria-label="Game review">
+          <EngineInsight game={game} selectedPly={selectedPly} />
+          <div className="review-moves">
+            <h2 id="moves-title">Game moves</h2>
+            <p id="replay-help">
+              Select a move, or use Left/Right arrows, Home, or End in the
+              replay area. Gold outlines mark the last played move.
+            </p>
+            <MoveList game={game} selectedPly={selectedPly} select={select} />
+          </div>
         </section>
-        <InsightPanels game={game} selectedPly={selectedPly} />
+        <CoachInsight />
       </aside>
     </section>
   );
