@@ -1,6 +1,7 @@
 import { useId } from "react";
 import type { Game } from "../../api/discoveryValidation";
 import { Board } from "./Board";
+import type { BoardArrow } from "../guidance/arrows";
 
 type Player = Game["game"]["white"];
 type Color = "white" | "black";
@@ -35,11 +36,13 @@ export function BoardFrame({
   fen,
   orientation,
   lastMove,
+  arrows,
 }: {
   players: Pick<Game["game"], "white" | "black">;
   fen: string;
   orientation: Color;
   lastMove: string | null;
+  arrows?: BoardArrow[] | undefined;
 }) {
   const id = useId();
   const topColor = orientation === "white" ? "black" : "white";
@@ -55,6 +58,7 @@ export function BoardFrame({
         fen={fen}
         orientation={orientation}
         lastMove={lastMove}
+        arrows={arrows}
         describedBy={`${id}-top ${id}-bottom`}
       />
       <PlayerLabel

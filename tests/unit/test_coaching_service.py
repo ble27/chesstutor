@@ -109,3 +109,9 @@ def test_request_needs_an_intent_or_a_bounded_question():
         with pytest.raises(ValueError):
             request(**changes)
     assert FREE_QUEEN
+
+
+def test_lesson_text_is_the_explanation_and_alternatives_are_separate():
+    lesson = lessons_response(analysis([loose_rook()]), "beginner").lessons[0]
+    assert "Consider moving" not in lesson.text
+    assert lesson.alternatives and "Consider moving" in lesson.alternatives[0].text

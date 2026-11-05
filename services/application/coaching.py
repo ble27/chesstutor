@@ -17,8 +17,8 @@ from services.core.analysis.values import AnalysisError, MoveEvidence
 from services.core.classification.review import legal_line
 from services.core.coaching.coach import coach
 from services.core.coaching.detectors import detect_evidence
-from services.core.coaching.lessons import Arrow, Lesson, build_lessons, lesson_kind, render_lesson
-from services.core.coaching.templates import render_coaching
+from services.core.coaching.lessons import Arrow, Lesson, build_lessons, lesson_kind
+from services.core.coaching.templates import render_blocks, render_coaching
 from services.core.coaching.values import Evidence, Level
 
 MAX_GAME_EVIDENCE = 6
@@ -39,7 +39,7 @@ def lesson_out(lesson: Lesson) -> LessonOut:
     return LessonOut(
         ply=lesson.ply,
         kind=lesson.kind,
-        text=render_lesson(lesson),
+        text=render_blocks(lesson.blocks),
         evidence_ids=ids,
         alternatives=[
             AlternativeOut(rank=a.rank, uci=a.uci, text=a.description) for a in lesson.alternatives

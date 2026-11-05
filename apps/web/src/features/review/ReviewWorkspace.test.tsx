@@ -160,9 +160,7 @@ it("keeps navigation inside the tabbed workspace and preserves selection across 
   fireEvent.click(screen.getByRole("tab", { name: "Review" }));
   expect(screen.getByRole("button", { name: "Previous move" })).toBeEnabled();
   fireEvent.click(screen.getByRole("tab", { name: "Chess guidance" }));
-  expect(
-    screen.getByText("Chess guidance is not available yet."),
-  ).toBeVisible();
+  expect(screen.getByText(/Run a review to get chess guidance/)).toBeVisible();
   fireEvent.click(screen.getByRole("tab", { name: "Analysis" }));
   expect(screen.getByRole("button", { name: "1. White: e4" })).toHaveAttribute(
     "aria-current",

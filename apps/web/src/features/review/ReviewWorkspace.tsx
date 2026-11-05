@@ -7,6 +7,8 @@ import { BrowserExperiment } from "../browserExperiment/BrowserExperiment";
 import { useAnalysis } from "./useAnalysis";
 import { EngineView } from "./EnginePanel";
 import { ClassificationSummary } from "./ClassificationSummary";
+import { GuidancePanel } from "../guidance/GuidancePanel";
+import type { BoardArrow } from "../guidance/arrows";
 import { ReviewTabs } from "./ReviewTabs";
 import type { ReviewTab } from "./ReviewTabs";
 
@@ -15,7 +17,10 @@ type Props = {
   selectedPly: number;
   select: (ply: number) => void;
   flip: () => void;
+  onArrows?: (arrows: BoardArrow[]) => void;
 };
+
+const noArrows = () => undefined;
 
 export function ReviewWorkspace(props: Props) {
   return new URLSearchParams(window.location.search).get("engine") ===
@@ -25,6 +30,12 @@ export function ReviewWorkspace(props: Props) {
       analysis={
         <BrowserExperiment game={props.game} selectedPly={props.selectedPly} />
       }
+      guidance={() => (
+        <p>
+          Chess guidance needs a server-verified review. The browser experiment
+          does not provide it.
+        </p>
+      )}
       review={() => (
         <p>
           Browser evidence is provisional. Server-verified game summaries are
@@ -51,6 +62,13 @@ function ServerWorkspace(props: Props) {
           workspace
         />
       }
+      guidance={() => (
+        <GuidancePanel
+          analysis={session.state.job}
+          selectedPly={props.selectedPly}
+          onArrows={props.onArrows ?? noArrows}
+        />
+      )}
       review={(selectMoment) =>
         summary ? (
           <>
@@ -83,9 +101,11 @@ function ReviewShell({
   select,
   flip,
   analysis,
+  guidance,
   review,
 }: Props & {
   analysis: ReactNode;
+  guidance: () => ReactNode;
   review: (selectMoment: (ply: number) => void) => ReactNode;
 }) {
   const [tab, setTab] = useState<ReviewTab>("Analysis");
@@ -127,7 +147,7 @@ function ReviewShell({
           className="review-tab-content"
         >
           <h2>Chess guidance</h2>
-          <p>Chess guidance is not available yet.</p>
+          {tab === "Chess guidance" && guidance()}
         </div>
         <div className="review-footer">
           <ReplayControls

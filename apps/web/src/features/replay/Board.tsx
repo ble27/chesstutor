@@ -1,16 +1,19 @@
 import type { CSSProperties } from "react";
 import { Chessboard } from "react-chessboard";
+import type { BoardArrow } from "../guidance/arrows";
 
 export function Board({
   fen,
   orientation,
   lastMove,
   describedBy,
+  arrows = [],
 }: {
   fen: string;
   orientation: "white" | "black";
   lastMove: string | null;
   describedBy: string;
+  arrows?: BoardArrow[] | undefined;
 }) {
   const squareStyles: Record<string, CSSProperties> = {};
   if (lastMove) {
@@ -34,6 +37,7 @@ export function Board({
             boardOrientation: orientation,
             allowDragging: false,
             allowDrawingArrows: false,
+            arrows,
             showAnimations: false,
             darkSquareStyle: { backgroundColor: "#637878" },
             lightSquareStyle: { backgroundColor: "#e0dfd5" },

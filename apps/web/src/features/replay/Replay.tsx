@@ -1,9 +1,11 @@
+import { useState } from "react";
 import type { Game } from "../../api/discoveryValidation";
 import { useReplay } from "./useReplay";
 import { ReviewWorkspace } from "../review/ReviewWorkspace";
 import { BoardFrame } from "./BoardFrame";
 import { PositionText } from "./PositionText";
 import { moveLabel } from "./moves";
+import type { BoardArrow } from "../guidance/arrows";
 
 export function Replay({ game }: { game: Game }) {
   return (
@@ -18,6 +20,7 @@ function ReplaySession({ game }: { game: Game }) {
   const lastPly = game.positions.length - 1;
   const { selectedPly, select, orientation, flip, onKeyDown } =
     useReplay(lastPly);
+  const [arrows, setArrows] = useState<BoardArrow[]>([]);
   const position = game.positions[selectedPly];
   if (!position) return null;
   const previous = game.positions[selectedPly - 1];
@@ -51,6 +54,7 @@ function ReplaySession({ game }: { game: Game }) {
           fen={position.fen}
           orientation={orientation}
           lastMove={position.uci}
+          arrows={arrows}
         />
         <PositionText fen={position.fen} />
         <PieceCredit />
@@ -60,6 +64,7 @@ function ReplaySession({ game }: { game: Game }) {
         selectedPly={selectedPly}
         select={select}
         flip={flip}
+        onArrows={setArrows}
       />
     </section>
   );
