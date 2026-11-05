@@ -415,3 +415,212 @@ button:disabled {
     padding: 20px 16px;
   }
 }
+
+/* One review workspace: board 60%, tabbed analysis 40%. */
+[hidden] {
+  display: none !important;
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.replay-workspace {
+  align-items: start;
+}
+.replay-workspace .replay-panel {
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+.replay-position {
+  font-size: 13px;
+  margin: 0 0 8px;
+}
+.replay-workspace .board-frame {
+  width: 100%;
+}
+.replay-workspace .review-panel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  border-radius: 12px;
+  height: 740px;
+}
+.review-tabs {
+  display: flex;
+  border-bottom: 1px solid #555;
+}
+.review-tabs button {
+  flex: 1;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #b8b8b8;
+  padding: 12px 8px;
+  font-size: 14px;
+}
+.review-tabs [aria-selected="true"] {
+  color: #fff;
+  background: #383838;
+  box-shadow: inset 0 -2px #eac96a;
+}
+.review-tabs button:focus-visible {
+  outline-offset: -4px;
+}
+.analysis-tab {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) minmax(140px, 1fr);
+  min-height: 0;
+}
+.analysis-region,
+.review-tab-content {
+  overflow-y: auto;
+  min-height: 0;
+}
+.review-tab-content {
+  padding: 20px;
+}
+.review-tab-content button {
+  margin: 4px;
+}
+.review-panel .engine-panel {
+  padding: 16px;
+  max-height: none;
+  overflow: visible;
+}
+.review-panel .engine-panel h2 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+.review-panel .engine-panel p {
+  font-size: 13px;
+  line-height: 1.5;
+}
+.review-panel .analysis-actions button {
+  font-size: 13px;
+  padding: 8px;
+}
+.review-panel .review-moves {
+  padding: 8px;
+  overflow: hidden;
+  min-height: 0;
+  border-color: #555;
+}
+.review-panel .move-list {
+  height: 100%;
+  max-height: none;
+  border: 0;
+  border-radius: 0;
+}
+.review-footer {
+  border-top: 1px solid #555;
+  padding: 8px;
+  background: #242424;
+}
+.review-footer nav {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+.review-footer nav button {
+  font-size: 12px;
+  padding: 6px 4px;
+  background: #383838;
+  color: #eee;
+  border-color: transparent;
+}
+.review-footer nav button:last-child {
+  grid-column: 1 / -1;
+}
+.review-footer p {
+  font-size: 12px;
+  margin: 8px 4px 0;
+  line-height: 1.5;
+}
+.position-score {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.position-score strong {
+  font-size: 28px;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+.position-score span {
+  font-size: 12px;
+}
+.candidate-lines {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.candidate-lines li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  padding: 8px 0;
+  border-top: 1px solid #444;
+  font-size: 13px;
+}
+.candidate-lines strong {
+  background: #ddd;
+  color: #181818;
+  padding: 2px 6px;
+  align-self: start;
+  font-variant-numeric: tabular-nums;
+}
+.candidate-lines span {
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+.candidate-lines small {
+  grid-column: 2;
+  color: #b8b8b8;
+}
+.analysis-region,
+.move-list,
+.review-tab-content {
+  scrollbar-width: thin;
+  scrollbar-color: #777 #292929;
+}
+::selection {
+  background: #eac96a;
+  color: #181818;
+}
+@media (min-width: 1024px) {
+  .replay-workspace {
+    --board-size: min(
+      calc(100dvh - 180px),
+      calc((min(100vw, 1440px) - 104px) * 0.6),
+      850px
+    );
+    width: min(100%, calc(var(--board-size) * 5 / 3 + 24px));
+    margin-inline: auto;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: 24px;
+  }
+  .replay-workspace .replay-panel {
+    position: sticky;
+    top: 12px;
+  }
+  .replay-workspace .review-panel {
+    height: calc(var(--board-size) + 132px);
+  }
+}
+@media (max-width: 1023px) {
+  .replay-workspace .board-frame {
+    width: min(100%, 640px);
+  }
+  .replay-workspace .review-panel {
+    height: 740px;
+  }
+}
+
+.replay-workspace .player-label {
+  margin-block: 4px;
+}
