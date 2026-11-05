@@ -28,6 +28,7 @@ from services.core.coaching.values import (
 )
 
 THEMES = {"hanging_piece": "loose_pieces", "fork": "forks", "pin": "pins"}
+BETTER_KINDS = frozenset({"hanging_piece", "fork"})  # kinds with a reviewed better_* template
 IMPROVE = {"hanging_piece": "improve_loose_pieces", "fork": "improve_forks", "pin": "improve_pins"}
 
 
@@ -98,7 +99,7 @@ def threats(ctx: Context, items: list[EvidenceRecord]) -> CoachingResult:
 
 def better(ctx: Context, items: list[EvidenceRecord]) -> CoachingResult:
     for item in items:
-        if item.continuation_uci and item.kind in IMPROVE and is_opportunity(item, ctx.player):
+        if item.continuation_uci and item.kind in BETTER_KINDS and is_opportunity(item, ctx.player):
             shown = evidence_block(item, ctx.player, ctx.level)
             idea = TemplateBlock(f"better_{item.kind}", shown.evidence_ids, shown.values)
             return CoachingResult(
@@ -148,6 +149,10 @@ def answer(intent: Intent, ctx: Context, items: list[EvidenceRecord]) -> Coachin
     return handlers[intent](ctx, items)
 
 
+def as_intent(value: str | None) -> Intent | None:
+    return next((item for item in INTENTS if item == value), None)
+
+
 def choose_intent(
     intent: str | None, question: str, items: list[EvidenceRecord], model: Model | None,
     clock: Callable[[], float],
@@ -157,8 +162,9 @@ def choose_intent(
     choice = ask_model(model, question, known, clock) if model and question else None
     if choice and choice.evidence_ids:
         items = [item for item in items if item.id in choice.evidence_ids]
-    if intent in INTENTS:
-        return intent, items  # type: ignore[return-value]
+    approved = as_intent(intent)
+    if approved is not None:
+        return approved, items
     if intent is not None or not question:
         return None, items
     return (choice.intent if choice else keyword_intent(question)), items

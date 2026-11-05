@@ -12,7 +12,7 @@ from typing import Literal
 
 import chess
 
-from services.core.analysis.values import Color, EngineLine, MoveEvidence
+from services.core.analysis.values import Color, EngineLine, MoveEvidence, Wdl
 from services.core.classification.base import expected_for_mover
 from services.core.classification.review import ReviewedMove, legal_line
 from services.core.coaching.detectors import detect_evidence
@@ -21,6 +21,7 @@ from services.core.coaching.templates import block, render_blocks
 from services.core.coaching.values import Evidence, Level, TemplateBlock
 
 LessonKind = Literal["miss", "mistake", "blunder", "great", "brilliant"]
+FLAW_KINDS = ("miss", "mistake", "blunder")
 MAX_ALTERNATIVES = 2
 CLOSE_TO_BEST = Fraction(1, 20)  # beginners are offered playable, not engine-perfect, moves
 
@@ -133,17 +134,22 @@ def usable_lines(evidence: MoveEvidence, root: chess.Board) -> list[EngineLine]:
     ]
 
 
-def close_to_best(lines: list[EngineLine], mover: Color) -> list[EngineLine]:
-    """Keep the best line plus lines within a playable margin of it, by mover expected score."""
-    if not lines or lines[0].wdl is None:
+def close_to_best(
+    lines: list[EngineLine], reference_wdl: Wdl | None, mover: Color
+) -> list[EngineLine]:
+    """Keep usable lines within a playable margin of the engine's true best expected score.
+
+    The reference is the engine's top line even when that line is unusable (bounded or
+    illegal), so a weaker line is never offered just because the best one was dropped.
+    """
+    if reference_wdl is None:
         return lines[:1]
-    reference = expected_for_mover(lines[0].wdl, mover)
-    close = (
+    reference = expected_for_mover(reference_wdl, mover)
+    return [
         line
-        for line in lines[1:]
+        for line in lines
         if line.wdl is not None and reference - expected_for_mover(line.wdl, mover) <= CLOSE_TO_BEST
-    )
-    return [lines[0], *close]
+    ]
 
 
 def alternative_template(
@@ -174,7 +180,8 @@ def alternative_template(
 
 def alternatives(evidence: MoveEvidence, unsafe: bool, level: Level) -> tuple[Alternative, ...]:
     root = chess.Board(evidence.root_fen)
-    lines = close_to_best(usable_lines(evidence, root), evidence.mover)
+    reference = evidence.best[0].wdl if evidence.best else None
+    lines = close_to_best(usable_lines(evidence, root), reference, evidence.mover)
     unique: dict[str, EngineLine] = {}
     for line in lines:
         unique.setdefault(line.pv[0].uci, line)
@@ -186,7 +193,7 @@ def alternatives(evidence: MoveEvidence, unsafe: bool, level: Level) -> tuple[Al
     return tuple(found)
 
 
-def arrow(kind: Literal["played", "suggested"], rank: int, uci: str) -> Arrow:
+def make_arrow(kind: Literal["played", "suggested"], rank: int, uci: str) -> Arrow:
     return Arrow(kind, rank, uci[:2], uci[2:4], uci)
 
 
@@ -197,12 +204,12 @@ def build_lesson(move: ReviewedMove, evidence: MoveEvidence, level: Level) -> Le
         return None
     main = main_block(kind, move, evidence, level)
     suggestions: tuple[Alternative, ...] = ()
-    if kind in ("miss", "mistake", "blunder"):
+    if kind in FLAW_KINDS:
         unsafe = main.template_id.endswith("_hanging")
         suggestions = alternatives(evidence, unsafe, level)
     arrows = (
-        arrow("played", 0, evidence.played_uci),
-        *(arrow("suggested", item.rank, item.uci) for item in suggestions),
+        make_arrow("played", 0, evidence.played_uci),
+        *(make_arrow("suggested", item.rank, item.uci) for item in suggestions),
     )
     return Lesson(move.ply, kind, level, (main,), suggestions, arrows)
 

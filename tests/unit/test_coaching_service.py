@@ -115,3 +115,10 @@ def test_lesson_text_is_the_explanation_and_alternatives_are_separate():
     lesson = lessons_response(analysis([loose_rook()]), "beginner").lessons[0]
     assert "Consider moving" not in lesson.text
     assert lesson.alternatives and "Consider moving" in lesson.alternatives[0].text
+
+
+def test_game_improvement_on_an_unanalyzed_ply_reports_partial_coverage():
+    result = coach_response(
+        analysis([missed_queen()], state="running"), request(intent="game_improvement", ply=3)
+    )
+    assert result.status == "uncertain" and result.scope == "partial_game"

@@ -17,7 +17,14 @@ from services.core.analysis.values import AnalysisError, MoveEvidence
 from services.core.classification.review import legal_line
 from services.core.coaching.coach import coach
 from services.core.coaching.detectors import detect_evidence
-from services.core.coaching.lessons import Arrow, Lesson, build_lessons, lesson_kind
+from services.core.coaching.lessons import (
+    FLAW_KINDS,
+    Arrow,
+    Lesson,
+    build_lessons,
+    lesson_kind,
+    make_arrow,
+)
 from services.core.coaching.templates import render_blocks, render_coaching
 from services.core.coaching.values import Evidence, Level
 
@@ -78,15 +85,23 @@ def game_evidence(analysis: AnalysisResponse) -> list[Evidence]:
     found: list[Evidence] = []
     for review in analysis.classifications:
         kind = lesson_kind(review)
-        if review.ply in by_ply and kind in ("miss", "mistake", "blunder"):
+        if review.ply in by_ply and kind in FLAW_KINDS:
             found.extend(position_evidence(by_ply[review.ply]))
     return found[:MAX_GAME_EVIDENCE]
 
 
+def context_move(analysis: AnalysisResponse, request: CoachRequest) -> MoveEvidence:
+    """The analyzed move a question is about; game advice may use the latest analyzed move."""
+    exact = next((item for item in analysis.evidence if item.ply == request.ply), None)
+    if exact is not None:
+        return exact
+    if request.intent == "game_improvement" and analysis.evidence:
+        return analysis.evidence[-1]
+    raise AnalysisError("ply_not_analyzed", "This move has not been analyzed yet.", 409)
+
+
 def coach_response(analysis: AnalysisResponse, request: CoachRequest) -> CoachResponse:
-    move = next((item for item in analysis.evidence if item.ply == request.ply), None)
-    if move is None:
-        raise AnalysisError("ply_not_analyzed", "This move has not been analyzed yet.", 409)
+    move = context_move(analysis, request)
     items = (
         game_evidence(analysis) if request.intent == "game_improvement" else position_evidence(move)
     )
@@ -96,7 +111,7 @@ def coach_response(analysis: AnalysisResponse, request: CoachRequest) -> CoachRe
         game_exists=True,
         analysis_exists=True,
         total_plies=analysis.total_plies,
-        ply=request.ply,
+        ply=move.ply,
         fen=move.root_fen,
         player_color=request.player_color,
         level=request.level,
@@ -105,10 +120,7 @@ def coach_response(analysis: AnalysisResponse, request: CoachRequest) -> CoachRe
         evidence=items,
         analysis_state=analysis.state,
     )
-    arrows = [
-        arrow_out(Arrow("suggested", 1, uci[:2], uci[2:4], uci))
-        for uci in result.continuation_uci[:1]
-    ]
+    arrows = [arrow_out(make_arrow("suggested", 1, uci)) for uci in result.continuation_uci[:1]]
     return CoachResponse(
         status=result.status,
         text=render_coaching(result),

@@ -57,17 +57,31 @@ def hanging_evidence(board: chess.Board, fen: str, ply: int) -> list[Evidence]:
     return [capture_evidence(fen, ply, move) for move in ranked[:MAX_PER_KIND]]
 
 
+def wins_material(board: chess.Board, forker: chess.Piece, target_square: int) -> bool:
+    """A target is worth forking if losing it costs material: undefended or worth more."""
+    target = board.piece_at(target_square)
+    if target is None:
+        return False
+    if target.piece_type == chess.KING:
+        return True
+    worth_a_piece = POINTS[target.piece_type] >= POINTS[chess.KNIGHT]
+    undefended = not board.is_attacked_by(target.color, target_square)
+    return worth_a_piece and (undefended or POINTS[target.piece_type] > POINTS[forker.piece_type])
+
+
 def fork_targets(board: chess.Board, square: int) -> tuple[int, ...]:
-    """Opposing pieces the piece on `square` attacks that are worth a knight or more."""
-    mover = board.piece_at(square)
-    if mover is None or board.is_attacked_by(not mover.color, square):
+    """Opposing pieces the safe, unpinned piece on `square` attacks that it could win."""
+    forker = board.piece_at(square)
+    if forker is None or board.is_attacked_by(not forker.color, square):
         return ()  # a forking piece that can be captured does not fork anything
+    if board.is_pinned(forker.color, square):
+        return ()  # a pinned piece cannot freely carry out the threat
     return tuple(
         target
         for target in board.attacks(square)
         if (piece := board.piece_at(target)) is not None
-        and piece.color != mover.color
-        and (piece.piece_type == chess.KING or POINTS[piece.piece_type] >= 3)
+        and piece.color != forker.color
+        and wins_material(board, forker, target)
     )
 
 

@@ -49,7 +49,7 @@ TEMPLATES: dict[str, dict[Level, str]] = {
     "fork_opportunity": both(
         "Moving your {attacker_piece} to {attacker_square} attacks the opponent's "
         "{target_piece} on {target_square} and {second_piece} on {second_square} at the same "
-        "time, so they cannot save both.",
+        "time, which is hard to defend against.",
         "A {attacker_piece} on {attacker_square} forks the {target_piece} on {target_square} "
         "and the {second_piece} on {second_square}.",
     ),
@@ -61,13 +61,13 @@ TEMPLATES: dict[str, dict[Level, str]] = {
     ),
     "pin_opportunity": both(
         "Your {attacker_piece} on {attacker_square} pins the opponent's {target_piece} on "
-        "{target_square} against the king on {king_square}, so it cannot safely move.",
+        "{target_square} against the king on {king_square}, so it cannot move off that line.",
         "Your {attacker_piece} on {attacker_square} pins the {target_piece} on "
         "{target_square} to the king on {king_square}.",
     ),
     "pin_danger": both(
         "The opponent's {attacker_piece} on {attacker_square} pins your {target_piece} on "
-        "{target_square} against your king on {king_square}, so it cannot safely move.",
+        "{target_square} against your king on {king_square}, so it cannot move off that line.",
         "Your {target_piece} on {target_square} is pinned to your king on {king_square} by the "
         "opponent's {attacker_piece} on {attacker_square}.",
     ),
@@ -202,13 +202,13 @@ TEMPLATES: dict[str, dict[Level, str]] = {
             ),
             (
                 "safe",
-                "Consider moving your {piece} from {from_square} to {to_square}, which keeps your "
-                "pieces protected.",
+                "Consider moving your {piece} from {from_square} to {to_square}, which leaves none "
+                "of your pieces undefended.",
             ),
             (
                 "best",
-                "Consider moving your {piece} from {from_square} to {to_square}, which the engine "
-                "rates as the strongest option.",
+                "Consider moving your {piece} from {from_square} to {to_square}, which is the "
+                "strongest option here.",
             ),
         )
     },
