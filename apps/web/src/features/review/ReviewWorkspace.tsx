@@ -117,7 +117,7 @@ function ReviewShell({
           hidden={tab !== "Review"}
           className="review-tab-content"
         >
-          {review(selectMoment)}
+          {tab === "Review" && review(selectMoment)}
         </div>
         <div
           id="view-chess-guidance"

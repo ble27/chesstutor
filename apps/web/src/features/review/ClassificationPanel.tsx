@@ -1,5 +1,6 @@
 import type { Analysis } from "../../api/analysis";
 import { ClassificationSummary } from "./ClassificationSummary";
+import { ProofEvidence } from "./ProofEvidence";
 
 export function SelectedMoveClassification({
   job,
@@ -11,16 +12,13 @@ export function SelectedMoveClassification({
   const move = job.classifications?.find((item) => item.ply === selectedPly);
   if (!move) return null;
   return (
-    <p className="selected-classification">
-      Independent classification: {move.classification.base_label}
-      {move.provisional && " · Quick is provisional relative to Deep"}
-      {move.badges.map((badge) => (
-        <span key={badge}>
-          {" "}
-          · {badge === "brilliant" ? "Brilliant (heuristic)" : badge}
-        </span>
-      ))}
-    </p>
+    <div className="selected-classification">
+      <p>
+        Independent classification: {move.classification.base_label}
+        {move.provisional && " · Quick is provisional relative to Deep"}
+      </p>
+      <ProofEvidence move={move} themes={job.summary?.practice_themes ?? []} />
+    </div>
   );
 }
 
