@@ -1,6 +1,34 @@
 {
   "components": {
     "schemas": {
+      "AlternativeOut": {
+        "additionalProperties": false,
+        "properties": {
+          "rank": {
+            "maximum": 2.0,
+            "minimum": 1.0,
+            "title": "Rank",
+            "type": "integer"
+          },
+          "text": {
+            "maxLength": 300,
+            "title": "Text",
+            "type": "string"
+          },
+          "uci": {
+            "pattern": "^[a-h][1-8][a-h][1-8][qrbn]?$",
+            "title": "Uci",
+            "type": "string"
+          }
+        },
+        "required": [
+          "rank",
+          "uci",
+          "text"
+        ],
+        "title": "AlternativeOut",
+        "type": "object"
+      },
       "AnalysisRequest": {
         "additionalProperties": false,
         "properties": {
@@ -210,6 +238,49 @@
           "months"
         ],
         "title": "ArchivesResponse",
+        "type": "object"
+      },
+      "ArrowOut": {
+        "additionalProperties": false,
+        "properties": {
+          "from_square": {
+            "pattern": "^[a-h][1-8]$",
+            "title": "From Square",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "played",
+              "suggested"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "rank": {
+            "maximum": 2.0,
+            "minimum": 0.0,
+            "title": "Rank",
+            "type": "integer"
+          },
+          "to_square": {
+            "pattern": "^[a-h][1-8]$",
+            "title": "To Square",
+            "type": "string"
+          },
+          "uci": {
+            "pattern": "^[a-h][1-8][a-h][1-8][qrbn]?$",
+            "title": "Uci",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "rank",
+          "from_square",
+          "to_square",
+          "uci"
+        ],
+        "title": "ArrowOut",
         "type": "object"
       },
       "BadgeProof": {
@@ -592,6 +663,185 @@
         "title": "ClassificationSummary",
         "type": "object"
       },
+      "CoachBlockOut": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Evidence Ids",
+            "type": "array"
+          },
+          "template_id": {
+            "title": "Template Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "template_id",
+          "evidence_ids"
+        ],
+        "title": "CoachBlockOut",
+        "type": "object"
+      },
+      "CoachRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "intent": {
+            "anyOf": [
+              {
+                "enum": [
+                  "explain_move",
+                  "better_move",
+                  "opponent_threat",
+                  "position_plan",
+                  "explain_chess_rule",
+                  "game_improvement"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intent"
+          },
+          "level": {
+            "enum": [
+              "beginner",
+              "intermediate"
+            ],
+            "title": "Level",
+            "type": "string"
+          },
+          "player_color": {
+            "enum": [
+              "white",
+              "black"
+            ],
+            "title": "Player Color",
+            "type": "string"
+          },
+          "ply": {
+            "maximum": 300.0,
+            "minimum": 1.0,
+            "title": "Ply",
+            "type": "integer"
+          },
+          "question": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Question"
+          }
+        },
+        "required": [
+          "ply",
+          "player_color",
+          "level"
+        ],
+        "title": "CoachRequest",
+        "type": "object"
+      },
+      "CoachResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "arrows": {
+            "items": {
+              "$ref": "#/components/schemas/ArrowOut"
+            },
+            "title": "Arrows",
+            "type": "array"
+          },
+          "blocks": {
+            "items": {
+              "$ref": "#/components/schemas/CoachBlockOut"
+            },
+            "title": "Blocks",
+            "type": "array"
+          },
+          "continuation_uci": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Continuation Uci",
+            "type": "array"
+          },
+          "evidence_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Evidence Ids",
+            "type": "array"
+          },
+          "player_color": {
+            "enum": [
+              "white",
+              "black"
+            ],
+            "title": "Player Color",
+            "type": "string"
+          },
+          "practice_themes": {
+            "items": {
+              "$ref": "#/components/schemas/PracticeThemeOut"
+            },
+            "title": "Practice Themes",
+            "type": "array"
+          },
+          "scope": {
+            "title": "Scope",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "grounded",
+              "uncertain",
+              "refused"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "suggest_deep": {
+            "title": "Suggest Deep",
+            "type": "boolean"
+          },
+          "supporting_plies": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Supporting Plies",
+            "type": "array"
+          },
+          "text": {
+            "maxLength": 1500,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "text",
+          "player_color",
+          "blocks",
+          "evidence_ids",
+          "continuation_uci",
+          "arrows",
+          "suggest_deep",
+          "scope",
+          "supporting_plies",
+          "practice_themes"
+        ],
+        "title": "CoachResponse",
+        "type": "object"
+      },
       "Coverage": {
         "additionalProperties": false,
         "properties": {
@@ -933,6 +1183,104 @@
         "type": "object"
       },
       "JsonValue": {},
+      "LessonOut": {
+        "additionalProperties": false,
+        "properties": {
+          "alternatives": {
+            "items": {
+              "$ref": "#/components/schemas/AlternativeOut"
+            },
+            "maxItems": 2,
+            "title": "Alternatives",
+            "type": "array"
+          },
+          "arrows": {
+            "items": {
+              "$ref": "#/components/schemas/ArrowOut"
+            },
+            "maxItems": 3,
+            "title": "Arrows",
+            "type": "array"
+          },
+          "evidence_ids": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 8,
+            "title": "Evidence Ids",
+            "type": "array"
+          },
+          "kind": {
+            "enum": [
+              "miss",
+              "mistake",
+              "blunder",
+              "great",
+              "brilliant"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "ply": {
+            "maximum": 300.0,
+            "minimum": 1.0,
+            "title": "Ply",
+            "type": "integer"
+          },
+          "text": {
+            "maxLength": 800,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ply",
+          "kind",
+          "text",
+          "evidence_ids",
+          "alternatives",
+          "arrows"
+        ],
+        "title": "LessonOut",
+        "type": "object"
+      },
+      "LessonsResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "analysis_id": {
+            "format": "uuid",
+            "title": "Analysis Id",
+            "type": "string"
+          },
+          "complete": {
+            "title": "Complete",
+            "type": "boolean"
+          },
+          "lessons": {
+            "items": {
+              "$ref": "#/components/schemas/LessonOut"
+            },
+            "title": "Lessons",
+            "type": "array"
+          },
+          "level": {
+            "enum": [
+              "beginner",
+              "intermediate"
+            ],
+            "title": "Level",
+            "type": "string"
+          }
+        },
+        "required": [
+          "analysis_id",
+          "level",
+          "complete",
+          "lessons"
+        ],
+        "title": "LessonsResponse",
+        "type": "object"
+      },
       "MateScore": {
         "additionalProperties": false,
         "properties": {
@@ -1198,6 +1546,28 @@
           "supporting_plies"
         ],
         "title": "PracticeTheme",
+        "type": "object"
+      },
+      "PracticeThemeOut": {
+        "additionalProperties": false,
+        "properties": {
+          "supporting_plies": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Supporting Plies",
+            "type": "array"
+          },
+          "theme": {
+            "title": "Theme",
+            "type": "string"
+          }
+        },
+        "required": [
+          "theme",
+          "supporting_plies"
+        ],
+        "title": "PracticeThemeOut",
         "type": "object"
       },
       "ReviewedMove": {
@@ -1654,6 +2024,210 @@
           }
         },
         "summary": "Cancel"
+      }
+    },
+    "/api/v1/analyses/{analysis_id}/coach": {
+      "post": {
+        "operationId": "ask_coach",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "analysis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Analysis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CoachRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoachResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Coach"
+      }
+    },
+    "/api/v1/analyses/{analysis_id}/lessons": {
+      "get": {
+        "operationId": "read_lessons",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "analysis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Analysis Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "level",
+            "required": false,
+            "schema": {
+              "default": "beginner",
+              "enum": [
+                "beginner",
+                "intermediate"
+              ],
+              "title": "Level",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Lessons"
       }
     },
     "/api/v1/games/{game_id}": {
