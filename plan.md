@@ -99,13 +99,16 @@ heuristic brilliance, and Quick results as provisional relative to Deep.
 ## S5 — Grounded coaching
 
 **Implementation:** Add evidence detectors, reviewed templates, supported intents,
-both-player advice, beginner/intermediate wording, and game improvement. Keep
+both-player advice, beginner/intermediate wording, and game improvement. Add an
+automatic per-ply lesson keyed to the S4 label and badges, and typed arrows for
+up to three legally replayed engine PV first moves with a text equivalent. Keep
 the private model adapter optional; core coaching works without it. Render only
 reviewed templates and validated typed chess values.
 
 **Tests to write first:** Unsupported claims rendered; illegal alternatives
 suggested; absent evidence produces confident advice; wording ignores level;
-unrelated/mixed or unsupported requests answered; injected PGN, username, or chat
+a lesson that contradicts its stored label or shows Brilliant without the badge;
+an arrow from an illegal, bounded, or non-PV move; unrelated/mixed or unsupported requests answered; injected PGN, username, or chat
 instructions followed; invalid model evidence IDs, schema failures, or timeouts
 reach output. Cover all supported intents and evidence-to-template mappings.
 

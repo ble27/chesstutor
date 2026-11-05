@@ -297,6 +297,21 @@ a better legal option when available, a short continuation, and a practical plan
 Support beginner/intermediate wording and either player's perspective. Weak
 evidence produces uncertainty and an offer to run Deep, not an invented tactic.
 
+Every analyzed ply also gets an automatic short lesson without a question. It is
+rendered from the stored S4 label (Best, Good, Inaccuracy, Mistake, Blunder, Miss,
+Forced, Unclassified) and badges (Great, Brilliant), the played move, the engine's
+better move, and the supporting detector evidence. There is no "decent" label;
+Good covers it. Unclassified plies say the evidence is insufficient and offer Deep.
+Brilliant and Great lessons are shown only when the verified badge exists.
+
+Suggested good moves are exposed as typed arrows derived from the engine's
+principal variations: the first move of each stored candidate line that replays
+legally from the position, at most three per ply, with rank, from/to squares, SAN,
+and a score label that keeps POV and mate separate. The played move is a distinct
+arrow kind. Arrows come only from validated engine lines, never from model prose,
+and are omitted when the line is bounded or illegal. Arrows need a text equivalent
+listing the same moves, and color is never the only distinction.
+
 Evidence detectors should cover hanging pieces, forks, pins, skewers, discovered
 attacks, mate threats, development, king safety, center control, pawn structure,
 piece activity, exchanges, and basic endgame principles. Each concrete claim
