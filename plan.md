@@ -100,15 +100,18 @@ heuristic brilliance, and Quick results as provisional relative to Deep.
 
 **Implementation:** Add evidence detectors, reviewed templates, supported intents,
 both-player advice, beginner/intermediate wording, and game improvement. Add an
-automatic per-ply lesson keyed to the S4 label and badges, and typed arrows for
-up to three legally replayed engine PV first moves with a text equivalent. Keep
+automatic beginner-friendly lesson only for Miss, Mistake, Blunder, and notable
+good plies, worded in plain language rather than algebraic notation, with one or
+two practical alternatives, and typed arrows for at most two legally replayed
+engine PV first moves with a text equivalent. Keep
 the private model adapter optional; core coaching works without it. Render only
 reviewed templates and validated typed chess values.
 
 **Tests to write first:** Unsupported claims rendered; illegal alternatives
 suggested; absent evidence produces confident advice; wording ignores level;
 a lesson that contradicts its stored label or shows Brilliant without the badge;
-an arrow from an illegal, bounded, or non-PV move; unrelated/mixed or unsupported requests answered; injected PGN, username, or chat
+an arrow from an illegal, bounded, or non-PV move; a routine ply annotated; more
+than two alternatives suggested; algebraic notation in primary lesson text; unrelated/mixed or unsupported requests answered; injected PGN, username, or chat
 instructions followed; invalid model evidence IDs, schema failures, or timeouts
 reach output. Cover all supported intents and evidence-to-template mappings.
 

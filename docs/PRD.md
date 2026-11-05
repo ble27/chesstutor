@@ -297,20 +297,36 @@ a better legal option when available, a short continuation, and a practical plan
 Support beginner/intermediate wording and either player's perspective. Weak
 evidence produces uncertainty and an offer to run Deep, not an invented tactic.
 
-Every analyzed ply also gets an automatic short lesson without a question. It is
-rendered from the stored S4 label (Best, Good, Inaccuracy, Mistake, Blunder, Miss,
-Forced, Unclassified) and badges (Great, Brilliant), the played move, the engine's
-better move, and the supporting detector evidence. There is no "decent" label;
-Good covers it. Unclassified plies say the evidence is insufficient and offer Deep.
-Brilliant and Great lessons are shown only when the verified badge exists.
+Selected plies get an automatic short lesson without a question. Annotate only
+Miss, Mistake, Blunder, and notable good play (Great or Brilliant badge, or a
+Best move that avoids a verified threat). Do not annotate every ply; routine
+Good, Best, Forced, Inaccuracy, and Unclassified plies stay quiet, with the label
+still visible and an on-demand explanation available. Lessons come from the stored
+S4 label and badges, the played move, the engine's better move, and the supporting
+detector evidence. Brilliant and Great lessons require the verified badge.
 
-Suggested good moves are exposed as typed arrows derived from the engine's
-principal variations: the first move of each stored candidate line that replays
-legally from the position, at most three per ply, with rank, from/to squares, SAN,
-and a score label that keeps POV and mate separate. The played move is a distinct
-arrow kind. Arrows come only from validated engine lines, never from model prose,
-and are omitted when the line is bounded or illegal. Arrows need a text equivalent
-listing the same moves, and color is never the only distinction.
+Lesson wording is plain and coach-like, written for a beginner. Describe pieces
+and squares in words ("your rook on d5", "the opponent's bishop") and what the
+move allows or misses, not in algebraic notation. Algebraic notation may appear
+only as secondary text, such as an alternate line a user expands. Examples:
+"This move is a mistake because it leaves your rook undefended, so the opponent's
+bishop can capture it." "This was a missed chance: you could have captured the
+pawn on e5, which was no longer protected." A concrete claim appears only when a
+detector verified it on a legal line; otherwise the lesson stays general.
+
+Suggest at most one or two practical alternatives, never a full engine list. Prefer
+the engine's best move when it is understandable; otherwise offer the simplest
+move that avoids the problem and is within a small score margin of the best, because
+beginners do not play like an engine. Each alternative is explained in a sentence
+("this keeps your rook protected").
+
+Suggested moves are exposed as typed arrows from the engine's principal variations:
+the first move of a stored candidate line that replays legally, at most two per
+annotated ply, with rank, from/to squares, a plain-language description, and a score
+label that keeps POV and mate separate. The played move is a distinct arrow kind.
+Arrows come only from validated engine lines, never model prose, and are omitted
+when the line is bounded or illegal. Arrows need a text equivalent listing the same
+moves, and color is never the only distinction.
 
 Evidence detectors should cover hanging pieces, forks, pins, skewers, discovered
 attacks, mate threats, development, king safety, center control, pawn structure,
