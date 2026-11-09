@@ -70,7 +70,7 @@ def test_analysis_response_exposes_labels_and_partial_coverage():
         mode="quick",
         state="running",
         game_data=game,
-        engine={"classification_version": "v1"},
+        engine={"classification_version": "v2"},
         token=uuid4(),
         attempts=1,
         completed_plies=1,
@@ -96,7 +96,7 @@ def test_analysis_response_exposes_labels_and_partial_coverage():
 def test_legacy_engine_identity_remains_usable_without_crossing_other_versions():
     from services.worker.analysis import compatible_engine_identity
 
-    current = {"binary_sha256": "trusted", "classification_version": "v1"}
+    current = {"binary_sha256": "trusted", "classification_version": "v2"}
     old = {**current, "classification_version": "pending-v1"}
     assert compatible_engine_identity(current, old)
     assert compatible_engine_identity(current, current)

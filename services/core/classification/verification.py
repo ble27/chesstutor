@@ -13,10 +13,15 @@ import chess
 from services.core.analysis.runner import Checkpoint, Engine
 from services.core.analysis.values import PRESETS, EngineLine, Mode, MoveEvidence
 from services.core.classification.badges import Badge
-from services.core.classification.base import expected_for_mover
+from services.core.classification.base import POLICY_VERSION, expected_for_mover
 from services.core.classification.proofs import BadgeProof, Motif
 from services.core.classification.review import ReviewedMove, classify_evidence, legal_line
-from services.core.classification.tactics import material_gain, offered_capture_moves, winning_motif
+from services.core.classification.tactics import (
+    free_capture,
+    material_gain,
+    offered_capture_moves,
+    winning_motif,
+)
 
 Reserve = Callable[[int], Awaitable[bool]]
 
@@ -69,7 +74,8 @@ def candidate_for(
             return Candidate(
                 "unique_move", board.copy(), (board.parse_uci(evidence.best[runner].pv[0].uci),)
             )
-    if loss >= 0.10 and best.pv[0].uci != evidence.played_uci and winning_motif(board, best):
+    unplayed_win = winning_motif(board, best) or free_capture(board, best)
+    if loss >= 0.10 and best.pv[0].uci != evidence.played_uci and unplayed_win:
         return Candidate("forced_mate", board.copy(), (board.parse_uci(best.pv[0].uci),))
     return None
 
@@ -101,6 +107,9 @@ def proof_from_line(
         ) < Fraction(1, 10):
             return None
         motif = winning_motif(candidate.board, line)
+        free = motif is None and free_capture(candidate.board, line)
+        if free:
+            motif = "material_win"  # an undefended piece needs no long forcing proof
         if motif is None:
             return None
         if (
@@ -108,13 +117,17 @@ def proof_from_line(
             and winning_motif(candidate.board, evidence.played) == "forced_mate"
         ):
             return None
-        if motif == "material_win" and (
-            len(evidence.played.pv) < 6 or material_gain(candidate.board, evidence.played) >= 2
+        if (
+            motif == "material_win"
+            and not free
+            and (
+                len(evidence.played.pv) < 6 or material_gain(candidate.board, evidence.played) >= 2
+            )
         ):
             return None
         badge = "miss"
     return BadgeProof(
-        f"v1:{evidence.ply}:{badge}",
+        f"{POLICY_VERSION}:{evidence.ply}:{badge}",
         badge,
         motif,
         evidence.ply,

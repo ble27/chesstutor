@@ -33,7 +33,7 @@ export function ClassificationPanel({
   const coverage = job.summary?.coverage;
   return (
     <section aria-label="Move classifications">
-      <p>Independent classifications use Chess Tutor policy v1.</p>
+      <p>Independent classifications use Chess Tutor policy v2.</p>
       <p>
         Brilliant is a heuristic; badges require checked supporting evidence.
       </p>

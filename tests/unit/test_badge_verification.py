@@ -363,3 +363,26 @@ def test_verification_reserves_the_engine_cleanup_bound_before_starting_search()
     assert result.badges == ()
     assert reservations == [1200]
     assert clock.seconds * 1000 < reservations[0]
+
+
+FREE_PAWN = "4k3/8/8/3p4/8/2N5/8/4K3 w - - 0 1"
+DEFENDED_PAWN = "4k3/8/4p3/3p4/8/2N5/8/4K3 w - - 0 1"
+
+
+def missed_capture(fen: str) -> tuple[chess.Board, MoveEvidence, EngineLine]:
+    board = chess.Board(fen)
+    best, played = line(board, ("c3d5",), 800), line(board, ("e1e2",), 500)
+    return board, evidence(board, (best,), played), best
+
+
+def test_ignoring_a_free_pawn_is_a_miss():
+    board, item, best = missed_capture(FREE_PAWN)
+    result, _ = verify(board, item, FakeVerifier(best))
+    assert result.badges == ("miss",)
+    assert result.proofs[0].motif == "material_win"
+
+
+def test_a_defended_pawn_is_not_a_missed_capture():
+    board, item, best = missed_capture(DEFENDED_PAWN)
+    result, _ = verify(board, item, FakeVerifier(best))
+    assert result.badges == ()

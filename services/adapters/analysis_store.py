@@ -337,7 +337,7 @@ class PostgresAnalyses:
                     ply=evidence.ply,
                     payload=payload,
                     move_review=asdict(review or classify_evidence(evidence, job.mode))
-                    if job.engine.get("classification_version") == "v1"
+                    if job.engine.get("classification_version") == "v2"
                     else None,
                 )
             )

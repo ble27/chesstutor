@@ -36,7 +36,7 @@ class StoredJob(StrictModel):
     def response(
         self, owner: str, evidence: list[MoveEvidence], cached: bool = False
     ) -> AnalysisResponse:
-        compatible = self.engine.get("classification_version") == "v1"
+        compatible = self.engine.get("classification_version") == "v2"
         classified = self.persisted_reviews
         if classified is None:
             classified = (

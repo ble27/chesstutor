@@ -16,7 +16,7 @@ function proofView(
   if (
     typeof id !== "string" ||
     input.ply !== ply ||
-    id !== `v1:${ply}:${badge}` ||
+    id !== `v2:${ply}:${badge}` ||
     !badges.includes(badge)
   )
     return null;

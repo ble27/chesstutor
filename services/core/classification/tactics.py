@@ -62,6 +62,17 @@ def winning_motif(board: chess.Board, line: EngineLine) -> Motif | None:
     return None
 
 
+def free_capture(board: chess.Board, line: EngineLine) -> bool:
+    """The line starts by capturing a piece that nothing defends, so it wins material outright."""
+    if not legal_line(board, line):
+        return False
+    move = chess.Move.from_uci(line.pv[0].uci)
+    target = board.piece_at(move.to_square)
+    if target is None or target.piece_type == chess.KING:
+        return False
+    return not board.is_attacked_by(target.color, move.to_square)
+
+
 def is_recapture(board: chess.Board, move: chess.Move) -> bool:
     if not board.move_stack or not board.is_capture(move):
         return False

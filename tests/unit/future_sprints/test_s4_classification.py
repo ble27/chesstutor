@@ -54,7 +54,7 @@ def test_exact_loss_boundaries_for_both_colors(mover, played_wins, top, label):
     )
     assert result.base_label == label
     assert result.expected_loss == pytest.approx((8000 - played_wins) / 10000)
-    assert result.policy_version == "v1"
+    assert result.policy_version == "v2"
 
 
 @pytest.mark.parametrize("top", [False, True])

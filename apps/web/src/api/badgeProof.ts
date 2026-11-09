@@ -149,8 +149,8 @@ export function validateProofs(
         : review.mover;
     if (
       proof.ply !== review.ply ||
-      proof.id !== `v1:${review.ply}:${proof.badge}` ||
-      proof.policy_version !== "v1" ||
+      proof.id !== `v2:${review.ply}:${proof.badge}` ||
+      proof.policy_version !== "v2" ||
       !review.badges.includes(proof.badge) ||
       proof.reserved_ms < (mode === "deep" ? 750 : 100) ||
       proof.verified_followup_plies !== proof.line.pv.length ||

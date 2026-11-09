@@ -5,6 +5,7 @@ from typing import Literal
 
 from services.core.analysis.values import EngineLine
 from services.core.classification.badges import Badge
+from services.core.classification.base import POLICY_VERSION
 
 Motif = Literal["forced_mate", "material_win", "unique_move", "sacrifice"]
 
@@ -21,5 +22,5 @@ class BadgeProof:
     offered_material_points: int = 0
     verified_followup_plies: int = 0
     expected_score_after_reply: float | None = None
-    policy_version: str = "v1"
+    policy_version: str = POLICY_VERSION
     survival_line: EngineLine | None = None

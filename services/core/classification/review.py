@@ -6,7 +6,13 @@ import chess
 
 from services.core.analysis.values import Color, EngineLine, JobState, Mode, MoveEvidence
 from services.core.classification.badges import Badge
-from services.core.classification.base import BaseLabel, Classification, classify_move
+from services.core.classification.base import (
+    BaseLabel,
+    Classification,
+    TacticalCost,
+    classify_move,
+)
+from services.core.classification.cost import tactical_cost
 from services.core.classification.proofs import BadgeProof
 from services.core.classification.summary import ClassificationSummary, summarize_game
 
@@ -57,6 +63,7 @@ def legal_line(root: chess.Board, line: EngineLine) -> bool:
 
 
 def classify_evidence(evidence: MoveEvidence, mode: Mode) -> ReviewedMove:
+    cost: TacticalCost | None = None
     try:
         board = chess.Board(evidence.root_fen)
         legal = board.is_valid() and bool(evidence.best)
@@ -64,6 +71,7 @@ def classify_evidence(evidence: MoveEvidence, mode: Mode) -> ReviewedMove:
         legal = legal and evidence.played.pv[0].uci == evidence.played_uci
         legal = legal and ("white" if board.turn else "black") == evidence.mover
         legal_count = board.legal_moves.count()
+        cost = tactical_cost(board, evidence) if legal else None
     except ValueError, IndexError:
         legal, legal_count = False, 1
     best = evidence.best[0] if evidence.best else None
@@ -77,6 +85,7 @@ def classify_evidence(evidence: MoveEvidence, mode: Mode) -> ReviewedMove:
         evidence_status=evidence.status,
         pv_legal=legal,
         search_complete=bool(best and not best.bounded and not evidence.played.bounded),
+        tactical=cost,
     )
     # Base evidence alone never authorizes a badge; verification attaches proof.
     return ReviewedMove(evidence.ply, evidence.mover, result, (), mode == "quick")

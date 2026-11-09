@@ -208,7 +208,7 @@ export function validateReview(
             item.classification.expected_loss !==
               lines[index]?.expected_loss)) ||
         item.provisional !== (mode === "quick") ||
-        item.classification.policy_version !== "v1",
+        item.classification.policy_version !== "v2",
     )
   )
     throw new Error("Classification belongs to another move");

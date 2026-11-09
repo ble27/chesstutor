@@ -249,7 +249,7 @@ incomplete search, or unstable results receive
 See [python-chess engine docs](https://python-chess.readthedocs.io/en/stable/engine.html)
 and [Stockfish UCI controls](https://official-stockfish.github.io/docs/stockfish-wiki/UCI-Protocol-and-Stockfish-Commands.html).
 
-### Independent classification policy v1
+### Independent classification policy v2
 
 These are initial product rules to calibrate on annotated fixtures, not
 Chess.com's definitions. Every change increments the policy version.
@@ -261,14 +261,14 @@ Chess.com's definitions. Every change increments the policy version.
 | Good | Other moves with `0 <= L < 0.05` |
 | Inaccuracy | `0.05 <= L < 0.10` |
 | Mistake | `0.10 <= L < 0.20` |
-| Blunder | `L >= 0.20` |
+| Blunder | `L >= 0.20` and the engine line loses at least 3 material points against the best line or allows a forced mate; otherwise Mistake |
 | Unclassified | Missing, unstable, or insufficient evidence |
 
 Each move gets one base label and optional badges. Test all numerical boundaries
 and both colors. A low-loss move may be Good even if it is not the top choice.
 
-- **Miss:** a verified tactical opportunity to force mate or win material was
-  available, the move abandons it, and `L >= 0.10`. Require a detected motif and
+- **Miss:** a verified tactical opportunity to force mate or win material (including
+  capturing an undefended piece) was available, the move abandons it, and `L >= 0.10`. Require a detected motif and
   legal supporting line; show what was missed. An evaluation swing alone fails.
 - **Great:** Deep only; a Best move is the only candidate within 0.05 of best,
   and the next candidate loses at least 0.15. Recheck the runner-up with the same

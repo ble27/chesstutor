@@ -7,7 +7,23 @@ from typing import Literal
 from services.core.analysis.values import Color, EvidenceStatus, Wdl
 
 BaseLabel = Literal["forced", "best", "good", "inaccuracy", "mistake", "blunder", "unclassified"]
-POLICY_VERSION = "v1"
+POLICY_VERSION = "v2"
+BLUNDER_MATERIAL_POINTS = 3  # a whole minor piece, the smallest "major material"
+
+
+@dataclass(frozen=True)
+class TacticalCost:
+    """What the played engine line costs the mover beyond the evaluation drop.
+
+    `material_points` uses P=1/N=3/B=3/R=5/Q=9 relative to the engine's best line.
+    """
+
+    material_points: int
+    allows_mate: bool
+
+    @property
+    def justifies_blunder(self) -> bool:
+        return self.allows_mate or self.material_points >= BLUNDER_MATERIAL_POINTS
 
 
 @dataclass(frozen=True)
@@ -50,7 +66,11 @@ def classify_move(
     search_complete: bool,
     best_score: tuple[str, int, str] | None = None,
     played_score: tuple[str, int, str] | None = None,
+    tactical: TacticalCost | None = None,
 ) -> Classification:
+    """Label one move. A large drop is a Blunder only when `tactical` shows lost
+    material or a forced mate; otherwise it is a Mistake. `None` means the caller
+    has no tactical evidence and the plain expected-score band applies."""
     if legal_move_count < 1:
         raise ValueError("A played move requires a legal move")
     if best_wdl is not None:
@@ -69,4 +89,7 @@ def classify_move(
     if difference < -Fraction(1, 50):
         return Classification("unclassified", None)
     loss = max(Fraction(0), difference)
-    return Classification(loss_label(loss, legal_move_count, verified_top_choice), float(loss))
+    label = loss_label(loss, legal_move_count, verified_top_choice)
+    if label == "blunder" and tactical is not None and not tactical.justifies_blunder:
+        label = "mistake"
+    return Classification(label, float(loss))
