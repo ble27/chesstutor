@@ -13,12 +13,11 @@ export function App() {
     <main className="app">
       <header className="masthead">
         <a className="brand" href="/" aria-label="Chess Tutor home">
-          <span aria-hidden="true">♘</span> Chess Tutor
+          Chess Tutor
         </a>
         <span className="tag">Independent game review</span>
       </header>
       <section className="intro" aria-labelledby="page-title">
-        <p className="eyebrow">A little reflection. A better next game.</p>
         <h1 id="page-title">Understand every move.</h1>
         <p>
           Review public games, explore the alternatives, and learn at your own

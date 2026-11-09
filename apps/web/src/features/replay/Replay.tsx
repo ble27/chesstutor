@@ -29,6 +29,7 @@ function ReplaySession({ game }: { game: Game }) {
     : "Starting position";
   return (
     <section
+      id="review-workspace"
       className="workspace replay-workspace"
       aria-label="Game replay"
       aria-describedby="replay-help"

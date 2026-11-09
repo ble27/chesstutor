@@ -59,3 +59,24 @@ it("encodes usernames and filters without accepting arbitrary paths", async () =
   expect(url.searchParams.get("opponent")).toBe("a&cursor=x");
   expect(url.searchParams.get("cursor")).toBe("cursor");
 });
+it("keeps older summaries usable without fabricating result or move count", () => {
+  const legacy = Object.fromEntries(
+    Object.entries(summary).filter(
+      ([key]) => key !== "result" && key !== "move_count",
+    ),
+  );
+  expect(parseGames({ ...listing, games: [legacy] }).games[0]).toMatchObject({
+    result: null,
+    move_count: null,
+  });
+});
+it.each([
+  { move_count: -1 },
+  { move_count: 152 },
+  { move_count: 1.5 },
+  { result: "*" },
+])("rejects invalid summary evidence %j", (change) => {
+  expect(() =>
+    parseGames({ ...listing, games: [{ ...summary, ...change }] }),
+  ).toThrow();
+});

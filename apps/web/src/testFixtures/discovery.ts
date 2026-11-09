@@ -19,6 +19,8 @@ export const summary: Summary = {
   end_time: "2026-11-01T12:00:00Z",
   time_class: "rapid",
   rules: "chess",
+  result: "1-0",
+  move_count: null,
   eligibility: "available",
 };
 export const listing: Games = {

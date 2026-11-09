@@ -19,6 +19,13 @@ class ArchivesResponse(Freshness):
     months: list[str]
 
 
+class PlayerRatings(Freshness):
+    username: str
+    rapid: int | None = Field(ge=0, le=10000)
+    blitz: int | None = Field(ge=0, le=10000)
+    bullet: int | None = Field(ge=0, le=10000)
+
+
 class Player(StrictModel):
     username: str = Field(min_length=1, max_length=100)
     rating: int | None = Field(default=None, ge=0, le=10000)
@@ -33,6 +40,8 @@ class GameSummary(StrictModel):
     end_time: datetime | None
     time_class: str | None
     rules: str
+    result: Literal["1-0", "0-1", "1/2-1/2"] | None = None
+    move_count: int | None = Field(default=None, ge=1, le=151)
     eligibility: Literal[
         "available", "unsupported_game", "unfinished_game", "invalid_data", "game_too_large"
     ]

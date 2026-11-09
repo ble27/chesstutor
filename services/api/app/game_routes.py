@@ -3,7 +3,12 @@ from uuid import UUID
 
 from fastapi import APIRouter, Query
 
-from services.api.app.game_schemas import ArchivesResponse, GameResponse, GamesResponse
+from services.api.app.game_schemas import (
+    ArchivesResponse,
+    GameResponse,
+    GamesResponse,
+    PlayerRatings,
+)
 from services.api.app.schemas import ErrorResponse
 from services.application.discovery import Discovery
 
@@ -21,6 +26,12 @@ def discovery_router(discovery: Discovery) -> APIRouter:
     )
     async def archives(username: str) -> ArchivesResponse:
         return await discovery.archives(username)
+
+    @router.get(
+        "/players/{username}/ratings", response_model=PlayerRatings, operation_id="player_ratings"
+    )
+    async def ratings(username: str) -> PlayerRatings:
+        return await discovery.ratings(username)
 
     @router.get(
         "/players/{username}/games", response_model=GamesResponse, operation_id="player_games"

@@ -8,11 +8,26 @@ import { replayFixtures } from "../../testFixtures/replay";
 async function importResponse(payload: unknown) {
   vi.stubGlobal(
     "fetch",
-    vi
-      .fn()
-      .mockResolvedValueOnce(Response.json(archive))
-      .mockResolvedValueOnce(Response.json(listing))
-      .mockResolvedValueOnce(Response.json(payload)),
+    vi.fn((url: string) =>
+      Promise.resolve(
+        Response.json(
+          url.endsWith("/ratings")
+            ? {
+                username: "alice",
+                rapid: 1200,
+                blitz: null,
+                bullet: null,
+                fetched_at: archive.fetched_at,
+                stale: false,
+              }
+            : url.endsWith("/archives")
+              ? archive
+              : url.includes("/players/")
+                ? listing
+                : payload,
+        ),
+      ),
+    ),
   );
   render(<Discovery />);
   fireEvent.change(

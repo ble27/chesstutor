@@ -1,12 +1,12 @@
 import re
 from datetime import UTC, datetime
-from typing import Literal
+from typing import Literal, cast
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from services.api.app.game_schemas import GameSummary, Player
 from services.core.games.discovery import DiscoveryError, game_id, source_url
-from services.core.games.importer import MAX_PGN_BYTES, completion_result
+from services.core.games.importer import MAX_PGN_BYTES, completion_result, parse_game
 
 
 class ProviderPlayer(BaseModel):
@@ -26,7 +26,7 @@ class ProviderGame(BaseModel):
     time_class: str | None = Field(default=None, max_length=100)
     rules: str = Field(default="unknown", max_length=100)
 
-    def summary(self) -> GameSummary:
+    def summary(self, *, include_move_count: bool = False) -> GameSummary:
         return GameSummary(
             id=game_id(self.url),
             source_url=source_url(self.url),
@@ -37,8 +37,32 @@ class ProviderGame(BaseModel):
             else None,
             time_class=self.time_class,
             rules=self.rules,
+            result=self.completed_result(),
             eligibility=self.eligibility(),
+            move_count=self.validated_move_count() if include_move_count else None,
         )
+
+    def completed_result(self) -> Literal["1-0", "0-1", "1/2-1/2"] | None:
+        try:
+            return cast(
+                Literal["1-0", "0-1", "1/2-1/2"],
+                completion_result(self.white.result or "", self.black.result or ""),
+            )
+        except DiscoveryError:
+            return None
+
+    def validated_move_count(self) -> int | None:
+        if self.eligibility() != "available":
+            return None
+        try:
+            game = parse_game(
+                self.pgn or "", self.rules, self.white.result or "", self.black.result or ""
+            )
+        except DiscoveryError:
+            return None
+        plies = len(game.positions) - 1
+        starts_black = game.initial_fen.split()[1] == "b"
+        return (plies + int(starts_black) + 1) // 2
 
     def eligibility(
         self,

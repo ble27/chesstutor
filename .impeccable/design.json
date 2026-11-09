@@ -1,0 +1,436 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-09T07:15:17.000440+00:00",
+  "title": "Design System: Chess Tutor",
+  "extensions": {
+    "colorMeta": {
+      "accent": {
+        "role": "primary",
+        "displayName": "Accent",
+        "tonalRamp": [
+          "oklch(15% 0.0241 90.5)",
+          "oklch(27% 0.0602 90.5)",
+          "oklch(39% 0.0963 90.5)",
+          "oklch(51% 0.1204 90.5)",
+          "oklch(63% 0.1204 90.5)",
+          "oklch(75% 0.0963 90.5)",
+          "oklch(87% 0.0602 90.5)",
+          "oklch(95% 0.0241 90.5)"
+        ]
+      },
+      "accent-hover": {
+        "role": "primary",
+        "displayName": "Accent Hover",
+        "tonalRamp": [
+          "oklch(15% 0.0154 92.9)",
+          "oklch(27% 0.0384 92.9)",
+          "oklch(39% 0.0615 92.9)",
+          "oklch(51% 0.0769 92.9)",
+          "oklch(63% 0.0769 92.9)",
+          "oklch(75% 0.0615 92.9)",
+          "oklch(87% 0.0384 92.9)",
+          "oklch(95% 0.0154 92.9)"
+        ]
+      },
+      "accent-active": {
+        "role": "primary",
+        "displayName": "Accent Active",
+        "tonalRamp": [
+          "oklch(15% 0.0249 91.0)",
+          "oklch(27% 0.0622 91.0)",
+          "oklch(39% 0.0995 91.0)",
+          "oklch(51% 0.1244 91.0)",
+          "oklch(63% 0.1244 91.0)",
+          "oklch(75% 0.0995 91.0)",
+          "oklch(87% 0.0622 91.0)",
+          "oklch(95% 0.0249 91.0)"
+        ]
+      },
+      "board-teal": {
+        "role": "secondary",
+        "displayName": "Board Teal",
+        "tonalRamp": [
+          "oklch(15% 0.0049 196.5)",
+          "oklch(27% 0.0123 196.5)",
+          "oklch(39% 0.0197 196.5)",
+          "oklch(51% 0.0247 196.5)",
+          "oklch(63% 0.0247 196.5)",
+          "oklch(75% 0.0197 196.5)",
+          "oklch(87% 0.0123 196.5)",
+          "oklch(95% 0.0049 196.5)"
+        ]
+      },
+      "board-cream": {
+        "role": "secondary",
+        "displayName": "Board Cream",
+        "tonalRamp": [
+          "oklch(15% 0.0027 102.0)",
+          "oklch(27% 0.0067 102.0)",
+          "oklch(39% 0.0108 102.0)",
+          "oklch(51% 0.0135 102.0)",
+          "oklch(63% 0.0135 102.0)",
+          "oklch(75% 0.0108 102.0)",
+          "oklch(87% 0.0067 102.0)",
+          "oklch(95% 0.0027 102.0)"
+        ]
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Canvas",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.9)",
+          "oklch(27% 0.0000 89.9)",
+          "oklch(39% 0.0000 89.9)",
+          "oklch(51% 0.0000 89.9)",
+          "oklch(63% 0.0000 89.9)",
+          "oklch(75% 0.0000 89.9)",
+          "oklch(87% 0.0000 89.9)",
+          "oklch(95% 0.0000 89.9)"
+        ]
+      },
+      "canvas-end": {
+        "role": "neutral",
+        "displayName": "Canvas End",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.9)",
+          "oklch(27% 0.0000 89.9)",
+          "oklch(39% 0.0000 89.9)",
+          "oklch(51% 0.0000 89.9)",
+          "oklch(63% 0.0000 89.9)",
+          "oklch(75% 0.0000 89.9)",
+          "oklch(87% 0.0000 89.9)",
+          "oklch(95% 0.0000 89.9)"
+        ]
+      },
+      "panel": {
+        "role": "neutral",
+        "displayName": "Panel",
+        "tonalRamp": [
+          "oklch(15% 0.0006 197.0)",
+          "oklch(27% 0.0015 197.0)",
+          "oklch(39% 0.0023 197.0)",
+          "oklch(51% 0.0029 197.0)",
+          "oklch(63% 0.0029 197.0)",
+          "oklch(75% 0.0023 197.0)",
+          "oklch(87% 0.0015 197.0)",
+          "oklch(95% 0.0006 197.0)"
+        ]
+      },
+      "surface-raised": {
+        "role": "neutral",
+        "displayName": "Surface Raised",
+        "tonalRamp": [
+          "oklch(15% 0.0014 196.8)",
+          "oklch(27% 0.0035 196.8)",
+          "oklch(39% 0.0056 196.8)",
+          "oklch(51% 0.0070 196.8)",
+          "oklch(63% 0.0070 196.8)",
+          "oklch(75% 0.0056 196.8)",
+          "oklch(87% 0.0035 196.8)",
+          "oklch(95% 0.0014 196.8)"
+        ]
+      },
+      "field": {
+        "role": "neutral",
+        "displayName": "Field",
+        "tonalRamp": [
+          "oklch(15% 0.0009 196.9)",
+          "oklch(27% 0.0022 196.9)",
+          "oklch(39% 0.0036 196.9)",
+          "oklch(51% 0.0045 196.9)",
+          "oklch(63% 0.0045 196.9)",
+          "oklch(75% 0.0036 196.9)",
+          "oklch(87% 0.0022 196.9)",
+          "oklch(95% 0.0009 196.9)"
+        ]
+      },
+      "action-secondary": {
+        "role": "neutral",
+        "displayName": "Action Secondary",
+        "tonalRamp": [
+          "oklch(15% 0.0021 196.7)",
+          "oklch(27% 0.0053 196.7)",
+          "oklch(39% 0.0085 196.7)",
+          "oklch(51% 0.0107 196.7)",
+          "oklch(63% 0.0107 196.7)",
+          "oklch(75% 0.0085 196.7)",
+          "oklch(87% 0.0053 196.7)",
+          "oklch(95% 0.0021 196.7)"
+        ]
+      },
+      "selected": {
+        "role": "neutral",
+        "displayName": "Selected",
+        "tonalRamp": [
+          "oklch(15% 0.0026 189.3)",
+          "oklch(27% 0.0066 189.3)",
+          "oklch(39% 0.0105 189.3)",
+          "oklch(51% 0.0132 189.3)",
+          "oklch(63% 0.0132 189.3)",
+          "oklch(75% 0.0105 189.3)",
+          "oklch(87% 0.0066 189.3)",
+          "oklch(95% 0.0026 189.3)"
+        ]
+      },
+      "opened": {
+        "role": "neutral",
+        "displayName": "Opened",
+        "tonalRamp": [
+          "oklch(15% 0.0030 183.1)",
+          "oklch(27% 0.0076 183.1)",
+          "oklch(39% 0.0121 183.1)",
+          "oklch(51% 0.0151 183.1)",
+          "oklch(63% 0.0151 183.1)",
+          "oklch(75% 0.0121 183.1)",
+          "oklch(87% 0.0076 183.1)",
+          "oklch(95% 0.0030 183.1)"
+        ]
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Text",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.9)",
+          "oklch(27% 0.0000 89.9)",
+          "oklch(39% 0.0000 89.9)",
+          "oklch(51% 0.0000 89.9)",
+          "oklch(63% 0.0000 89.9)",
+          "oklch(75% 0.0000 89.9)",
+          "oklch(87% 0.0000 89.9)",
+          "oklch(95% 0.0000 89.9)"
+        ]
+      },
+      "heading": {
+        "role": "neutral",
+        "displayName": "Heading",
+        "tonalRamp": [
+          "oklch(15% 0.0005 165.1)",
+          "oklch(27% 0.0013 165.1)",
+          "oklch(39% 0.0020 165.1)",
+          "oklch(51% 0.0025 165.1)",
+          "oklch(63% 0.0025 165.1)",
+          "oklch(75% 0.0020 165.1)",
+          "oklch(87% 0.0013 165.1)",
+          "oklch(95% 0.0005 165.1)"
+        ]
+      },
+      "text-secondary": {
+        "role": "neutral",
+        "displayName": "Text Secondary",
+        "tonalRamp": [
+          "oklch(15% 0.0018 197.0)",
+          "oklch(27% 0.0044 197.0)",
+          "oklch(39% 0.0071 197.0)",
+          "oklch(51% 0.0089 197.0)",
+          "oklch(63% 0.0089 197.0)",
+          "oklch(75% 0.0071 197.0)",
+          "oklch(87% 0.0044 197.0)",
+          "oklch(95% 0.0018 197.0)"
+        ]
+      },
+      "text-muted": {
+        "role": "neutral",
+        "displayName": "Text Muted",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.9)",
+          "oklch(27% 0.0000 89.9)",
+          "oklch(39% 0.0000 89.9)",
+          "oklch(51% 0.0000 89.9)",
+          "oklch(63% 0.0000 89.9)",
+          "oklch(75% 0.0000 89.9)",
+          "oklch(87% 0.0000 89.9)",
+          "oklch(95% 0.0000 89.9)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Line",
+        "tonalRamp": [
+          "oklch(15% 0.0016 196.8)",
+          "oklch(27% 0.0039 196.8)",
+          "oklch(39% 0.0063 196.8)",
+          "oklch(51% 0.0079 196.8)",
+          "oklch(63% 0.0079 196.8)",
+          "oklch(75% 0.0063 196.8)",
+          "oklch(87% 0.0039 196.8)",
+          "oklch(95% 0.0016 196.8)"
+        ]
+      },
+      "panel-border": {
+        "role": "neutral",
+        "displayName": "Panel Border",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.9)",
+          "oklch(27% 0.0000 89.9)",
+          "oklch(39% 0.0000 89.9)",
+          "oklch(51% 0.0000 89.9)",
+          "oklch(63% 0.0000 89.9)",
+          "oklch(75% 0.0000 89.9)",
+          "oklch(87% 0.0000 89.9)",
+          "oklch(95% 0.0000 89.9)"
+        ]
+      },
+      "field-border": {
+        "role": "neutral",
+        "displayName": "Field Border",
+        "tonalRamp": [
+          "oklch(15% 0.0022 196.8)",
+          "oklch(27% 0.0056 196.8)",
+          "oklch(39% 0.0089 196.8)",
+          "oklch(51% 0.0112 196.8)",
+          "oklch(63% 0.0112 196.8)",
+          "oklch(75% 0.0089 196.8)",
+          "oklch(87% 0.0056 196.8)",
+          "oklch(95% 0.0022 196.8)"
+        ]
+      },
+      "action-border": {
+        "role": "neutral",
+        "displayName": "Action Border",
+        "tonalRamp": [
+          "oklch(15% 0.0035 181.3)",
+          "oklch(27% 0.0087 181.3)",
+          "oklch(39% 0.0140 181.3)",
+          "oklch(51% 0.0175 181.3)",
+          "oklch(63% 0.0175 181.3)",
+          "oklch(75% 0.0140 181.3)",
+          "oklch(87% 0.0087 181.3)",
+          "oklch(95% 0.0035 181.3)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Page headline",
+        "purpose": "Primary page heading; 28px at narrow widths."
+      },
+      "body": {
+        "displayName": "Shared sans",
+        "purpose": "Inter is named but not bundled; system sans is the installed fallback."
+      }
+    },
+    "shadows": [
+      {
+        "name": "selected-tab",
+        "value": "inset 0 -2px #eac96a",
+        "purpose": "Underline the selected review tab."
+      },
+      {
+        "name": "last-move",
+        "value": "inset 0 0 0 3px #181818, inset 0 0 0 6px #eac96a",
+        "purpose": "Identify both last-move squares."
+      }
+    ],
+    "motion": [
+      {
+        "name": "button-feedback",
+        "value": "background-color 150ms ease-out, border-color 150ms ease-out",
+        "purpose": "Button feedback; disabled by prefers-reduced-motion: reduce."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "desktop-review",
+        "value": "1024px"
+      },
+      {
+        "name": "compact-gutters-max",
+        "value": "767px"
+      },
+      {
+        "name": "narrow-library-max",
+        "value": "600px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary action",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Gold search action.",
+      "html": "<button class=\"ds-primary\">Find games</button>",
+      "css": ".ds-primary{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:14px;min-height:44px;padding:10px 12px;border:1px solid #63716e;border-radius:8px;cursor:pointer;transition:background-color 150ms ease-out,border-color 150ms ease-out;padding-inline:22px;background:var(--accent,#eac96a);color:#181818;border-color:transparent;font-weight:600}.ds-primary:hover{background:#f6e4aa}.ds-primary:active{background:#d9b854}.ds-primary:focus-visible{outline:2px solid var(--accent,#eac96a);outline-offset:3px;} @media(prefers-reduced-motion:reduce){button{transition:none}}"
+    },
+    {
+      "name": "Secondary action",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Quiet action used on library rows.",
+      "html": "<button class=\"ds-secondary\">Open game</button>",
+      "css": ".ds-secondary{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:14px;min-height:44px;padding:10px 12px;border:1px solid #63716e;border-radius:8px;cursor:pointer;transition:background-color 150ms ease-out,border-color 150ms ease-out;background:#363e3e;color:#f1f3f2;font-weight:600}.ds-secondary:hover{background:#f6e4aa;color:#181818}.ds-secondary:active{background:#d9b854;color:#181818}.ds-secondary:focus-visible{outline:2px solid var(--accent,#eac96a);outline-offset:3px;} @media(prefers-reduced-motion:reduce){button{transition:none}}"
+    },
+    {
+      "name": "Username field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Explicitly labeled public username input.",
+      "html": "<label class=\"ds-label\">Chess.com username<input class=\"ds-input\" placeholder=\"e.g. your Chess.com username\" /></label>",
+      "css": ".ds-label{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:14px;display:grid;gap:8px;color:#eeeeee}.ds-input{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:14px;min-height:44px;padding:10px 12px;background:#1d2020;color:#eeeeee;border:1px solid #596262;border-radius:8px;caret-color:var(--accent,#eac96a)}.ds-input::placeholder{color:#a5afaf}.ds-input:hover{border-color:#899595}.ds-input:focus-visible{outline:2px solid var(--accent,#eac96a);outline-offset:3px;} @media(prefers-reduced-motion:reduce){button{transition:none}}"
+    },
+    {
+      "name": "Selected time filter",
+      "kind": "chip",
+      "refersTo": "filter-selected",
+      "description": "Pressed-state filter with local Lucide timer geometry.",
+      "html": "<button class=\"ds-filter\" aria-pressed=\"true\"><svg aria-hidden=\"true\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><line x1=\"10\" x2=\"14\" y1=\"2\" y2=\"2\"/><line x1=\"12\" x2=\"15\" y1=\"14\" y2=\"11\"/><circle cx=\"12\" cy=\"14\" r=\"8\"/></svg>Rapid</button>",
+      "css": ".ds-filter{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:14px;min-height:44px;padding:10px 12px;border:1px solid #63716e;border-radius:8px;cursor:pointer;transition:background-color 150ms ease-out,border-color 150ms ease-out;display:inline-flex;align-items:center;gap:8px;background:#3b4544;color:#fff;border-color:#748782;font-weight:500}.ds-filter:hover{background:#363e3e}.ds-filter:focus-visible{outline:2px solid var(--accent,#eac96a);outline-offset:3px;} @media(prefers-reduced-motion:reduce){button{transition:none}}"
+    },
+    {
+      "name": "Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Flat bordered material shared by search and library.",
+      "html": "<section class=\"ds-panel\"><h2>Game library</h2><p>Recent games, ready for a closer look.</p></section>",
+      "css": ".ds-panel{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:14px;background:#242626;color:#eeeeee;border:1px solid #3b3b3b;border-radius:12px;padding:24px}.ds-panel h2{font-size:20px;font-weight:500;letter-spacing:-.02em;color:#f1f3f2;margin:0 0 8px}.ds-panel p{color:#b8b8b8;font-size:15px;line-height:1.65;margin:0} @media(prefers-reduced-motion:reduce){button{transition:none}}"
+    },
+    {
+      "name": "Review tabs",
+      "kind": "nav",
+      "refersTo": "panel",
+      "description": "Flat tab navigation with gold inset selection.",
+      "html": "<div class=\"ds-tabs\" role=\"tablist\" aria-label=\"Game review\"><button role=\"tab\" aria-selected=\"true\">Analysis</button><button role=\"tab\" aria-selected=\"false\">Review</button><button role=\"tab\" aria-selected=\"false\">Chess guidance</button></div>",
+      "css": ".ds-tabs{display:flex;background:#242626;border-bottom:1px solid var(--line,#414747)}.ds-tabs button{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:14px;flex:1;min-height:44px;padding:12px 8px;background:transparent;border:0;color:#b8b8b8;font-weight:500;cursor:pointer}.ds-tabs [aria-selected=\"true\"]{background:#303837;color:#fff;box-shadow:inset 0 -2px #eac96a}.ds-tabs button:hover{background:#343c3b}.ds-tabs button:focus-visible{outline:2px solid var(--accent,#eac96a);outline-offset:3px;outline-offset:-4px} @media(prefers-reduced-motion:reduce){button{transition:none}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Quiet Review Workspace",
+    "overview": "Chess Tutor uses the approved quiet charcoal Operate direction: a practical tool whose visual emphasis belongs to the chess position and the next useful action. The existing teal and cream board remains the recognizable center of the review.  Flat bordered surfaces, one sans family, and compact explanatory text support careful reading. Gold connects actions, keyboard focus, and the current move. This records the implemented interface, not release or accessibility gate status.",
+    "keyCharacteristics": [
+      "Charcoal surfaces with quiet dividers.",
+      "Teal and cream chessboard with gold move emphasis.",
+      "Consistent sans typography and tabular chess numbers.",
+      "Flat controls with visible keyboard focus."
+    ],
+    "rules": [
+      {
+        "name": "The Board Identity Rule",
+        "body": "Preserve teal and cream squares; use gold to identify selected moves and actions rather than recoloring the board.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Voice Rule",
+        "body": "Use the shared sans stack for interface text and reserve monospace for literal position notation.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Surface Rule",
+        "body": "Use borders and tone to separate tool surfaces; reserve inset emphasis for selected state.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** preserve the teal and cream board with gold move emphasis.",
+      "**Do** use the shared sans family stack and tabular numbers for chess data.",
+      "**Do** keep controls at least 44px high and show a visible keyboard focus state.",
+      "**Do** use local SVG icons with their text labels and retain asset licenses.",
+      "**Do** preserve the desktop 60/40 review split and stack it below 1024px."
+    ],
+    "donts": [
+      "**Don't** introduce decorative glyph icons or a competing display typeface.",
+      "**Don't** turn individual library games into a grid of cards.",
+      "**Don't** add ambient card shadows to the flat charcoal surfaces.",
+      "**Don't** treat the named Inter family as an installed font guarantee."
+    ]
+  }
+}

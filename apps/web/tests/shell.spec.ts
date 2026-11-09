@@ -14,7 +14,11 @@ for (const width of [320, 390, 768, 1024, 1440]) {
       "Review service connected",
     );
     await expect(
-      page.getByRole("heading", { name: "Chess guidance" }),
+      page.getByRole("heading", { name: "Game library" }),
+    ).toBeVisible();
+    await expect(page.getByLabel("Chess.com username")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Engine analysis" }),
     ).toBeVisible();
     expect(
       await page.evaluate(

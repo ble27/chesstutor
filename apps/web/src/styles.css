@@ -1,5 +1,6 @@
 :root {
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 15px;
   color: #eeeeee;
   background: #181818;
   font-synthesis: none;
@@ -29,7 +30,7 @@ a:focus-visible {
   margin: auto;
 }
 .masthead {
-  min-height: 88px;
+  min-height: 72px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -53,7 +54,7 @@ footer {
   color: #b8b8b8;
 }
 .intro {
-  padding: 56px 0 32px;
+  padding: 36px 0 24px;
 }
 .eyebrow {
   font-size: 11px;
@@ -62,9 +63,9 @@ footer {
   color: #b8b8b8;
 }
 h1 {
-  font-size: clamp(30px, 4vw, 52px);
+  font-size: 32px;
   font-weight: 500;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.03em;
   margin: 12px 0;
 }
 h2 {
@@ -89,13 +90,13 @@ p {
 }
 .panel {
   border: 1px solid #3b3b3b;
-  border-radius: 18px;
-  background: linear-gradient(145deg, #292929, #242424);
+  border-radius: 12px;
+  background: #242626;
   padding: 28px;
   min-width: 0;
 }
 .game-space {
-  min-height: 420px;
+  min-height: 200px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -146,7 +147,7 @@ footer {
     grid-template-columns: minmax(0, 1fr);
   }
   .panel {
-    padding: 24px;
+    padding: 20px;
   }
   .game-space {
     min-height: 300px;
@@ -197,29 +198,6 @@ button:focus-visible {
 .filters label {
   flex: 1 1 170px;
 }
-.game-list {
-  list-style: none;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-  gap: 16px;
-}
-.game-card {
-  padding: 20px;
-  border: 1px solid #555;
-  border-radius: 12px;
-  min-width: 0;
-}
-.game-card h3 {
-  font-size: 16px;
-  font-weight: 500;
-  overflow-wrap: anywhere;
-}
-.game-card a {
-  display: inline-block;
-  text-decoration: underline;
-  margin: 0 16px 16px 0;
-}
 .freshness {
   font-size: 12px;
 }
@@ -254,7 +232,7 @@ button:focus-visible {
   margin: 0 0 12px;
 }
 .review-moves {
-  border-top: 1px solid #51483f;
+  border-top: 1px solid #424747;
   padding: 20px 24px 24px;
 }
 .review-moves p {
@@ -263,7 +241,7 @@ button:focus-visible {
   margin: 0 0 12px;
 }
 .analysis-limits {
-  color: #c9c2b9;
+  color: #bbc2c2;
   font-size: 13px;
   margin: 0 0 16px;
 }
@@ -332,7 +310,7 @@ button:disabled {
   margin: 0;
   max-height: 320px;
   overflow-y: auto;
-  border: 1px solid #51483f;
+  border: 1px solid #424747;
   border-radius: 8px;
 }
 .move-list li {
@@ -342,11 +320,11 @@ button:disabled {
   gap: 8px;
   margin: 0;
   padding: 2px 4px;
-  color: #c9c2b9;
+  color: #bbc2c2;
   font-variant-numeric: tabular-nums;
 }
 .move-list li:nth-child(odd) {
-  background: #302d2a;
+  background: #2b3030;
 }
 .move-list button {
   background: transparent;
@@ -523,7 +501,7 @@ button:disabled {
 }
 .review-footer nav {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 4px;
 }
 .review-footer nav button {
@@ -532,9 +510,6 @@ button:disabled {
   background: #383838;
   color: #eee;
   border-color: transparent;
-}
-.review-footer nav button:last-child {
-  grid-column: 1 / -1;
 }
 .review-footer p {
   font-size: 12px;

@@ -81,14 +81,25 @@ export function parseSummary(input: unknown): Summary {
     !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(id)
   )
     throw new Error("Invalid ID");
+  const result = value.result;
+  if (
+    result != null &&
+    result !== "1-0" &&
+    result !== "0-1" &&
+    result !== "1/2-1/2"
+  )
+    throw new Error("Invalid summary result");
   return {
     id,
+    result: result ?? null,
     source_url: source,
     white: player(value.white),
     black: player(value.black),
     end_time: value.end_time === null ? null : date(value.end_time),
     time_class: nullableText(value.time_class),
     rules: text(value.rules, 100),
+    move_count:
+      value.move_count == null ? null : integer(value.move_count, 1, 151),
     eligibility,
   };
 }

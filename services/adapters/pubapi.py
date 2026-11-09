@@ -130,7 +130,7 @@ class PubAPI:
     @staticmethod
     def validate_path(path: str) -> None:
         if not re.fullmatch(
-            r"/player/[a-z0-9_-]{3,25}/games/(?:archives|20\d{2}/(?:0[1-9]|1[0-2]))", path
+            r"/player/[a-z0-9_-]{3,25}/(?:stats|games/(?:archives|20\d{2}/(?:0[1-9]|1[0-2])))", path
         ):
             raise DiscoveryError("invalid_path", "Invalid public archive path.")
 
@@ -214,7 +214,7 @@ class PubAPI:
                     "The provider ignored the uncompressed download request.",
                     502,
                 )
-            limit = MAX_MONTH_BYTES if not path.endswith("archives") else 1024 * 1024
+            limit = 1024 * 1024 if path.endswith(("archives", "stats")) else MAX_MONTH_BYTES
             body = bytearray()
             async for chunk in response.aiter_bytes(chunk_size=65536):
                 body.extend(chunk)

@@ -6,12 +6,14 @@ from typing import Literal, cast
 from uuid import UUID
 
 from services.adapters.game_store import GameStore
+from services.adapters.player_ratings import player_ratings
 from services.adapters.provider_data import ProviderGame, archive_months, provider_games
 from services.adapters.pubapi import PubAPI
 from services.api.app.game_schemas import (
     ArchivesResponse,
     GameResponse,
     GamesResponse,
+    PlayerRatings,
     PositionResponse,
 )
 from services.core.games.discovery import (
@@ -36,6 +38,16 @@ class Discovery:
             months=archive_months(document.payload, player),
             fetched_at=document.fetched_at,
             stale=document.stale,
+        )
+
+    async def ratings(self, player: str) -> PlayerRatings:
+        player = username(player)
+        document = await self.provider.get(f"/player/{player}/stats")
+        return PlayerRatings(
+            username=player,
+            fetched_at=document.fetched_at,
+            stale=document.stale,
+            **player_ratings(document.payload),
         )
 
     async def games(
@@ -66,7 +78,9 @@ class Discovery:
         if offset > len(filtered):
             raise DiscoveryError("invalid_cursor", "Restart this month's game list.")
         selected = filtered[offset : offset + 20]
-        summaries = [record.summary() for record in selected]
+        summaries = await asyncio.to_thread(
+            lambda: [record.summary(include_move_count=True) for record in selected]
+        )
         await asyncio.to_thread(
             self.store.stage,
             [
