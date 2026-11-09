@@ -11,6 +11,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Protocol
 
+from services.core.coaching.phrases import motif_templates
 from services.core.coaching.values import Level, TemplateBlock
 
 REFUSAL = (
@@ -125,18 +126,6 @@ TEMPLATES: dict[str, dict[Level, str]] = {
         f"lesson_{name}": both(text, tech)
         for name, text, tech in (
             (
-                "miss_capture",
-                "This was a missed chance: you could have captured the opponent's {target_piece} "
-                "on {target_square} with your {attacker_piece}, and nothing protected it.",
-                "A missed opportunity: your {attacker_piece} could take the undefended "
-                "{target_piece} on {target_square}.",
-            ),
-            (
-                "miss_mate",
-                "A checkmate was available here, and this move let it slip.",
-                "A forced checkmate was available and was missed.",
-            ),
-            (
                 "miss_material",
                 "This was a missed chance to win material: a stronger move was available.",
                 "A line winning material was available and was missed.",
@@ -159,19 +148,20 @@ TEMPLATES: dict[str, dict[Level, str]] = {
             ),
             (
                 "mistake_general",
-                "This move is a mistake: it gives up part of your advantage compared with the "
-                "best option.",
+                "This move is a mistake: the opponent gets a clear edge from it, and a stronger "
+                "option was available.",
                 "Mistake: a noticeably better option was available.",
             ),
             (
                 "blunder_general",
-                "This move is a blunder: it throws away a large part of your advantage.",
+                "This move is a blunder: it hands the opponent a big edge, and a much "
+                "stronger option was available.",
                 "Blunder: this gives up a large part of your advantage.",
             ),
             (
                 "great",
-                "Well played! This was the one move that kept your position strong, and most "
-                "other moves would have lost ground.",
+                "Well played! Every other move here gives away part of your advantage, so this "
+                "was the one to find.",
                 "Great move: it was the only move that kept the position in good shape.",
             ),
             (
@@ -213,6 +203,7 @@ TEMPLATES: dict[str, dict[Level, str]] = {
         )
     },
 }
+TEMPLATES.update(motif_templates())
 SUPPORTED_KINDS = frozenset({"hanging_piece", "fork", "pin"})
 UNSUPPORTED_THEMES = (
     "skewer",
@@ -264,6 +255,8 @@ def valid_value(key: str, value: object) -> bool:
         return False
     if key == "level":
         return value in ("beginner", "intermediate")
+    if key == "file":
+        return bool(re.fullmatch(r"[a-h]", value))
     if key == "move_number":
         return bool(NUMBER.match(value))
     if key == "square" or key.endswith("_square"):

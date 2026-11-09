@@ -14,9 +14,12 @@ import chess
 
 from services.core.analysis.values import Color, EngineLine, MoveEvidence, Wdl
 from services.core.classification.base import expected_for_mover
+from services.core.classification.cost import tactical_cost
 from services.core.classification.review import ReviewedMove, legal_line
 from services.core.coaching.detectors import detect_evidence
 from services.core.coaching.facts import color_of
+from services.core.coaching.motifs import Motif, flaw_cause, move_motifs, named
+from services.core.coaching.phrases import GOOD, MISS_KINDS, SACRIFICE_KINDS
 from services.core.coaching.templates import block, render_blocks
 from services.core.coaching.values import Evidence, Level, TemplateBlock
 
@@ -89,27 +92,66 @@ def capture_values(board: chess.Board, item: Evidence) -> dict[str, str]:
     }
 
 
-def miss_block(move: ReviewedMove, root: chess.Board, level: Level) -> TemplateBlock:
+def best_move(evidence: MoveEvidence, root: chess.Board) -> chess.Move | None:
+    """The engine's first choice, only when its line replays legally."""
+    if not evidence.best or not legal_line(root, evidence.best[0]):
+        return None
+    return chess.Move.from_uci(evidence.best[0].pv[0].uci)
+
+
+def good_motif(root: chess.Board, move: chess.Move | None, kinds: Sequence[str]) -> Motif | None:
+    if move is None:
+        return None
+    return next((m for m in move_motifs(root, move) if m.kind in kinds), None)
+
+
+def miss_block(
+    move: ReviewedMove, evidence: MoveEvidence, root: chess.Board, level: Level
+) -> TemplateBlock:
     proof = next((p for p in move.proofs if p.badge == "miss"), None)
-    if proof is not None and proof.motif == "forced_mate":
-        return block("lesson_miss_mate", (proof.id,), level=level)
-    if proof is not None and proof.motif == "material_win" and proof.line.pv:
-        for item in detect_evidence(fen=root.fen(), ply=move.ply, continuation_uci=()):
-            if item.kind == "hanging_piece" and item.continuation_uci == (proof.line.pv[0].uci,):
-                return block(
-                    "lesson_miss_capture",
-                    (item.id, proof.id),
-                    level=level,
-                    **capture_values(root, item),
-                )
-    return block("lesson_miss_material", (proof.id,) if proof else (), level=level)
+    ids = (proof.id,) if proof else ()
+    best = best_move(evidence, root)
+    motif = good_motif(root, best, MISS_KINDS)
+    if motif is not None:
+        return block(f"lesson_miss_{motif.kind}", ids, level=level, **motif.values)
+    piece = root.piece_at(best.from_square) if best else None
+    if proof is not None and proof.motif == "forced_mate" and best and piece:
+        values = named(piece, best.to_square, "attacker")
+        return block("lesson_miss_forced_mate", ids, level=level, **values)
+    return block("lesson_miss_material", ids, level=level)
 
 
-def flaw_block(kind: str, after: chess.Board, move: ReviewedMove, level: Level) -> TemplateBlock:
+def reply_move(evidence: MoveEvidence, root: chess.Board) -> chess.Move | None:
+    """The opponent's reply in the engine's line for the played move, if it replays legally."""
+    if len(evidence.played.pv) < 2 or not legal_line(root, evidence.played):
+        return None
+    return chess.Move.from_uci(evidence.played.pv[1].uci)
+
+
+def flaw_block(
+    kind: str, move: ReviewedMove, evidence: MoveEvidence, root: chess.Board, level: Level
+) -> TemplateBlock:
+    played = chess.Move.from_uci(evidence.played_uci)
+    cause = flaw_cause(root, played, reply_move(evidence, root), tactical_cost(root, evidence))
+    if cause is not None:
+        return block(f"lesson_{kind}_{cause.kind}", (), level=level, **cause.values)
+    after = root.copy()
+    after.push(played)
     item = hanging_after(after, color_of(move.mover), move.ply)
     if item is None:
         return block(f"lesson_{kind}_general", (), level=level)
     return block(f"lesson_{kind}_hanging", (item.id,), level=level, **capture_values(after, item))
+
+
+def praise_block(
+    kind: str, move: ReviewedMove, evidence: MoveEvidence, root: chess.Board, level: Level
+) -> TemplateBlock:
+    ids = tuple(p.id for p in move.proofs)
+    played = chess.Move.from_uci(evidence.played_uci)
+    motif = good_motif(root, played, SACRIFICE_KINDS if kind == "brilliant" else tuple(GOOD))
+    if motif is None:
+        return block(f"lesson_{kind}", ids, level=level)
+    return block(f"lesson_{kind}_{motif.kind}", ids, level=level, **motif.values)
 
 
 def main_block(
@@ -117,12 +159,10 @@ def main_block(
 ) -> TemplateBlock:
     root = chess.Board(evidence.root_fen)
     if kind == "miss":
-        return miss_block(move, root, level)
+        return miss_block(move, evidence, root, level)
     if kind in ("great", "brilliant"):
-        return block(f"lesson_{kind}", tuple(p.id for p in move.proofs), level=level)
-    after = root.copy()
-    after.push_uci(evidence.played_uci)
-    return flaw_block(kind, after, move, level)
+        return praise_block(kind, move, evidence, root, level)
+    return flaw_block(kind, move, evidence, root, level)
 
 
 def usable_lines(evidence: MoveEvidence, root: chess.Board) -> list[EngineLine]:
