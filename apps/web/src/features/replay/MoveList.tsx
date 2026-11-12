@@ -1,6 +1,11 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 import type { Game } from "../../api/discoveryValidation";
 import { moveLabel } from "./moves";
+import type { Analysis } from "../../api/analysis";
+import {
+  CLASSIFICATION_LABELS,
+  primaryLabel,
+} from "../review/summaryPresentation";
 
 type Move = Game["positions"][number];
 type Row = { number: number; white?: Move; black?: Move };
@@ -27,12 +32,15 @@ export function MoveList({
   game,
   selectedPly,
   select,
+  reviews,
 }: {
   game: Game;
   selectedPly: number;
   select: (ply: number) => void;
+  reviews?: Analysis["classifications"];
 }) {
   const list = useRef<HTMLOListElement>(null);
+  const id = useId();
   useEffect(() => {
     const container = list.current;
     if (container && selectedPly === 0) {
@@ -62,9 +70,22 @@ export function MoveList({
                   move.san,
                 )}
                 aria-current={selectedPly === move.ply ? "step" : undefined}
+                aria-describedby={
+                  reviews ? `${id}-classification-${move.ply}` : undefined
+                }
                 onClick={() => select(move.ply)}
               >
                 {move.san}
+                {reviews && (
+                  <small
+                    className="recorded-move-label"
+                    id={`${id}-classification-${move.ply}`}
+                  >
+                    {classificationName(
+                      reviews.find((review) => review.ply === move.ply),
+                    )}
+                  </small>
+                )}
               </button>
             ) : (
               <span key={color} aria-label={`No ${color} move`}>
@@ -75,5 +96,15 @@ export function MoveList({
         </li>
       ))}
     </ol>
+  );
+}
+
+function classificationName(
+  move: NonNullable<Analysis["classifications"]>[number] | undefined,
+): string {
+  if (!move) return "Pending";
+  return (
+    CLASSIFICATION_LABELS.find(([key]) => key === primaryLabel(move))?.[1] ??
+    "Unclassified"
   );
 }

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 import type { Game } from "../../api/discoveryValidation";
+import type { Analysis } from "../../api/analysis";
 import { MoveList } from "../replay/MoveList";
 import { ReplayControls } from "../replay/ReplayControls";
 import { BrowserExperiment } from "../browserExperiment/BrowserExperiment";
@@ -18,6 +19,7 @@ type Props = {
   select: (ply: number) => void;
   flip: () => void;
   onArrows?: (arrows: BoardArrow[]) => void;
+  moveReviews?: Analysis["classifications"];
 };
 
 const noArrows = () => undefined;
@@ -54,6 +56,7 @@ function ServerWorkspace(props: Props) {
   return (
     <ReviewShell
       {...props}
+      moveReviews={session.state.job?.classifications}
       analysis={
         <EngineView
           game={props.game}
@@ -77,7 +80,11 @@ function ServerWorkspace(props: Props) {
               {summary.coverage.total_plies} plies classified
               {!summary.is_final && " · analysis incomplete"}
             </p>
-            <ClassificationSummary summary={summary} />
+            <ClassificationSummary
+              summary={summary}
+              reviews={session.state.job?.classifications}
+              players={props.game.game}
+            />
             {summary.critical_moments.map((moment) => (
               <button key={moment.ply} onClick={() => selectMoment(moment.ply)}>
                 Inspect ply {moment.ply} · {moment.label}
@@ -100,6 +107,7 @@ function ReviewShell({
   selectedPly,
   select,
   flip,
+  moveReviews,
   analysis,
   guidance,
   review,
@@ -127,7 +135,12 @@ function ReviewShell({
         >
           <div className="analysis-region">{analysis}</div>
           <div className="review-moves">
-            <MoveList game={game} selectedPly={selectedPly} select={select} />
+            <MoveList
+              game={game}
+              selectedPly={selectedPly}
+              select={select}
+              reviews={moveReviews}
+            />
           </div>
         </div>
         <div

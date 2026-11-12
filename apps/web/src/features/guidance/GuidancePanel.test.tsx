@@ -73,7 +73,7 @@ it("draws the played and suggested arrows and removes them on request", async ()
 it("does not annotate a move without a lesson and clears arrows", async () => {
   route({ lessons: () => Response.json({ ...lessons, lessons: [] }) });
   const onArrows = setup();
-  expect(await screen.findByText(/This move was not flagged/)).toBeVisible();
+  expect(await screen.findByText(/No explanation is available/)).toBeVisible();
   expect(onArrows).toHaveBeenLastCalledWith([]);
 });
 
@@ -213,4 +213,55 @@ it("shows the matching suggested move's engine score with its perspective", asyn
   expect(arrows).toHaveTextContent(
     "Suggestion 1: e2 to e4 · White evaluation: +1.2",
   );
+});
+
+it("updates the selected ply's label and explanation for either player without a question", async () => {
+  const note = lessons.lessons[0];
+  const move = completedAnalysis.evidence[0];
+  if (!note || !move) throw new Error("Missing fixture");
+  route({
+    lessons: () =>
+      Response.json({
+        ...lessons,
+        lessons: [
+          {
+            ...note,
+            ply: 1,
+            kind: "good",
+            text: "Your pawn moved from e2 to e4. Good move: this keeps options open.",
+            alternatives: [],
+            arrows: [],
+          },
+          {
+            ...note,
+            ply: 2,
+            kind: "unclassified",
+            text: "Your pawn moved from e7 to e5. There is not enough evidence for a reliable label.",
+            alternatives: [],
+            arrows: [],
+          },
+        ],
+      }),
+  });
+  const analysis = {
+    ...completedAnalysis,
+    evidence: [move, { ...move, ply: 2, mover: "black" as const }],
+  };
+  const onArrows = vi.fn();
+  const { rerender } = render(
+    <GuidancePanel analysis={analysis} selectedPly={1} onArrows={onArrows} />,
+  );
+  expect(await screen.findByText("Good")).toBeVisible();
+  expect(screen.getByText(/Ply 1 · White move/)).toBeVisible();
+  expect(
+    screen.queryByRole("checkbox", { name: "Show arrows on the board" }),
+  ).not.toBeInTheDocument();
+  rerender(
+    <GuidancePanel analysis={analysis} selectedPly={2} onArrows={onArrows} />,
+  );
+  expect(screen.getByText("Unclassified")).toBeVisible();
+  expect(screen.getByText(/Ply 2 · Black move/)).toBeVisible();
+  expect(screen.queryByText(/Your pawn moved from e2/)).not.toBeInTheDocument();
+  expect(screen.getByText(/not enough evidence/)).toBeVisible();
+  expect(onArrows).toHaveBeenLastCalledWith([]);
 });

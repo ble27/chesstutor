@@ -30,14 +30,22 @@ Automated keyboard/accessibility checks do not replace this gate.
   refusal and uncertainty paths, both colors/levels, and an optional injected
   model callable. The private llama.cpp adapter is omitted because PRD §7
   makes it optional; core coaching works with the model disabled.
-- Lessons only for Miss, Mistake, Blunder, Great and Brilliant; plain language,
-  at most two alternatives and legally replayable PV first moves.
+- Notable automatic annotations remain selective. Selected-ply notes now cover
+  all analyzed labels, including Good, Best, Inaccuracy, Forced and Unclassified,
+  using reviewed templates and actual played pieces/squares. Previous/Next in
+  Chess guidance updates the note without a chat request. The move list shows
+  each reviewed ply's primary label and marks unprocessed plies Pending.
+- Review now compares both named players in an ordered classification table,
+  with zero counts, one primary label per ply and scored coverage. Independent
+  Chess Tutor accuracy is `100 * (1 - average_expected_loss)` on scored moves;
+  its formula is visible under "How these numbers work". Missing scores stay
+  unavailable. The existing base-count API is preserved.
 - Late coaching responses are cancelled and ignored after context changes.
   Arrows carry ply/root FEN and trigger an explicitly labelled pre-move board
   preview. Hiding arrows restores normal replay. Suggested-move text joins
   exact UCI matches to typed engine scores with explicit POV; unmatched scores
-  say unavailable. Opaque dark red/green arrows have a 3:1 browser contrast
-  regression against both unchanged teal/cream square colors.
+  say unavailable. Suggested arrows are bright green with a hard dark outline;
+  the outline retains 3:1 contrast against both unchanged teal/cream squares.
 - Pin explanations say a pinned piece cannot move **off that line**, avoiding
   a false claim for rooks that can move along the pin.
 - Regression cases demonstrated missing behavior before the fixes. Whole-sprint
@@ -62,6 +70,8 @@ record final commit IDs, and only then mark S5 complete and start S6.
 S5 sprint-start baseline (fixed):
 `ed099a4af91e9d928a27d65904d2b2f80b23e834`.
 Continuation began at `5a4ca85808d6ac2ac229823895bb9440ec1ea3a2`.
+The requested summary/selected-note/green-arrow expansion began at
+`738d12b8d10b5d2a522f75782fb06df204f81d52`.
 The implementation checkpoint and evidence commit are recorded in S5.md and
 Git history. Slash commands are unavailable; use `git diff <baseline>` plus
 untracked-file inventory and code review against AGENTS.md, PRD and sprint gates.

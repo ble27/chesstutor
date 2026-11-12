@@ -5,6 +5,7 @@ import type { Lesson, Level } from "../../api/coaching";
 import { arrowDescription, toBoardArrows } from "./arrows";
 import type { BoardArrow } from "./arrows";
 import { QuestionForm } from "./QuestionForm";
+import { LabelLoss } from "./LabelLoss";
 import { useCoach, useLessons } from "./useGuidance";
 import type { LessonState } from "./useGuidance";
 
@@ -20,6 +21,11 @@ const KIND_LABEL: Record<Lesson["kind"], string> = {
   blunder: "Blunder",
   great: "Great move",
   brilliant: "Brilliant",
+  good: "Good",
+  best: "Best move",
+  inaccuracy: "Inaccuracy",
+  forced: "Forced",
+  unclassified: "Unclassified",
 };
 
 export function GuidancePanel({ analysis, selectedPly, onArrows }: Props) {
@@ -55,6 +61,11 @@ export function GuidancePanel({ analysis, selectedPly, onArrows }: Props) {
         showArrows={showArrows}
         setShowArrows={setShowArrows}
         evidence={move}
+      />
+      <LabelLoss
+        review={analysis.classifications?.find(
+          (item) => item.ply === selectedPly,
+        )}
       />
       <QuestionForm
         ply={selectedPly}
@@ -108,8 +119,16 @@ function MoveNote(props: {
   if (state.status !== "ready") return <p>Loading move notes…</p>;
   if (!analyzed) return <p>This move has not been analyzed yet.</p>;
   return (
-    <section aria-labelledby="move-note-title">
+    <section
+      aria-labelledby="move-note-title"
+      aria-live="polite"
+      aria-atomic="true"
+    >
       <h3 id="move-note-title">Move note</h3>
+      <p className="move-note-context">
+        Ply {selectedPly} ·{" "}
+        {props.evidence?.mover === "white" ? "White" : "Black"} move
+      </p>
       {!state.lessons.complete && (
         <p>The analysis is still running, so notes may be incomplete.</p>
       )}
@@ -117,8 +136,8 @@ function MoveNote(props: {
         <LessonView {...props} lesson={lesson} />
       ) : (
         <p>
-          This move was not flagged. Ask a question below to understand it
-          better.
+          No explanation is available for this move yet. Ask a question below or
+          run Deep for more evidence.
         </p>
       )}
     </section>
@@ -149,21 +168,25 @@ function LessonView({
           ))}
         </ul>
       )}
-      <label>
-        <input
-          type="checkbox"
-          checked={showArrows}
-          onChange={(event) => setShowArrows(event.target.checked)}
-        />
-        Show arrows on the board
-      </label>
-      <ul aria-label="Board arrows">
-        {lesson.arrows.map((item) => (
-          <li key={`${item.kind}-${item.uci}`}>
-            {arrowDescription(item, evidence)}
-          </li>
-        ))}
-      </ul>
+      {lesson.arrows.length > 0 && (
+        <label>
+          <input
+            type="checkbox"
+            checked={showArrows}
+            onChange={(event) => setShowArrows(event.target.checked)}
+          />
+          Show arrows on the board
+        </label>
+      )}
+      {lesson.arrows.length > 0 && (
+        <ul aria-label="Board arrows">
+          {lesson.arrows.map((item) => (
+            <li key={`${item.kind}-${item.uci}`}>
+              {arrowDescription(item, evidence)}
+            </li>
+          ))}
+        </ul>
+      )}
     </>
   );
 }

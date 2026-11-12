@@ -7,9 +7,9 @@ from pydantic import Field, model_validator
 
 from services.api.app.game_schemas import StrictModel
 from services.core.analysis.values import Color
+from services.core.coaching.lessons import LessonKind
 from services.core.coaching.values import Intent, Level
 
-LessonKind = Literal["miss", "mistake", "blunder", "great", "brilliant"]
 CoachStatus = Literal["grounded", "uncertain", "refused"]
 
 

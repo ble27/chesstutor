@@ -55,3 +55,15 @@ it("rejects coach answers with unknown status, unsafe arrows or oversized text",
     parseCoach({ ...answer, continuation_uci: ["not-a-move"] }),
   ).toThrow();
 });
+
+it.each(["good", "best", "forced", "inaccuracy", "unclassified"])(
+  "accepts selected-ply %s notes",
+  (kind) => {
+    const note = lessons.lessons[0];
+    if (!note) throw new Error("Missing note");
+    expect(
+      parseLessons({ ...lessons, lessons: [{ ...note, kind }] }).lessons[0]
+        ?.kind,
+    ).toBe(kind);
+  },
+);

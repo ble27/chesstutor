@@ -32,6 +32,27 @@ def both(beginner: str, intermediate: str | None = None) -> dict[Level, str]:
 
 
 TEMPLATES: dict[str, dict[Level, str]] = {
+    "played_move": both("Your {piece} moved from {from_square} to {to_square}."),
+    "selected_best": both(
+        "Best move: you chose the engine's strongest checked option, with very little "
+        "expected-score loss."
+    ),
+    "selected_good": both(
+        "Good move: the checked alternatives did not justify a worse label under the "
+        "pawn-swing and expected-score policy. A stronger option may still exist."
+    ),
+    "selected_inaccuracy": both(
+        "Inaccuracy: a stronger option was available. The measured pawn swing or "
+        "expected-score loss limits this to the mildest negative label."
+    ),
+    "selected_forced": both(
+        "Forced move: this was the only legal move in the position. There was no other "
+        "legal choice to compare it with."
+    ),
+    "selected_unclassified": both(
+        "Unclassified: there isn't enough reliable engine evidence to assign a move-quality "
+        "label. Run Deep for a closer look; this does not mean the move was bad."
+    ),
     "refusal": both(REFUSAL),
     "uncertain_deep": both(NOT_ENOUGH),
     "no_threat": both("No verified threat against you was found in this position."),

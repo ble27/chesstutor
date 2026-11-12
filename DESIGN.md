@@ -8,7 +8,8 @@ colors:
   board-teal: "#637878"
   board-cream: "#e0dfd5"
   arrow-played: "#49160e"
-  arrow-suggested: "#092e20"
+  arrow-suggested: "#31e65c"
+  arrow-outline: "#092e20"
   canvas: "#181818"
   canvas-end: "#242424"
   panel: "#242626"
@@ -244,11 +245,20 @@ Guidance uses the existing panel hierarchy and scroll area. Showing a lesson's
 arrows previews its pre-move position, labelled "Before" in the replay status;
 hiding them restores the selected post-move position. Position text follows the
 displayed board. Played moves use opaque dark red arrows, suggestions opaque
-dark green, with each move also named in a text list. Both colors exceed 3:1
-against either board square color. Suggested-move labels use matching engine
+bright green with a hard dark outline, with each move also named in a text list.
+The outline exceeds 3:1 against either board square color. Suggested-move labels use matching engine
 scores with explicit score perspective and separate mate notation; unavailable
 scores are identified in words. These details do not certify the outstanding
 manual screen-reader gate recorded in S5.md.
+
+Review summaries use a flat comparison table: move labels on the left, named
+White/Black columns on the right. A single primary label counts each reviewed
+ply once, including zero-count rows. Accuracy, scored coverage and expected-score
+loss remain together; a disclosure defines the independent accuracy formula.
+Numeric percentages stay on one line at phone widths. In Chess guidance, each
+selected analyzed ply has a reviewed label explanation; the replay footer cycles
+through plies. The move list shows primary labels and distinguishes Pending from
+Unclassified. None of these additions closes the manual accessibility gate.
 
 ## Do's and Don'ts
 

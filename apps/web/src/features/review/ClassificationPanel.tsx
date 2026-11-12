@@ -51,7 +51,12 @@ export function ClassificationPanel({
           {!job.summary?.is_final && " · analysis incomplete"}
         </p>
       )}
-      {job.summary && <ClassificationSummary summary={job.summary} />}
+      {job.summary && (
+        <ClassificationSummary
+          summary={job.summary}
+          reviews={job.classifications}
+        />
+      )}
       {move?.proofs.map((proof) => (
         <div key={proof.id}>
           <p>

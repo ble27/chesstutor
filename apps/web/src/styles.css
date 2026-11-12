@@ -599,3 +599,103 @@ button:disabled {
 .replay-workspace .player-label {
   margin-block: 4px;
 }
+
+.classification-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.classification-table th,
+.classification-table td {
+  padding: 8px 4px;
+  border-bottom: 1px solid #414747;
+  overflow-wrap: anywhere;
+}
+.classification-table th {
+  text-align: start;
+  font-weight: 500;
+  width: 46%;
+}
+.classification-table thead th:not(:first-child),
+.classification-table td {
+  text-align: center;
+  width: 27%;
+}
+.summary-player {
+  display: block;
+  color: #f1f3f2;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.summary-accuracy td {
+  color: #eac96a;
+  font-size: clamp(14px, 1.4vw, 18px);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.classification-table tfoot {
+  color: #b9c1c1;
+  font-size: 12px;
+}
+.summary-accuracy td.accuracy-unavailable {
+  font-size: 12px;
+  white-space: normal;
+}
+.classification-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-inline-end: 8px;
+  border-radius: 50%;
+  background: #b9c1c1;
+}
+.classification-dot.label-brilliant {
+  background: #52dcd0;
+}
+.classification-dot.label-great {
+  background: #87c9ef;
+}
+.classification-dot.label-best {
+  background: #b6dd7a;
+}
+.classification-dot.label-good {
+  background: #a2c9a8;
+}
+.classification-dot.label-inaccuracy {
+  background: #edce6f;
+}
+.classification-dot.label-mistake {
+  background: #efa362;
+}
+.classification-dot.label-blunder {
+  background: #f18d82;
+}
+.classification-dot.label-miss {
+  background: #e4bc72;
+}
+.summary-method summary {
+  min-height: 44px;
+  padding-block: 12px;
+}
+.summary-method p,
+.move-note-context {
+  color: #b9c1c1;
+  font-size: 13px;
+}
+
+/* A hard dark outline preserves bright arrow contrast against light squares. */
+.replay-board path[marker-end],
+.replay-board marker polygon {
+  filter: drop-shadow(3px 0 0 #092e20) drop-shadow(-3px 0 0 #092e20)
+    drop-shadow(0 3px 0 #092e20) drop-shadow(0 -3px 0 #092e20);
+}
+
+.recorded-move-label {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  line-height: 1.3;
+  color: inherit;
+}

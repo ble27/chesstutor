@@ -331,8 +331,10 @@ it("shows independent provisional move labels and complete coverage for Quick re
   ).toBeVisible();
   expect(screen.getByText(/provisional relative to Deep/i)).toBeVisible();
   expect(screen.getByText(/1 of 1 moves classified/)).toBeVisible();
-  expect(screen.getByText(/White: mistake 1/)).toBeVisible();
-  expect(screen.getByText(/Black: no classified moves/)).toBeVisible();
+  expect(screen.getByRole("row", { name: "Mistake 1 0" })).toBeVisible();
+  expect(
+    screen.getByRole("row", { name: "Chess Tutor accuracy 90.0% Unavailable" }),
+  ).toBeVisible();
   expect(screen.getByText(/Critical moment: ply 1/)).toBeVisible();
   expect(screen.getByText(/Brilliant is a heuristic/i)).toBeVisible();
 });

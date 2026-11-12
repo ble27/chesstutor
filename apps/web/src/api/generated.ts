@@ -650,11 +650,8 @@ export interface components {
             arrows: components["schemas"]["ArrowOut"][];
             /** Evidence Ids */
             evidence_ids: string[];
-            /**
-             * Kind
-             * @enum {string}
-             */
-            kind: "miss" | "mistake" | "blunder" | "great" | "brilliant";
+            /** Kind */
+            kind: ("forced" | "best" | "good" | "inaccuracy" | "mistake" | "blunder" | "unclassified") | ("miss" | "great" | "brilliant");
             /** Ply */
             ply: number;
             /** Text */

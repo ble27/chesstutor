@@ -145,15 +145,27 @@ test("guidance works at a phone width without horizontal scrolling", async ({
   await page.screenshot({ path: test.info().outputPath("guidance-phone.png") });
 });
 
-test("guidance arrows contrast with both board squares", async ({ page }) => {
+test("bright green guidance arrows have a contrasting outline on both board squares", async ({
+  page,
+}) => {
   await mockGuidance(page, { mode: "ok" });
   await openGuidance(page);
   const paths = page.locator(".replay-board path[marker-end]");
   await expect(paths).toHaveCount(2);
+  await expect(
+    page.locator('.replay-board path[stroke="#31e65c"]'),
+  ).toHaveCount(1);
   for (const path of await paths.all()) {
     await expect(path).toHaveAttribute("opacity", "1");
-    const stroke = await path.getAttribute("stroke");
-    if (!stroke) throw new Error("Missing arrow color");
+    const filter = await path.evaluate(
+      (element) => getComputedStyle(element).filter,
+    );
+    const rgb = filter.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+    if (!rgb) throw new Error("Missing contrasting arrow outline");
+    const stroke = `#${rgb
+      .slice(1)
+      .map((channel) => Number(channel).toString(16).padStart(2, "0"))
+      .join("")}`;
     for (const square of ["#637878", "#e0dfd5"]) {
       const values = [luminance(stroke), luminance(square)].sort(
         (a, b) => a - b,
@@ -163,4 +175,7 @@ test("guidance arrows contrast with both board squares", async ({ page }) => {
       ).toBeGreaterThanOrEqual(3);
     }
   }
+  await page.screenshot({
+    path: test.info().outputPath("guidance-arrows.png"),
+  });
 });

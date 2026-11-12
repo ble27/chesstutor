@@ -297,6 +297,15 @@ critical moments, and up to three supported practice themes. Show coverage and
 avoid full-game conclusions for unfinished analysis. Do not call this Chess.com
 accuracy or use optional provider accuracy as the product's score.
 
+S5 review-summary expansion (2026-11-12): replace comma-separated counts with an
+ordered comparison table for both named players. Count each reviewed ply once,
+using Brilliant > Great > Miss > base-label precedence. Show all supported labels,
+including zero counts, Forced and Unclassified; do not invent Book or Excellent.
+Display independent **Chess Tutor accuracy** as `100 * (1 - average_expected_loss)`
+on scored moves only, with the formula and scored-move coverage. Null averages
+mean unavailable, never 100%. Partial analyses stay explicitly partial. This is
+an expected-score retention metric, not Chess.com's proprietary accuracy.
+
 ## 7. Grounded, chess-only guidance
 
 For each analyzed move, explain what changed, the concrete benefit/problem,
@@ -311,6 +320,19 @@ Good, Best, Forced, Inaccuracy, and Unclassified plies stay quiet, with the labe
 still visible and an on-demand explanation available. Lessons come from the stored
 S4 label and badges, the played move, the engine's better move, and the supporting
 detector evidence. Brilliant and Great lessons require the verified badge.
+
+S5 selected-move expansion (2026-11-12): in Chess guidance, previous/next ply
+navigation also displays a reviewed explanation for every analyzed ply, including
+Good, Best, Forced, Inaccuracy and Unclassified. Preserve the selected move, mover,
+base label and any verified primary badge; explain its label using stored evidence.
+For routine moves use reviewed policy explanations and the actual played piece
+and squares; do not invent a tactic. Unclassified notes state insufficient evidence.
+Pending plies remain pending. Notable-only automatic timeline annotations and
+the review packet remain selective. Selected-ply notes require no chat request.
+The recorded move list shows each analyzed ply's primary label. Unprocessed
+plies show Pending, distinct from evidence-backed Unclassified.
+Suggestion arrows use bright green with a contrasting dark outline so the green
+is visible on the preserved teal/cream board; retain text alternatives.
 
 Lesson wording is plain and coach-like, written for a beginner. Describe pieces
 and squares in words ("your rook on d5", "the opponent's bishop") and what the
@@ -383,6 +405,7 @@ on drift. Validate network payloads at the frontend boundary. Error envelope:
 | `GET /games/{game_id}` | Validated metadata, starting FEN, complete move/position sequence |
 | `POST /analyses` | `{game_id, mode: quick\|deep}`; 202/job or 200/reusable completed result |
 | `GET /analyses/{analysis_id}` | State, progress, available per-move evidence, versions |
+| `GET /analyses/{analysis_id}/lessons?level=` | Reviewed selected-ply notes for all analyzed labels, legal alternatives and arrows |
 | `POST /analyses/{analysis_id}/cancel` | Idempotent initiating-session cancellation |
 | `POST /coach` | `{analysis_id, ply, player_color, intent?, question?, explanation_level}` |
 | `GET /health/live`, `GET /health/ready` | Process health and dependency readiness |

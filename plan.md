@@ -98,6 +98,13 @@ heuristic brilliance, and Quick results as provisional relative to Deep.
 
 ## S5 — Grounded coaching
 
+Approved expansion (2026-11-12): organized named-player comparison counts with
+one primary label per reviewed ply; independent Chess Tutor accuracy with its
+formula and scored coverage; selected-ply explanations for every analyzed label
+while rotating through moves; bright green engine arrows with a contrast outline.
+See PRD §§6–7 for counting/metric and evidence rules. The existing manual
+accessibility gate remains open; this is additional S5 scope, not S6 entry.
+
 **Implementation:** Add evidence detectors, reviewed templates, supported intents,
 both-player advice, beginner/intermediate wording, and game improvement. Add an
 automatic beginner-friendly lesson only for Miss, Mistake, Blunder, and notable

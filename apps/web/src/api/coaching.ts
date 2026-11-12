@@ -63,6 +63,11 @@ function kind(value: unknown): Lesson["kind"] {
     case "blunder":
     case "great":
     case "brilliant":
+    case "good":
+    case "best":
+    case "inaccuracy":
+    case "forced":
+    case "unclassified":
       return value;
     default:
       throw new Error("Invalid lesson kind");

@@ -13,7 +13,7 @@ from typing import Literal
 import chess
 
 from services.core.analysis.values import Color, EngineLine, MoveEvidence, Wdl
-from services.core.classification.base import expected_for_mover
+from services.core.classification.base import BaseLabel, expected_for_mover
 from services.core.classification.cost import tactical_cost
 from services.core.classification.review import ReviewedMove, legal_line
 from services.core.coaching.detectors import detect_evidence
@@ -23,7 +23,7 @@ from services.core.coaching.phrases import GOOD, MISS_KINDS, SACRIFICE_KINDS
 from services.core.coaching.templates import block, render_blocks
 from services.core.coaching.values import Evidence, Level, TemplateBlock
 
-LessonKind = Literal["miss", "mistake", "blunder", "great", "brilliant"]
+LessonKind = BaseLabel | Literal["miss", "great", "brilliant"]
 FLAW_KINDS = ("miss", "mistake", "blunder")
 MAX_ALTERNATIVES = 2
 CLOSE_TO_BEST = Fraction(1, 20)  # beginners are offered playable, not engine-perfect, moves

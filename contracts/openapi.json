@@ -1240,15 +1240,29 @@
             "type": "array"
           },
           "kind": {
-            "enum": [
-              "miss",
-              "mistake",
-              "blunder",
-              "great",
-              "brilliant"
+            "anyOf": [
+              {
+                "enum": [
+                  "forced",
+                  "best",
+                  "good",
+                  "inaccuracy",
+                  "mistake",
+                  "blunder",
+                  "unclassified"
+                ],
+                "type": "string"
+              },
+              {
+                "enum": [
+                  "miss",
+                  "great",
+                  "brilliant"
+                ],
+                "type": "string"
+              }
             ],
-            "title": "Kind",
-            "type": "string"
+            "title": "Kind"
           },
           "ply": {
             "maximum": 300.0,

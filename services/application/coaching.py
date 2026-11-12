@@ -21,10 +21,10 @@ from services.core.coaching.lessons import (
     FLAW_KINDS,
     Arrow,
     Lesson,
-    build_lessons,
     lesson_kind,
     make_arrow,
 )
+from services.core.coaching.move_notes import move_notes
 from services.core.coaching.templates import render_blocks, render_coaching
 from services.core.coaching.values import Evidence, Level
 
@@ -64,7 +64,7 @@ def lessons_response(analysis: AnalysisResponse, level: Level) -> LessonsRespons
         analysis_id=analysis.id,
         level=level,
         complete=analysis.state == "completed",
-        lessons=[lesson_out(lesson) for lesson in build_lessons(pairs, level)],
+        lessons=[lesson_out(lesson) for lesson in move_notes(pairs, level)],
     )
 
 

@@ -39,11 +39,11 @@ def request(**changes) -> CoachRequest:
     return CoachRequest(**(values | changes))
 
 
-def test_lessons_cover_only_notable_plies_with_text_and_arrows():
+def test_selected_notes_cover_routine_and_notable_plies_with_text_and_arrows():
     quiet = (reviewed("good", ply=2), replace(loose_rook()[1], ply=2))
     later = (reviewed("mistake", ply=3), replace(loose_rook()[1], ply=3))
     result = lessons_response(analysis([missed_queen(), quiet, later]), "beginner")
-    assert [item.kind for item in result.lessons] == ["miss", "mistake"]
+    assert [item.kind for item in result.lessons] == ["miss", "good", "mistake"]
     first = result.lessons[0]
     assert "queen" in first.text and first.arrows[0].kind == "played"
     assert result.complete is True and result.level == "beginner"
