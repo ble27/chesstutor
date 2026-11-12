@@ -93,6 +93,9 @@ Do not describe the aggregate gate as green while S6/S7 specifications fail.
   game sequences, provide deterministic proof. The generated sheet is a snapshot,
   not a newly tallied human review.
 - S6 manual accessibility and S7 release/benchmark/recovery gates remain unrun.
+- On the final rebuild, both workers hit the existing five-second UCI startup
+  timeout once. An unchanged `make up` retry passed with all services healthy;
+  the cause is not isolated. Retain this for S7 startup/reliability validation.
 
 ## S6 starting points after entry gates
 
