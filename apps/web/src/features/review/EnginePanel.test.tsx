@@ -303,7 +303,7 @@ it("shows independent provisional move labels and complete coverage for Quick re
         classification: {
           base_label: "mistake",
           expected_loss: 0.1,
-          policy_version: "v2",
+          policy_version: "v3",
         },
         badges: [],
         provisional: true,

@@ -249,26 +249,33 @@ incomplete search, or unstable results receive
 See [python-chess engine docs](https://python-chess.readthedocs.io/en/stable/engine.html)
 and [Stockfish UCI controls](https://official-stockfish.github.io/docs/stockfish-wiki/UCI-Protocol-and-Stockfish-Commands.html).
 
-### Independent classification policy v2
+### Independent classification policy v3
 
 These are initial product rules to calibrate on annotated fixtures, not
 Chess.com's definitions. Every change increments the policy version.
 
-| Base label | Initial rule |
+| Base label | Rule (policy v3) |
 | --- | --- |
 | Forced | Exactly one legal move and usable evidence |
 | Best | Verified top choice and `L < 0.02` |
-| Good | Other moves with `0 <= L < 0.05` |
-| Inaccuracy | `0.05 <= L < 0.10` |
-| Mistake | `0.10 <= L < 0.20` |
-| Blunder | `L >= 0.20` and the engine line loses at least 3 material points against the best line or allows a forced mate; otherwise Mistake |
+| Good | Other moves with `0 <= L < 0.05`, or a swing under 0.5 pawn |
+| Inaccuracy | `0.05 <= L < 0.10`, or a swing of 0.5 to under 1.0 pawn |
+| Mistake | `0.10 <= L < 0.20`, or a swing of 1.0 to under 2.0 pawns |
+| Blunder | `L >= 0.20` and a swing of 2.0 pawns or more, and the engine line loses at least 3 material points, allows or misses a forced mate, or turns a drawn or winning position (best above -0.5) into a losing one (-1.5 or worse); otherwise Mistake |
 | Unclassified | Missing, unstable, or insufficient evidence |
+
+`L` is the expected-score loss from WDL; the swing is the difference between the
+engine's best and played scores in pawns from the mover's point of view (mate counts
+as +/-99). The label is the less severe of the `L` band and the swing band, so a large
+pawn swing while both moves keep winning is damped, and an exaggerated `L` for a
+half-pawn slip is damped. If the played move wins the same material as the best move
+by another route, the label is at most Inaccuracy.
 
 Each move gets one base label and optional badges. Test all numerical boundaries
 and both colors. A low-loss move may be Good even if it is not the top choice.
 
 - **Miss:** a verified tactical opportunity to force mate or win material (including
-  capturing an undefended piece) was available, the move abandons it, and `L >= 0.10`. Require a detected motif and
+  capturing an undefended piece the move did not itself capture) was available, the move abandons it, and `L >= 0.10`. Require a detected motif and
   legal supporting line; show what was missed. An evaluation swing alone fails.
 - **Great:** Deep only; a Best move is the only candidate within 0.05 of best,
   and the next candidate loses at least 0.15. Recheck the runner-up with the same

@@ -2,7 +2,7 @@
 
 import chess
 
-from services.core.analysis.values import EngineLine, MateScore, MoveEvidence
+from services.core.analysis.values import EngineLine, MateScore, MoveEvidence, Score
 from services.core.classification.base import TacticalCost
 
 POINTS = {
@@ -43,13 +43,40 @@ def settled_material(root: chess.Board, line: EngineLine) -> int:
     return material(positions[plies], root.turn)
 
 
+MATE_PAWNS = 99.0
+
+
+def pawns(score: Score) -> float:
+    """Mover-relative score in pawns; a mate is +/-99 so it dwarfs any evaluation."""
+    if isinstance(score, MateScore):
+        return MATE_PAWNS if score.moves > 0 else -MATE_PAWNS
+    return score.centipawns / 100
+
+
+def delivers_mate(score: Score) -> bool:
+    return isinstance(score, MateScore) and score.moves > 0
+
+
 def tactical_cost(root: chess.Board, evidence: MoveEvidence) -> TacticalCost:
-    """Points lost against the engine's best line, and whether the played line gets mated."""
-    mated = (
-        isinstance(evidence.played.mover_score, MateScore) and evidence.played.mover_score.moves < 0
-    )
-    if not evidence.best or len(evidence.played.pv) < 2:
+    """Material, mate and pawn-swing cost of the played move against the engine's best line."""
+    played_score = evidence.played.mover_score
+    mated = isinstance(played_score, MateScore) and played_score.moves < 0
+    if not evidence.best:
         return TacticalCost(0, mated)
-    best = settled_material(root, evidence.best[0])
-    played = settled_material(root, evidence.played)
-    return TacticalCost(max(0, best - played), mated)
+    best_score = evidence.best[0].mover_score
+    best_p, played_p = pawns(best_score), pawns(played_score)
+    lost, won = 0, False
+    if len(evidence.played.pv) >= 2:
+        best_material = settled_material(root, evidence.best[0])
+        played_material = settled_material(root, evidence.played)
+        lost = max(0, best_material - played_material)
+        won = lost < 1 and played_material - material(root, root.turn) >= POINTS[chess.KNIGHT]
+    return TacticalCost(
+        lost,
+        mated,
+        missed_mate=delivers_mate(best_score) and not delivers_mate(played_score),
+        swing_pawns=max(0.0, best_p - played_p),
+        best_pawns=best_p,
+        played_pawns=played_p,
+        won_material=won,
+    )

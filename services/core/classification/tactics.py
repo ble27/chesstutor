@@ -73,6 +73,15 @@ def free_capture(board: chess.Board, line: EngineLine) -> bool:
     return not board.is_attacked_by(target.color, move.to_square)
 
 
+def takes_same_piece(board: chess.Board, played_uci: str, best: EngineLine) -> bool:
+    """The played move already captures the piece the best line wins (another route to it)."""
+    played = chess.Move.from_uci(played_uci)
+    return (
+        board.is_capture(played)
+        and played.to_square == chess.Move.from_uci(best.pv[0].uci).to_square
+    )
+
+
 def is_recapture(board: chess.Board, move: chess.Move) -> bool:
     if not board.move_stack or not board.is_capture(move):
         return False

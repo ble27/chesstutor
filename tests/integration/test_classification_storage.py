@@ -22,7 +22,7 @@ def test_versioned_move_reviews_are_persisted_atomically_with_engine_evidence():
                 select(reviews.c.move_review).where(reviews.c.analysis_id == job.id)
             )
         assert persisted["ply"] == value.ply
-        assert persisted["classification"]["policy_version"] == "v2"
+        assert persisted["classification"]["policy_version"] == "v3"
         assert snapshot.response(job.owner, evidence).classifications[0].ply == value.ply
 
 

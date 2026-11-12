@@ -11,7 +11,7 @@ const classified = {
       classification: {
         base_label: "best",
         expected_loss: 0,
-        policy_version: "v2",
+        policy_version: "v3",
       },
       badges: [],
       provisional: true,

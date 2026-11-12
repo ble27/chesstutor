@@ -110,7 +110,7 @@ it("retains selected-move labels and coverage and restores focus after opening a
         classification: {
           base_label: "blunder",
           expected_loss: 0.25,
-          policy_version: "v2",
+          policy_version: "v3",
         },
         badges: [],
         provisional: true,

@@ -386,3 +386,13 @@ def test_a_defended_pawn_is_not_a_missed_capture():
     board, item, best = missed_capture(DEFENDED_PAWN)
     result, _ = verify(board, item, FakeVerifier(best))
     assert result.badges == ()
+
+
+def test_taking_the_same_piece_another_way_is_not_a_miss():
+    """Regression: review sheet row 7; Nxd4 won the same bishop as cxd4."""
+    board = chess.Board("4k3/8/2n5/2p5/3B4/8/8/4K3 b - - 0 1")
+    pawn_takes, knight_takes = line(board, ("c5d4",), 800), line(board, ("c6d4",), 500)
+    result, _ = verify(
+        board, evidence(board, (pawn_takes,), knight_takes), FakeVerifier(pawn_takes)
+    )
+    assert result.badges == ()

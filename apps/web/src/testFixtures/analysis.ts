@@ -106,11 +106,11 @@ export const verifiedGreatAnalysis: components["schemas"]["AnalysisResponse"] =
         classification: {
           base_label: "best",
           expected_loss: 0,
-          policy_version: "v2",
+          policy_version: "v3",
         },
         proofs: [
           {
-            id: "v2:1:great",
+            id: "v3:1:great",
             badge: "great",
             motif: "unique_move",
             ply: 1,
@@ -120,7 +120,7 @@ export const verifiedGreatAnalysis: components["schemas"]["AnalysisResponse"] =
             offered_material_points: 0,
             verified_followup_plies: 1,
             expected_score_after_reply: 0.5,
-            policy_version: "v2",
+            policy_version: "v3",
           },
         ],
       },

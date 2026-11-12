@@ -20,6 +20,7 @@ from services.core.classification.tactics import (
     free_capture,
     material_gain,
     offered_capture_moves,
+    takes_same_piece,
     winning_motif,
 )
 
@@ -74,7 +75,9 @@ def candidate_for(
             return Candidate(
                 "unique_move", board.copy(), (board.parse_uci(evidence.best[runner].pv[0].uci),)
             )
-    unplayed_win = winning_motif(board, best) or free_capture(board, best)
+    unplayed_win = winning_motif(board, best) or (
+        free_capture(board, best) and not takes_same_piece(board, evidence.played_uci, best)
+    )
     if loss >= 0.10 and best.pv[0].uci != evidence.played_uci and unplayed_win:
         return Candidate("forced_mate", board.copy(), (board.parse_uci(best.pv[0].uci),))
     return None

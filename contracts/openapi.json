@@ -333,7 +333,7 @@
             "type": "integer"
           },
           "policy_version": {
-            "default": "v2",
+            "default": "v3",
             "title": "Policy Version",
             "type": "string"
           },
@@ -601,7 +601,7 @@
             "title": "Expected Loss"
           },
           "policy_version": {
-            "default": "v2",
+            "default": "v3",
             "title": "Policy Version",
             "type": "string"
           }

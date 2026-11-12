@@ -350,7 +350,7 @@ export interface components {
             ply: number;
             /**
              * Policy Version
-             * @default v2
+             * @default v3
              */
             policy_version: string;
             /** Reserved Ms */
@@ -444,7 +444,7 @@ export interface components {
             expected_loss: number | null;
             /**
              * Policy Version
-             * @default v2
+             * @default v3
              */
             policy_version: string;
         };

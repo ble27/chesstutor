@@ -7,7 +7,7 @@ const verifiedMove = {
   badges: ["great"],
   proofs: [
     {
-      id: "v2:1:great",
+      id: "v3:1:great",
       ply: 1,
       badge: "great",
       motif: "unique_move",

@@ -44,7 +44,7 @@ def badges(**changes: object) -> BadgeResult:
 def test_deep_unique_best_with_verified_runner_up_gets_great():
     result = badges(candidate_losses=(0.0, 0.15, 0.30))
     assert result.badges == ("great",)
-    assert result.policy_version == "v2"
+    assert result.policy_version == "v3"
     assert result.evidence_ids == ("verified-line-1",)
 
 
