@@ -7,6 +7,8 @@ colors:
   accent-active: "#d9b854"
   board-teal: "#637878"
   board-cream: "#e0dfd5"
+  arrow-played: "#49160e"
+  arrow-suggested: "#092e20"
   canvas: "#181818"
   canvas-end: "#242424"
   panel: "#242626"
@@ -235,6 +237,18 @@ charcoal-and-gold inset outline. The selected move receives a gold background,
 dark text, and stronger weight. Legal-position text, player descriptions, and
 attributed Cburnett pieces accompany the visual board. Piece provenance is
 CC BY-SA 3.0; local Lucide icons retain the accompanying ISC/MIT notices.
+
+### Chess guidance
+
+Guidance uses the existing panel hierarchy and scroll area. Showing a lesson's
+arrows previews its pre-move position, labelled "Before" in the replay status;
+hiding them restores the selected post-move position. Position text follows the
+displayed board. Played moves use opaque dark red arrows, suggestions opaque
+dark green, with each move also named in a text list. Both colors exceed 3:1
+against either board square color. Suggested-move labels use matching engine
+scores with explicit score perspective and separate mate notation; unavailable
+scores are identified in words. These details do not certify the outstanding
+manual screen-reader gate recorded in S5.md.
 
 ## Do's and Don'ts
 
