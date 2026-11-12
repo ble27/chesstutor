@@ -12,7 +12,7 @@ GOOD = {
     "{target_square}, and when it moves the {second_piece} on {second_square} behind it is "
     "lost (a skewer).",
     "pin": "Your {attacker_piece} on {attacker_square} pins the opponent's {target_piece} on "
-    "{target_square} to the king on {king_square}, so it cannot move.",
+    "{target_square} to the king on {king_square}, so it cannot move off that line.",
     "fork": "Your {attacker_piece} on {attacker_square} attacks the opponent's {target_piece} "
     "on {target_square} and {second_piece} on {second_square} at the same time (a fork).",
     "discovered_check": "Moving this piece uncovers a check from your {attacker_piece} on "

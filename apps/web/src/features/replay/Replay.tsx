@@ -24,8 +24,15 @@ function ReplaySession({ game }: { game: Game }) {
   const position = game.positions[selectedPly];
   if (!position) return null;
   const previous = game.positions[selectedPly - 1];
+  const preview =
+    arrows.length > 0 &&
+    previous &&
+    arrows.every(
+      (arrow) => arrow.ply === selectedPly && arrow.rootFen === previous.fen,
+    );
+  const boardPosition = preview ? previous : position;
   const selectedMove = previous
-    ? `After ${moveLabel(previous.fen, position.san)}`
+    ? `${preview ? "Before" : "After"} ${moveLabel(previous.fen, position.san)}`
     : "Starting position";
   return (
     <section
@@ -47,17 +54,17 @@ function ReplaySession({ game }: { game: Game }) {
           className="replay-position"
         >
           {selectedMove} ·{" "}
-          {position.fen.split(" ")[1] === "w" ? "White" : "Black"} to move ·{" "}
-          {orientation === "white" ? "White" : "Black"} at bottom
+          {boardPosition.fen.split(" ")[1] === "w" ? "White" : "Black"} to move
+          · {orientation === "white" ? "White" : "Black"} at bottom
         </p>
         <BoardFrame
           players={game.game}
-          fen={position.fen}
+          fen={boardPosition.fen}
           orientation={orientation}
-          lastMove={position.uci}
-          arrows={arrows}
+          lastMove={preview ? null : position.uci}
+          arrows={preview ? arrows : []}
         />
-        <PositionText fen={position.fen} />
+        <PositionText fen={boardPosition.fen} />
         <PieceCredit />
       </section>
       <ReviewWorkspace

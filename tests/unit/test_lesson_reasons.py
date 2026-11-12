@@ -101,6 +101,15 @@ def test_great_move_explains_the_pin_it_creates():
     assert "pins" in text and "knight" in text and "d7" in text and "e8" in text
 
 
+def test_a_pinned_rook_can_still_move_along_the_pin_line():
+    root = "4k3/4r3/8/8/8/8/8/R6K w - - 0 1"
+    board = chess.Board(root)
+    board.push_uci("a1e1")
+    assert chess.Move.from_uci("e7e6") in board.legal_moves
+    text = praised(root, "a1e1")
+    assert "pins" in text and "cannot move off that line" in text
+
+
 def test_great_move_that_rescues_a_piece_says_which_piece():
     text = praised("6k1/8/8/8/6b1/8/8/3R2K1 w - - 0 1", "d1d4")
     assert "rescues" in text and "rook" in text and "d1" in text

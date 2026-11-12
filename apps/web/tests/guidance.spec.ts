@@ -1,11 +1,32 @@
 import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
 import { isRecord } from "../src/api/validation";
-import { completedAnalysis } from "../src/testFixtures/analysis";
-import { answer, lessons, refusal } from "../src/testFixtures/coaching";
-import { archive, imported, listing } from "../src/testFixtures/discovery";
+import {
+  answer,
+  guidanceAnalysis,
+  guidanceGame,
+  lessons,
+  refusal,
+} from "../src/testFixtures/coaching";
+import { archive, listing } from "../src/testFixtures/discovery";
 
 type Coach = "ok" | "outage";
+
+function luminance(hex: string): number {
+  const parts = hex.replace("#", "").match(/../g);
+  if (!parts || parts.length !== 3) throw new Error("Invalid color");
+  const linear = parts.map((part) => {
+    const channel = Number.parseInt(part, 16) / 255;
+    return channel <= 0.04045
+      ? channel / 12.92
+      : ((channel + 0.055) / 1.055) ** 2.4;
+  });
+  return (
+    (linear[0] ?? 0) * 0.2126 +
+    (linear[1] ?? 0) * 0.7152 +
+    (linear[2] ?? 0) * 0.0722
+  );
+}
 
 async function mockGuidance(page: Page, coach: { mode: Coach }) {
   await page.route("**/api/v1/**", async (route) => {
@@ -27,12 +48,12 @@ async function mockGuidance(page: Page, coach: { mode: Coach }) {
       return route.fulfill({ json: question ? refusal : answer });
     }
     if (path === "/api/v1/analyses" || path.includes("/analyses/"))
-      return route.fulfill({ json: completedAnalysis });
+      return route.fulfill({ json: guidanceAnalysis });
     if (path.endsWith("/health/ready"))
       return route.fulfill({ json: { status: "ready" } });
     if (path.endsWith("/archives")) return route.fulfill({ json: archive });
     if (path.includes("/players/")) return route.fulfill({ json: listing });
-    return route.fulfill({ json: imported });
+    return route.fulfill({ json: guidanceGame });
   });
 }
 
@@ -41,7 +62,7 @@ async function openGuidance(page: Page) {
   await page.getByLabel("Chess.com username").fill("alice");
   await page.getByRole("button", { name: "Find games" }).click();
   await page.getByRole("button", { name: "Open game" }).click();
-  await page.getByRole("button", { name: "1. White: e4" }).click();
+  await page.getByRole("button", { name: "1. White: Kh1" }).click();
   await page.getByRole("button", { name: "Quick review" }).click();
   await expect(page.getByText("Completed · 1/1 plies")).toBeVisible();
   await page.getByRole("tab", { name: "Chess guidance" }).click();
@@ -66,6 +87,9 @@ test("explains a flagged move in plain words and draws labelled arrows", async (
     .uncheck();
   await expect.poll(parts).toBeLessThan(withArrows);
   await expect(page.getByRole("list", { name: "Board arrows" })).toBeVisible();
+  await page.screenshot({
+    path: test.info().outputPath("guidance-desktop.png"),
+  });
 });
 
 test("answers a supported question and refuses an unrelated one", async ({
@@ -118,4 +142,25 @@ test("guidance works at a phone width without horizontal scrolling", async ({
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
+  await page.screenshot({ path: test.info().outputPath("guidance-phone.png") });
+});
+
+test("guidance arrows contrast with both board squares", async ({ page }) => {
+  await mockGuidance(page, { mode: "ok" });
+  await openGuidance(page);
+  const paths = page.locator(".replay-board path[marker-end]");
+  await expect(paths).toHaveCount(2);
+  for (const path of await paths.all()) {
+    await expect(path).toHaveAttribute("opacity", "1");
+    const stroke = await path.getAttribute("stroke");
+    if (!stroke) throw new Error("Missing arrow color");
+    for (const square of ["#637878", "#e0dfd5"]) {
+      const values = [luminance(stroke), luminance(square)].sort(
+        (a, b) => a - b,
+      );
+      expect(
+        ((values[1] ?? 0) + 0.05) / ((values[0] ?? 0) + 0.05),
+      ).toBeGreaterThanOrEqual(3);
+    }
+  }
 });

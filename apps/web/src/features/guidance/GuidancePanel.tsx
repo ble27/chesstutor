@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Analysis } from "../../api/analysis";
+import type { Evidence } from "../../api/analysisEvidence";
 import type { Lesson, Level } from "../../api/coaching";
 import { arrowDescription, toBoardArrows } from "./arrows";
 import type { BoardArrow } from "./arrows";
@@ -33,9 +34,11 @@ export function GuidancePanel({ analysis, selectedPly, onArrows }: Props) {
       ? lessons.lessons.lessons.find((item) => item.ply === selectedPly)
       : undefined;
   useEffect(() => {
-    onArrows(showArrows && lesson ? toBoardArrows(lesson.arrows) : []);
+    onArrows(
+      showArrows && lesson && move ? toBoardArrows(lesson.arrows, move) : [],
+    );
     return () => onArrows([]);
-  }, [lesson, showArrows, onArrows]);
+  }, [lesson, move, showArrows, onArrows]);
   useEffect(() => reset(), [selectedPly, level, reset]);
   if (!analysis)
     return (
@@ -51,6 +54,7 @@ export function GuidancePanel({ analysis, selectedPly, onArrows }: Props) {
         analyzed={move !== undefined}
         showArrows={showArrows}
         setShowArrows={setShowArrows}
+        evidence={move}
       />
       <QuestionForm
         ply={selectedPly}
@@ -95,6 +99,7 @@ function MoveNote(props: {
   analyzed: boolean;
   showArrows: boolean;
   setShowArrows: (value: boolean) => void;
+  evidence: Evidence | undefined;
 }) {
   const { state, lesson, selectedPly, analyzed } = props;
   if (state.status === "error")
@@ -124,10 +129,12 @@ function LessonView({
   lesson,
   showArrows,
   setShowArrows,
+  evidence,
 }: {
   lesson: Lesson;
   showArrows: boolean;
   setShowArrows: (value: boolean) => void;
+  evidence: Evidence | undefined;
 }) {
   return (
     <>
@@ -152,7 +159,9 @@ function LessonView({
       </label>
       <ul aria-label="Board arrows">
         {lesson.arrows.map((item) => (
-          <li key={`${item.kind}-${item.uci}`}>{arrowDescription(item)}</li>
+          <li key={`${item.kind}-${item.uci}`}>
+            {arrowDescription(item, evidence)}
+          </li>
         ))}
       </ul>
     </>

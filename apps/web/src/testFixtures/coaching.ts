@@ -1,8 +1,42 @@
 import type { components } from "../api/generated";
 import { completedAnalysis } from "./analysis";
+import { imported } from "./discovery";
 
 type Lessons = components["schemas"]["LessonsResponse"];
 type Coach = components["schemas"]["CoachResponse"];
+
+const rootFen = "6k1/8/8/8/6b1/8/8/3R2K1 w - - 0 1";
+const playedFen = "6k1/8/8/8/6b1/8/8/3R3K b - - 1 1";
+const bestFen = "6k1/8/8/8/3R2b1/8/8/6K1 b - - 1 1";
+const base = completedAnalysis.evidence[0];
+if (!base || !base.best[0]) throw new Error("Missing analysis fixture");
+
+export const guidanceGame = {
+  ...imported,
+  initial_fen: rootFen,
+  positions: [
+    { ply: 0, fen: rootFen, san: null, uci: null },
+    { ply: 1, fen: playedFen, san: "Kh1", uci: "g1h1" },
+  ],
+};
+
+export const guidanceAnalysis = {
+  ...completedAnalysis,
+  evidence: [
+    {
+      ...base,
+      root_fen: rootFen,
+      played_uci: "g1h1",
+      played: {
+        ...base.played,
+        pv: [{ uci: "g1h1", san: "Kh1", fen: playedFen }],
+      },
+      best: [
+        { ...base.best[0], pv: [{ uci: "d1d4", san: "Rd4", fen: bestFen }] },
+      ],
+    },
+  ],
+};
 
 export const lessons: Lessons = {
   analysis_id: completedAnalysis.id,

@@ -59,26 +59,40 @@ export function useLessons(
 }
 
 export function useCoach(analysis: Analysis | null) {
-  const [state, setState] = useState<AnswerState>({ status: "idle" });
+  const [settled, setSettled] = useState<{
+    id: string;
+    state: AnswerState;
+  } | null>(null);
   const controller = useRef<AbortController | null>(null);
-  useEffect(() => () => controller.current?.abort(), []);
   const id = analysis?.id;
+  useEffect(() => () => controller.current?.abort(), [id]);
   const ask = useCallback(
     (request: CoachRequest) => {
       if (!id) return;
       controller.current?.abort();
       const current = new AbortController();
       controller.current = current;
-      setState({ status: "asking" });
+      setSettled({ id, state: { status: "asking" } });
       askCoach(id, request, current.signal)
-        .then((answer) => setState({ status: "answered", answer }))
+        .then((answer) => {
+          if (!current.signal.aborted)
+            setSettled({ id, state: { status: "answered", answer } });
+        })
         .catch((error: unknown) => {
           if (!current.signal.aborted)
-            setState({ status: "error", error: asApiError(error), request });
+            setSettled({
+              id,
+              state: { status: "error", error: asApiError(error), request },
+            });
         });
     },
     [id],
   );
-  const reset = useCallback(() => setState({ status: "idle" }), []);
+  const reset = useCallback(() => {
+    controller.current?.abort();
+    setSettled(null);
+  }, []);
+  const state: AnswerState =
+    settled?.id === id && settled ? settled.state : { status: "idle" };
   return { state, ask, reset };
 }

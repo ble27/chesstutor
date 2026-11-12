@@ -184,3 +184,33 @@ it("labels notes from an unfinished analysis as incomplete", async () => {
   setup();
   expect(await screen.findByText(/analysis is still running/i)).toBeVisible();
 });
+
+it("shows the matching suggested move's engine score with its perspective", async () => {
+  const lesson = lessons.lessons[0];
+  if (!lesson) throw new Error("Missing lesson");
+  route({
+    lessons: () =>
+      Response.json({
+        ...lessons,
+        lessons: [
+          {
+            ...lesson,
+            arrows: [
+              {
+                kind: "suggested",
+                rank: 1,
+                from_square: "e2",
+                to_square: "e4",
+                uci: "e2e4",
+              },
+            ],
+          },
+        ],
+      }),
+  });
+  setup();
+  const arrows = await screen.findByRole("list", { name: "Board arrows" });
+  expect(arrows).toHaveTextContent(
+    "Suggestion 1: e2 to e4 · White evaluation: +1.2",
+  );
+});

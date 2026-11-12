@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { Chessboard } from "react-chessboard";
+import { Chessboard, defaultArrowOptions } from "react-chessboard";
 import type { BoardArrow } from "../guidance/arrows";
 
 export function Board({
@@ -38,6 +38,7 @@ export function Board({
             allowDragging: false,
             allowDrawingArrows: false,
             arrows,
+            arrowOptions: { ...defaultArrowOptions, opacity: 1 },
             showAnimations: false,
             darkSquareStyle: { backgroundColor: "#637878" },
             lightSquareStyle: { backgroundColor: "#e0dfd5" },
