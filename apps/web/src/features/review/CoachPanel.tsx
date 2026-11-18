@@ -11,6 +11,7 @@ import { CoachVoice } from "./CoachVoice";
 export function CoachPanel({
   analysis,
   selectedPly,
+  selectedSan,
   onArrows,
   suspended = false,
   arrowsVisible,
@@ -21,6 +22,7 @@ export function CoachPanel({
   onArrowsVisible?: ((visible: boolean) => void) | undefined;
   analysis: Analysis | null;
   selectedPly: number;
+  selectedSan?: string | undefined;
   onArrows: (arrows: BoardArrow[]) => void;
 }) {
   const [muted, setMuted] = useState(false);
@@ -65,12 +67,9 @@ export function CoachPanel({
             onMute={setMuted}
           />
         </div>
-        {selectedPly > 0 && !suspended && (
-          <strong className="coach-rating" data-rating={rating.kind}>
-            {rating.name}
-          </strong>
-        )}
-        <CoachNote
+        <CoachResponse
+          move={suspended ? undefined : selectedSan}
+          rating={selectedPly > 0 && !suspended ? rating : null}
           lesson={lesson}
           state={state}
           selectedPly={selectedPly}
@@ -102,12 +101,16 @@ export function CoachPanel({
   );
 }
 
-function CoachNote({
+function CoachResponse({
+  move,
+  rating,
   lesson,
   state,
   selectedPly,
   suspended,
 }: {
+  move: string | undefined;
+  rating: ReturnType<typeof moveRating> | null;
   lesson: Lesson | undefined;
   state: ReturnType<typeof useLessons>;
   selectedPly: number;
@@ -124,7 +127,15 @@ function CoachNote({
           ? "Loading move note…"
           : null;
   return (
-    <>
+    <div className="coach-response">
+      {rating && (
+        <div className="coach-response-heading">
+          {move && <strong className="coach-move">{move}</strong>}
+          <span className="coach-rating" data-rating={rating.kind}>
+            {rating.name}
+          </span>
+        </div>
+      )}
       <p
         aria-live="polite"
         role={state.status === "error" && !suspended ? "alert" : undefined}
@@ -138,7 +149,7 @@ function CoachNote({
           <HighlightedNote text={alternative.text} />
         </p>
       )}
-    </>
+    </div>
   );
 }
 

@@ -9,6 +9,7 @@ it("automatically explains the ply without exposing standalone chat", async () =
     <CoachPanel
       analysis={guidanceAnalysis}
       selectedPly={1}
+      selectedSan="e4"
       onArrows={vi.fn()}
     />,
   );
@@ -18,6 +19,10 @@ it("automatically explains the ply without exposing standalone chat", async () =
         node?.matches(".coach-note") === true &&
         (node.textContent ?? "").includes("leaves your rook"),
     ),
+  ).toBeVisible();
+  expect(screen.getByText("e4", { selector: ".coach-move" })).toBeVisible();
+  expect(
+    document.querySelector(".coach-response .coach-note strong"),
   ).toBeVisible();
   expect(
     screen.queryByRole("textbox", { name: /question/i }),

@@ -436,12 +436,6 @@ button {
   height: 52px;
 }
 
-.coach-module .coach-note {
-  margin: 4px 0;
-  color: var(--text);
-  line-height: 1.45;
-}
-
 .coach-arrows {
   display: flex;
   align-items: center;
@@ -632,12 +626,20 @@ button {
   }
 
   .coach-module {
-    grid-template-columns: 44px minmax(0, 1fr);
+    position: relative;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .coach-module .coach-avatar {
+    position: absolute;
+    inset: 14px auto auto 14px;
     width: 44px;
     height: 44px;
+  }
+
+  .coach-module .module-heading {
+    min-height: 44px;
+    padding-left: 54px;
   }
 
   .library-filter-bar {
@@ -804,15 +806,6 @@ button {
   background: var(--accent);
 }
 
-.coach-rating {
-  display: inline-block;
-  margin-top: 8px;
-  padding: 3px 8px;
-  border: 1px solid var(--line);
-  border-radius: 5px;
-  font-size: 12px;
-}
-
 [data-rating="best"],
 [data-rating="brilliant"],
 [data-rating="great"],
@@ -831,22 +824,87 @@ button {
   color: inherit;
 }
 
-.coach-lesson .coach-note {
-  font-size: 15px;
-  max-width: 64ch;
-  margin: 8px 0;
-  line-height: 1.55;
+.coach-response {
+  margin-top: 8px;
+  padding: 12px;
+  border-radius: 6px;
+  background: #fff;
+  color: #232323;
 }
 
-.coach-note strong,
-.coach-alternative strong {
-  color: #f4d292;
+.coach-response-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
 }
+
+.coach-move {
+  font-size: 20px;
+  letter-spacing: -0.02em;
+}
+
+.coach-response .coach-rating {
+  padding: 3px 7px;
+  border-radius: 4px;
+  background: #ededed;
+  color: #353535;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.coach-rating:is(
+  [data-rating="brilliant"],
+  [data-rating="great"],
+  [data-rating="best"],
+  [data-rating="good"]
+) {
+  background: #e7efe6;
+  color: #2c5739;
+}
+
+.coach-rating:is(
+  [data-rating="inaccuracy"],
+  [data-rating="mistake"],
+  [data-rating="miss"]
+) {
+  background: #f7ead8;
+  color: #704417;
+}
+
+.coach-rating[data-rating="blunder"] {
+  background: #f6e1e1;
+  color: #872929;
+}
+
+.coach-lesson .coach-note {
+  margin: 0;
+  color: inherit;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.coach-response-heading + .coach-note:not(:empty) {
+  margin-top: 6px;
+}
+
+.coach-response p strong {
+  font-weight: 750;
+}
+
 .coach-lesson .coach-alternative {
-  margin-top: 10px;
+  margin: 8px 0 0;
   padding-top: 8px;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid #ddd;
+  color: #383838;
   font-size: 14px;
+}
+
+.coach-alternative > strong:first-child {
+  display: block;
+  margin-bottom: 2px;
+  color: #232323;
+  font-size: 12px;
 }
 
 .local-engine .engine-lines div {

@@ -208,6 +208,7 @@ function ReviewLayout(props: LayoutProps) {
 }
 
 function RecordedAnalysis({
+  game,
   engine,
   graph,
   variation,
@@ -217,6 +218,7 @@ function RecordedAnalysis({
   coachArrows,
 }: Pick<
   LayoutProps,
+  | "game"
   | "engine"
   | "graph"
   | "variation"
@@ -243,6 +245,7 @@ function RecordedAnalysis({
       <CoachPanel
         analysis={analysis}
         selectedPly={selectedPly}
+        selectedSan={game.positions[selectedPly]?.san ?? undefined}
         onArrows={onArrows ?? noArrows}
         suspended={variation?.kind === "variation"}
         arrowsVisible={coachArrows?.visible}
