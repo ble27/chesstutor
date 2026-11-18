@@ -143,13 +143,20 @@ zoom support. Target WCAG 2.2 AA, including normal-text contrast >=4.5:1.
 
 The engine module shows achieved depth and up to three legal recorded-review
 lines. In Self-analysis, local Stockfish produces up to two candidates at a common
-depth, validated before display. The board accepts drag, click or keyboard moves. The rail reports a White-perspective score (`+1.2` or `M3`). Label
-whether evidence describes the displayed position or a played-line evaluation
+depth, validated before display. One worker stays open across position changes
+during local analysis. The variation rows stay visible while fresh results are
+pending. The board accepts drag, click or keyboard moves. The rail reports a
+White-perspective score (`+1.2` or `M3`). Label whether evidence describes the
+displayed position or a played-line evaluation
 after the selected move. Match current-position lines by root FEN and pre-move
 ply; do not show a preceding root's candidate moves as current-position lines.
 When the final position has no unrestricted search, label the actual played-line
 score and omit unavailable candidates. Never insert illustrative engine scores.
-Future Chess guidance explains the move, alternative, plan, and follow-up questions.
+The coach response groups the selected move, its rating, the move note, and
+any verified alternative in a high-contrast card. Future Chess guidance also
+covers plans and follow-up questions.
+Report shows classification counts for White and Black and the total plies.
+The paired move list opens expanded and can be collapsed independently.
 Every recorded ply has a report label. Unprocessed plies show Awaiting analysis.
 Evidence that fails the grading policy shows Review needed. Neither status is
 a chess grade.
