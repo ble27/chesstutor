@@ -23,9 +23,9 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await page.getByText("More filters", { exact: true }).click();
     await page.getByLabel("Player color").selectOption("black");
     await page.getByRole("button", { name: "Apply filters" }).click();
-    await page.getByRole("button", { name: "Open game" }).click();
+    await page.getByRole("button", { name: "Analyze" }).click();
     await expect(
-      page.getByRole("heading", { name: "Game imported" }),
+      page.getByRole("heading", { name: "Game Review" }),
     ).toBeVisible();
     await expect(
       page.getByRole("button", { name: "1. White: e4" }),

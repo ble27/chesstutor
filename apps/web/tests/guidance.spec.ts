@@ -31,7 +31,18 @@ function luminance(hex: string): number {
 async function mockGuidance(page: Page, coach: { mode: Coach }) {
   await page.route("**/api/v1/**", async (route) => {
     const path = new URL(route.request().url()).pathname;
-    if (path.endsWith("/lessons")) return route.fulfill({ json: lessons });
+    if (path.endsWith("/lessons"))
+      return coach.mode === "outage"
+        ? route.fulfill({
+            status: 503,
+            json: {
+              code: "dependencies_unavailable",
+              message: "Coach is busy",
+              retryable: true,
+              request_id: "r1",
+            },
+          })
+        : route.fulfill({ json: lessons });
     if (path.endsWith("/coach")) {
       const body: unknown = route.request().postDataJSON();
       if (coach.mode === "outage")
@@ -61,11 +72,9 @@ async function openGuidance(page: Page) {
   await page.goto("/");
   await page.getByLabel("Chess.com username").fill("alice");
   await page.getByRole("button", { name: "Find games" }).click();
-  await page.getByRole("button", { name: "Open game" }).click();
+  await page.getByRole("button", { name: "Analyze" }).click();
   await page.getByRole("button", { name: "1. White: Kh1" }).click();
-  await page.getByRole("button", { name: "Quick review" }).click();
   await expect(page.getByText("Completed · 1/1 plies")).toBeVisible();
-  await page.getByRole("tab", { name: "Chess guidance" }).click();
 }
 
 test("explains a flagged move in plain words and draws labelled arrows", async ({
@@ -77,6 +86,10 @@ test("explains a flagged move in plain words and draws labelled arrows", async (
     page.getByText(/leaves your rook on d1 undefended/),
   ).toBeVisible();
   await expect(page.getByText("Mistake", { exact: true })).toBeVisible();
+  await page.screenshot({
+    path: test.info().outputPath("guidance-desktop.png"),
+  });
+  await page.getByText("Coach options and alternatives").click();
   const arrows = page.getByRole("list", { name: "Board arrows" });
   await expect(arrows).toContainText("Your move: g1 to h1");
   await expect(arrows).toContainText("Suggestion 1: d1 to d4");
@@ -87,44 +100,40 @@ test("explains a flagged move in plain words and draws labelled arrows", async (
     .uncheck();
   await expect.poll(parts).toBeLessThan(withArrows);
   await expect(page.getByRole("list", { name: "Board arrows" })).toBeVisible();
-  await page.screenshot({
-    path: test.info().outputPath("guidance-desktop.png"),
-  });
+  await page.getByText("Coach options and alternatives").click();
 });
 
-test("answers a supported question and refuses an unrelated one", async ({
+test("shows continuous coaching with opt-in voice and no chat", async ({
   page,
 }) => {
   await mockGuidance(page, { mode: "ok" });
   await openGuidance(page);
-  await page.getByRole("button", { name: "Explain this move" }).click();
   await expect(
-    page.getByText(/can capture the opponent's queen/),
+    page.getByText(/leaves your rook on d1 undefended/),
   ).toBeVisible();
-  await page
-    .getByRole("textbox", { name: "Ask a chess question" })
-    .fill("Write a soup recipe.");
-  await page.getByRole("button", { name: "Ask" }).click();
   await expect(
-    page.getByText(/Choose a chess question about this game/),
+    page.getByRole("textbox", { name: "Ask a chess question" }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("checkbox", { name: "Coach voice" }),
+  ).not.toBeChecked();
+  await page.getByRole("checkbox", { name: "Coach voice" }).check();
+  await expect(
+    page.getByRole("button", { name: "Replay voice" }),
   ).toBeVisible();
 });
 
-test("keeps the move note when the coach is unavailable and recovers on retry", async ({
+test("recovers automatic notes on retry without a new analysis", async ({
   page,
 }) => {
   const coach: { mode: Coach } = { mode: "outage" };
   await mockGuidance(page, coach);
   await openGuidance(page);
-  await page.getByRole("button", { name: "Explain this move" }).click();
   await expect(page.getByRole("alert")).toContainText("Coach is busy");
+  coach.mode = "ok";
+  await page.getByRole("button", { name: "Retry move notes" }).click();
   await expect(
     page.getByText(/leaves your rook on d1 undefended/),
-  ).toBeVisible();
-  coach.mode = "ok";
-  await page.getByRole("button", { name: "Try again" }).click();
-  await expect(
-    page.getByText(/can capture the opponent's queen/),
   ).toBeVisible();
 });
 
@@ -191,9 +200,8 @@ test("completes username to Quick, replay, coaching, Deep cancellation and retry
 }) => {
   await mockGuidance(page, { mode: "ok" });
   await openGuidance(page);
-  await page.getByRole("button", { name: "Explain this move" }).click();
   await expect(
-    page.getByText(/can capture the opponent's queen/),
+    page.getByText(/leaves your rook on d1 undefended/),
   ).toBeVisible();
   await page.getByRole("button", { name: "Previous move" }).click();
   await page.getByRole("button", { name: "Next move" }).click();
@@ -220,7 +228,9 @@ test("completes username to Quick, replay, coaching, Deep cancellation and retry
       },
     }),
   );
-  await page.getByRole("button", { name: "Deep review" }).click();
+  await page.getByLabel("Engine settings").click();
+  await page.getByLabel("Server review").selectOption("deep");
+  await page.getByRole("button", { name: "Run review" }).click();
   const progress = page.getByRole("status", { name: "Analysis progress" });
   await expect(progress).toContainText("Deep · Queued");
   await page.getByRole("button", { name: "Cancel analysis" }).click();

@@ -21,15 +21,15 @@ coaching remains S5.
 
 ## Current status
 
-This is a local development project, not a production release. Current S4 work
-adds independent move labels, per-player counts, and coverage-aware summaries.
-Quick labels are provisional. S4 now includes persisted move reviews, bounded
-badge verification with replayable proofs, and evidence-linked practice themes.
-The user accepted the S4 chess review on 2026-11-05. A passing full gate remains open, and S4 is not complete.
-Coaching and the remaining accessibility and production gates are incomplete.
-Previously committed S5–S7 specifications intentionally fail until implemented;
-`make verify` therefore does not currently pass. See [S4 evidence](docs/sprints/S4.md)
-and the [repository security review](docs/security-review.md) for checks and limits.
+This is a local development project, not a production release. Game Review now
+includes automatic per-ply template coaching, optional device-local voice,
+independent calibrated accuracy, a selectable evaluation graph and legal free
+analysis. Analyze starts a bounded Standard server review; Settings also offers
+Thorough review and local WASM depth/thread controls. The recorded game stays
+unchanged when exploring branches. See [the upgrade record](docs/review-upgrade.md)
+and [S6 evidence](docs/sprints/S6.md) for implementation and acceptance limits.
+Manual accessibility gates remain open. S7 is unstarted; its 43 inherited test
+specifications remain visible and keep the aggregate `make verify` gate red.
 
 ## Local setup
 
@@ -96,18 +96,27 @@ Compose forwards this setting to its API.
 
 Enter a public Chess.com username. The newest archive month opens by default;
 choose another month or filter by player color, exact opponent username, and time
-class. Filters apply only to that month. Open a game to validate and persist its
-main line and replay it immediately. Click either player's SAN or use
-first/previous/next/last controls. Focus the replay area for Left/Right arrows,
-Home, and End; these keys do not intercept typing in input fields. Flip changes
-orientation without changing the selected ply; player names and piece-color
-labels swap with their sides. Desktop shows recorded moves and analysis panels
-beside the board; smaller screens stack them below. The board caps at 640 CSS px
-and shrinks to fit shorter desktop windows. Expand “Text position and FEN”
-for occupied squares and the exact imported position. The game remains read-only;
-choose Quick or Deep review in the engine panel. Coaching remains unavailable.
-Source links open Chess.com;
-no password or provider key is used.
+class. Filters apply only to that month. Click **Analyze** to validate/import the
+game and automatically open a Standard review. Select either player's recorded
+move or use icon navigation; accessible names and keyboard Left/Right/Home/End
+remain available. Flip preserves the selected ply. Expand “Text position and FEN”
+for textual board access. The NPC coach follows selected moves without questions;
+Coach options contains alternatives, arrow text and explanation level. Voice is
+opt-in and uses local English device voices, with text fallback.
+
+Desktop fits board, coach, graph and navigation together; narrow, short and zoomed
+screens reflow. Engine Settings contains bounded Standard/Thorough server reviews
+and local depth 1–40 (default 18), 1–4 supported threads and a ten-second local
+search cap. Achieved depth may be lower. Refine a position locally or enable
+**Self-analysis / Free play** for legal branches, promotion, undo/redo and return.
+Local Stockfish.js 17.1 scores stay client-unverified; they never replace server
+Stockfish 19 coaching or game accuracy. Free analysis requires the backend for
+legal moves and PV validation. No WebGPU support is claimed.
+
+Accuracy uses versioned backend best-versus-played Win% loss with harmonic and
+volatility-weighted aggregation. Missing/uncertain scores remain unavailable;
+coverage is shown. It is an independent Lichess-inspired metric, not Chess.com CAPS.
+Source links open Chess.com; no password or provider key is used.
 
 ## Engine analysis
 
@@ -129,7 +138,7 @@ evaluation. Mate distance is separate from centipawns. WDL and PV evidence is
 stored; missing or unstable comparisons remain uncertain. Compatible v1 server
 results also show independent move labels and
 coverage-aware summaries. Legacy cached results retain their original provenance
-and do not receive new labels. Coaching remains unavailable. Completed cached Deep
+and do not receive new labels. Template coaching uses compatible stored evidence. Completed cached Deep
 results offered for Quick retain their Deep label and consume no engine quota.
 
 A signed anonymous HttpOnly session owns active jobs and cancellation; retain
@@ -239,6 +248,7 @@ All application endpoints use `/api/v1`. The authoritative contract is
 | POST | `/api/v1/analyses` | Start bounded Quick/Deep analysis |
 | GET | `/api/v1/analyses/{analysis_id}` | Read analysis evidence and progress |
 | POST | `/api/v1/analyses/{analysis_id}/cancel` | Owner-only cancellation |
+| POST | `/api/v1/games/{game_id}/sandbox` | Stateless legal branch and local-PV validation; signed session/origin required |
 | POST | `/api/v1/games/{game_id}/browser-evidence` | Experimental legal-line validation; scores remain untrusted |
 
 Analysis submission/cancellation and browser-evidence POSTs require an exact

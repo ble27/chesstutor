@@ -31,8 +31,7 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await page.goto("/");
     await page.getByLabel("Chess.com username").fill("alice");
     await page.getByRole("button", { name: "Find games" }).click();
-    await page.getByRole("button", { name: "Open game" }).click();
-    await page.getByRole("button", { name: "Quick review" }).click();
+    await page.getByRole("button", { name: "Analyze" }).click();
     await expect(page.getByText("Completed · 3/3 plies")).toBeVisible();
     await page.getByRole("tab", { name: "Review", exact: true }).click();
     const table = page.getByRole("table", {
@@ -61,12 +60,12 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await page.screenshot({
       path: test.info().outputPath("classification-summary.png"),
     });
-    await page.getByRole("tab", { name: "Chess guidance" }).click();
     await page.getByRole("button", { name: "Next move", exact: true }).click();
     await expect(page.getByText(/Your pawn moved from e2 to e4/)).toBeVisible();
     await page.getByRole("button", { name: "Next move", exact: true }).click();
     await expect(page.getByText(/Your pawn moved from e7 to e5/)).toBeVisible();
     await expect(page.getByText("Ply 2 · Black move")).toBeVisible();
+    await page.getByText("Coach options and alternatives").click();
     await expect(
       page.getByText("Base label: best · Expected-score loss: 0.0%"),
     ).toBeVisible();
@@ -76,7 +75,7 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     ).toBeVisible();
     await expect(
       page
-        .getByRole("tabpanel", { name: "Chess guidance" })
+        .getByRole("region", { name: "Move coach" })
         .getByText("Unclassified", { exact: true }),
     ).toBeVisible();
     await expect(

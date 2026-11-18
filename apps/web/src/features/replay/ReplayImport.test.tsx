@@ -35,7 +35,7 @@ async function importResponse(payload: unknown) {
     { target: { value: "alice" } },
   );
   fireEvent.click(screen.getByRole("button", { name: "Find games" }));
-  fireEvent.click(await screen.findByRole("button", { name: "Open game" }));
+  fireEvent.click(await screen.findByRole("button", { name: "Analyze" }));
 }
 
 function changedPosition(

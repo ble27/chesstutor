@@ -1,6 +1,6 @@
 import type { KeyboardEvent } from "react";
 
-export const reviewTabs = ["Analysis", "Review", "Chess guidance"] as const;
+export const reviewTabs = ["Analysis", "Review"] as const;
 export type ReviewTab = (typeof reviewTabs)[number];
 
 export function reviewTabId(tab: ReviewTab): string {

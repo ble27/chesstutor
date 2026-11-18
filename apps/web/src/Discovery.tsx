@@ -29,8 +29,24 @@ function Freshness({ date, stale }: { date: string; stale: boolean }) {
 export function Discovery() {
   const state = useDiscovery();
   const [username, setUsername] = useState("");
+  const [reviewOpen, setReviewOpen] = useState(true);
+  const game =
+    state.game.status === "ready" && reviewOpen ? state.game.data : null;
+  useEffect(() => {
+    document.body.classList.toggle("review-active", game !== null);
+    return () => document.body.classList.remove("review-active");
+  }, [game]);
   return (
     <>
+      {game && (
+        <header className="review-heading">
+          <button onClick={() => setReviewOpen(false)}>Back to library</button>
+          <h1>Game Review</h1>
+          <span>
+            {game.game.white.username} · {game.game.black.username}
+          </span>
+        </header>
+      )}
       <section className="panel discovery" aria-labelledby="discovery-title">
         <h2 id="discovery-title">Find your next game to learn from.</h2>
         <p>Enter a Chess.com username to explore their public game history.</p>
@@ -74,12 +90,10 @@ export function Discovery() {
           </div>
         </div>
         <ArchiveControls state={state} />
-        <GameResults state={state} />
+        <GameResults state={state} onOpen={() => setReviewOpen(true)} />
         <ImportedGame state={state} />
       </section>
-      <Workspace
-        game={state.game.status === "ready" ? state.game.data : null}
-      />
+      <Workspace game={game} />
     </>
   );
 }
@@ -139,7 +153,13 @@ function ArchiveControls({ state }: { state: DiscoveryState }) {
   );
 }
 
-function GameResults({ state }: { state: DiscoveryState }) {
+function GameResults({
+  state,
+  onOpen,
+}: {
+  state: DiscoveryState;
+  onOpen: () => void;
+}) {
   return (
     <>
       {state.list.status === "idle" && state.archive.status === "idle" && (
@@ -174,7 +194,10 @@ function GameResults({ state }: { state: DiscoveryState }) {
                 key={game.id}
                 game={game}
                 opened={state.game.status === "ready" ? state.game.data : null}
-                open={(id) => void state.open(id)}
+                open={(id) => {
+                  onOpen();
+                  void state.open(id);
+                }}
               />
             ))}
           </ul>

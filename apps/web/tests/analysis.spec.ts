@@ -12,7 +12,7 @@ async function openGame(page: Page) {
   await page.goto("/");
   await page.getByLabel("Chess.com username").fill("alice");
   await page.getByRole("button", { name: "Find games" }).click();
-  await page.getByRole("button", { name: "Open game" }).click();
+  await page.getByRole("button", { name: "Analyze" }).click();
   await page.getByRole("button", { name: "1. White: e4" }).click();
 }
 
@@ -90,7 +90,6 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await mockJourney(page);
     await openGame(page);
-    await page.getByRole("button", { name: "Quick review" }).click();
     const status = page.getByRole("status", { name: "Analysis progress" });
     await expect(status).toContainText("Queued · 0/1 plies");
     await page.getByRole("button", { name: "Flip board" }).click();
@@ -102,7 +101,9 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     ).toHaveAttribute("aria-current", "step");
     await expect(page.locator(".position-score strong")).toBeVisible();
     await expect(page.getByText("White evaluation · after e4")).toBeVisible();
-    await page.getByRole("button", { name: "Deep review" }).click();
+    await page.getByLabel("Engine settings").click();
+    await page.getByLabel("Server review").selectOption("deep");
+    await page.getByRole("button", { name: "Run review" }).click();
     await expect(status).toContainText("Deep · Queued");
     await page.getByRole("button", { name: "Cancel analysis" }).click();
     await expect(status).toContainText("Cancelled", { timeout: 10000 });
@@ -138,7 +139,6 @@ test("explains worker outage and shared-network quota without claiming completio
     }),
   );
   await openGame(page);
-  await page.getByRole("button", { name: "Quick review" }).click();
   await expect(page.getByRole("alert")).toContainText(
     "Analysis workers are not ready.",
   );
@@ -166,10 +166,12 @@ test("verified classification proof follows the selected ply", async ({
 }) => {
   await mockJourney(page);
   await page.route("**/api/v1/analyses", (route) =>
-    route.fulfill({ json: verifiedGreatAnalysis }),
+    route.fulfill({ json: { ...verifiedGreatAnalysis, cached: true } }),
   );
   await openGame(page);
-  await page.getByRole("button", { name: "Deep review" }).click();
+  await page.getByLabel("Engine settings").click();
+  await page.getByLabel("Server review").selectOption("deep");
+  await page.getByRole("button", { name: "Run review" }).click();
   await expect(page.getByText("Great", { exact: true })).toBeVisible();
   await expect(page.getByText("Checked supporting line: d4")).toBeVisible();
   await expect(page.getByText(/Practice: calculation/)).toBeVisible();

@@ -78,6 +78,38 @@ export class BrowserEngine {
     await this.command("isready", (line) => line === "readyok", signal, 10000);
     this.worker.postMessage("ucinewgame");
   }
+  async searchPosition(
+    initialFen: string,
+    moves: readonly string[],
+    depth: number,
+    signal: AbortSignal,
+    update: (line: RawLine) => void,
+  ): Promise<RawLine> {
+    if (!Number.isInteger(depth) || depth < 1 || depth > 40)
+      throw new Error("Invalid local depth");
+    if (moves.some((move) => !/^[a-h][1-8][a-h][1-8][qrbn]?$/.test(move)))
+      throw new Error("Invalid position history");
+    this.worker.postMessage(
+      `position fen ${initialFen}${moves.length ? ` moves ${moves.join(" ")}` : ""}`,
+    );
+    let latest: RawLine | null = null;
+    await this.command(
+      `go depth ${depth} movetime 9500`,
+      (line) => line.startsWith("bestmove "),
+      signal,
+      10500,
+      (message) => {
+        const line = parseInfo(message);
+        if (line && !line.bounded) {
+          latest = line;
+          update(line);
+        }
+      },
+    );
+    if (!latest) throw new Error("No complete local engine line was returned.");
+    return latest;
+  }
+
   async search(
     game: Game,
     ply: number,

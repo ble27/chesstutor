@@ -1,53 +1,48 @@
-import { useState } from "react";
+import { useReviewPosition } from "./useReviewPosition";
+import { formatScore } from "../review/EngineEvidence";
 import type { Game } from "../../api/discoveryValidation";
-import { useVariation } from "../review/useVariation";
-import { useReplay, replayKeyDown } from "./useReplay";
+import { replayKeyDown } from "./useReplay";
 import { ReviewWorkspace } from "../review/ReviewWorkspace";
 import { BoardFrame } from "./BoardFrame";
 import { PositionText } from "./PositionText";
-import { moveLabel } from "./moves";
 import type { BoardArrow } from "../guidance/arrows";
 
-export function Replay({ game }: { game: Game }) {
+export function Replay({
+  game,
+  automatic = false,
+}: {
+  game: Game;
+  automatic?: boolean;
+}) {
   return (
     <ReplaySession
       key={`${game.game.id}:${game.version}:${game.pgn_hash}`}
       game={game}
+      automatic={automatic}
     />
   );
 }
 
-function ReplaySession({ game }: { game: Game }) {
+function ReplaySession({
+  game,
+  automatic,
+}: {
+  game: Game;
+  automatic: boolean;
+}) {
+  const view = useReviewPosition(game);
+  const {
+    replay,
+    variation,
+    local,
+    boardPosition,
+    selectedMove,
+    preview,
+    setArrows,
+  } = view;
+  const { selectedPly } = replay;
   const lastPly = game.positions.length - 1;
-  const { selectedPly, select, orientation } = useReplay(lastPly);
-  const [arrows, setArrows] = useState<BoardArrow[]>([]);
-  const position = game.positions[selectedPly];
-  const variation = useVariation({
-    selectedPly,
-    fen: position?.fen ?? "",
-    orientation,
-  });
-  if (!position) return null;
-  const previous = game.positions[selectedPly - 1];
-  const preview =
-    variation.kind === "game" &&
-    arrows.length > 0 &&
-    previous &&
-    arrows.every(
-      (arrow) => arrow.ply === selectedPly && arrow.rootFen === previous.fen,
-    );
-  const boardPosition =
-    variation.kind === "variation"
-      ? { ...position, fen: variation.fen, uci: variation.lastMove }
-      : preview
-        ? previous
-        : position;
-  const selectedMove =
-    variation.kind === "variation"
-      ? `Variation from ply ${variation.rootPly} · ${variation.step} of ${variation.length}${variation.san ? ` · ${variation.san}` : ""}`
-      : previous
-        ? `${preview ? "Before" : "After"} ${moveLabel(previous.fen, position.san)}`
-        : "Starting position";
+  if (!boardPosition) return null;
   return (
     <section
       id="review-workspace"
@@ -58,9 +53,21 @@ function ReplaySession({ game }: { game: Game }) {
       onKeyDown={(event) =>
         replayKeyDown(
           event,
-          variation.kind === "variation" ? variation.step : selectedPly,
-          variation.kind === "variation" ? variation.length : lastPly,
-          variation.kind === "variation" ? variation.select : select,
+          local.sandbox.enabled
+            ? local.sandbox.branch.length
+            : variation.kind === "variation"
+              ? variation.step
+              : selectedPly,
+          local.sandbox.enabled
+            ? local.sandbox.branch.length + local.sandbox.future.length
+            : variation.kind === "variation"
+              ? variation.length
+              : lastPly,
+          local.sandbox.enabled
+            ? local.sandbox.seek
+            : variation.kind === "variation"
+              ? variation.select
+              : view.select,
         )
       }
     >
@@ -70,15 +77,26 @@ function ReplaySession({ game }: { game: Game }) {
         fen={boardPosition.fen}
         orientation={variation.orientation}
         lastMove={preview ? null : boardPosition.uci}
-        arrows={preview ? arrows : []}
+        arrows={view.arrows}
+        localScore={
+          local.live.line && (local.refine || local.sandbox.enabled)
+            ? formatScore(local.live.line.score, 2)
+            : null
+        }
+        onMove={
+          local.sandbox.enabled && !local.sandbox.busy ? local.play : undefined
+        }
+        legalMoves={local.sandbox.position?.legal_moves}
       />
       <ReviewWorkspace
+        automatic={automatic}
         game={game}
         selectedPly={selectedPly}
-        select={(ply) => {
-          variation.exit();
-          select(ply);
-        }}
+        positionPly={view.positionPly}
+        coachArrows={view.coachArrows}
+        selectPosition={view.selectPosition}
+        select={view.select}
+        localAnalysis={local}
         flip={variation.flip}
         variation={variation}
         onArrows={setArrows}
@@ -109,6 +127,9 @@ function ReplayBoard({
   orientation,
   lastMove,
   arrows,
+  localScore,
+  onMove,
+  legalMoves,
 }: {
   game: Game;
   selectedMove: string;
@@ -116,6 +137,9 @@ function ReplayBoard({
   orientation: "white" | "black";
   lastMove: string | null;
   arrows: BoardArrow[];
+  localScore: string | null;
+  onMove?: ((move: string) => void) | undefined;
+  legalMoves?: readonly string[] | undefined;
 }) {
   return (
     <section className="panel replay-panel" aria-labelledby="game-title">
@@ -131,12 +155,19 @@ function ReplayBoard({
         {selectedMove} · {fen.split(" ")[1] === "w" ? "White" : "Black"} to move
         · {orientation === "white" ? "White" : "Black"} at bottom
       </p>
+      {localScore && (
+        <p role="status">
+          Local evaluation: {localScore} · White perspective · Client-unverified
+        </p>
+      )}
       <BoardFrame
         players={game.game}
         fen={fen}
         orientation={orientation}
         lastMove={lastMove}
         arrows={arrows}
+        onMove={onMove}
+        legalMoves={legalMoves}
       />
       <PositionText fen={fen} />
       <PieceCredit />

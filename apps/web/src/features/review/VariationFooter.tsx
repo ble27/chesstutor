@@ -1,3 +1,4 @@
+import type { Sandbox } from "../analysis/useSandbox";
 import { ReplayControls } from "../replay/ReplayControls";
 import type { Variation } from "./useVariation";
 
@@ -7,12 +8,14 @@ export function VariationFooter({
   select,
   flip,
   variation,
+  sandbox,
 }: {
   selectedPly: number;
   lastPly: number;
   select: (ply: number) => void;
   flip: () => void;
   variation?: Variation | undefined;
+  sandbox?: Sandbox | undefined;
 }) {
   const preview = variation?.kind === "variation" ? variation : null;
   return (
@@ -34,9 +37,17 @@ export function VariationFooter({
         </button>
       )}
       <ReplayControls
-        selectedPly={preview?.step ?? selectedPly}
-        lastPly={preview?.length ?? lastPly}
-        select={preview?.select ?? select}
+        selectedPly={
+          sandbox?.enabled
+            ? sandbox.branch.length
+            : (preview?.step ?? selectedPly)
+        }
+        lastPly={
+          sandbox?.enabled
+            ? sandbox.branch.length + sandbox.future.length
+            : (preview?.length ?? lastPly)
+        }
+        select={sandbox?.enabled ? sandbox.seek : (preview?.select ?? select)}
         flip={flip}
       />
       <p id="replay-help">

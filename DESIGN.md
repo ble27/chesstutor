@@ -5,11 +5,11 @@ colors:
   accent: "#eac96a"
   accent-hover: "#f6e4aa"
   accent-active: "#d9b854"
-  board-teal: "#637878"
-  board-cream: "#e0dfd5"
+  board-teal: "#B58B64"
+  board-cream: "#F0D9B5"
   arrow-played: "#49160e"
-  arrow-suggested: "#31e65c"
-  arrow-outline: "#092e20"
+  arrow-suggested: "#ACC65B"
+  arrow-outline: "#253324"
   canvas: "#181818"
   canvas-end: "#242424"
   panel: "#242626"
@@ -106,7 +106,7 @@ components:
 
 Chess Tutor uses the approved quiet charcoal Operate direction: a practical tool
 whose visual emphasis belongs to the chess position and the next useful action.
-The existing teal and cream board remains the recognizable center of the review.
+The existing tan and cream board remains the recognizable center of the review.
 
 Flat bordered surfaces, one sans family, and compact explanatory text support
 careful reading. Gold connects actions, keyboard focus, and the current move.
@@ -139,7 +139,7 @@ sits above it through a border rather than a shadow. Bright text, softer heading
 and muted secondary text create hierarchy; line and field colors separate content
 and controls. Both secondary-text shades are present in the incumbent cascade.
 
-**The Board Identity Rule.** Preserve teal and cream squares; use gold to identify
+**The Board Identity Rule.** Preserve tan and cream squares; use gold to identify
 selected moves and actions rather than recoloring the board.
 
 ## Typography
@@ -233,7 +233,7 @@ labels remain visible text.
 
 ### Chessboard and move list
 
-The read-only board preserves teal and cream squares. Last-move squares receive a
+The read-only board preserves tan and cream squares. Last-move squares receive a
 charcoal-and-gold inset outline. The selected move receives a gold background,
 dark text, and stronger weight. Legal-position text, player descriptions, and
 attributed Cburnett pieces accompany the visual board. Piece provenance is
@@ -264,7 +264,7 @@ Unclassified. None of these additions closes the manual accessibility gate.
 
 ### Do:
 
-- **Do** preserve the teal and cream board with gold move emphasis.
+- **Do** preserve the tan and cream board with gold move emphasis.
 - **Do** use the shared sans family stack and tabular numbers for chess data.
 - **Do** keep controls at least 44px high and show a visible keyboard focus state.
 - **Do** use local SVG icons with their text labels and retain asset licenses.
@@ -299,3 +299,25 @@ Disclosures keep 44px targets, and textareas/disclosures share visible keyboard
 focus. Reduced-motion preference disables transitions and animation. Move-note
 outages offer an explicit retry without rerunning analysis; partial notes never
 claim a stopped job is running. Manual accessibility acceptance remains open.
+
+
+## Approved six-module review upgrade (2026-11-18)
+
+The user approved tan/cream classic board styling, replacing the earlier preserved
+teal rule. Explicit licensed Merida SVGs replace implicit library pieces. Thin
+light-green arrows sit below pieces, with a narrow contrasting edge. Navigation
+uses SVG icons with accessible names and 44px targets.
+
+Game Review now contains an original generated NPC tutor and automatic per-ply
+lessons. There is no standalone guidance tab or question form in the application.
+Device-local speech is opt-in and cancels on context change. Secondary alternatives,
+arrow text and explanation level sit under Coach options. Analysis and Review
+remain views within the same review screen, with persistent navigation.
+
+The graph uses matched engine evaluations, missing-data gaps and bounded smooth
+interpolation; its range control is the keyboard equivalent of pointer selection.
+Analyze opens a focused review and starts Standard once. Settings contains bounded
+server presets and local depth/thread settings. Local refinement and free analysis
+are explicitly client-unverified and never replace server coaching or accuracy.
+Desktop fits the viewport; small, short and zoomed screens reflow. Manual gates
+remain open. Avatar provenance is in public/coach/README.md.

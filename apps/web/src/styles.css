@@ -727,3 +727,224 @@ button:disabled {
     transition: none !important;
   }
 }
+
+/* The coach is part of the review workspace, never a separate chat surface. */
+.replay-workspace .review-panel {
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+}
+.workspace-coach {
+  max-height: 30vh;
+  overflow: auto;
+  padding: 12px 16px;
+  border-bottom: 1px solid #414747;
+}
+.npc-coach {
+  display: flex;
+  align-items: start;
+  gap: 12px;
+}
+.coach-avatar {
+  object-fit: contain;
+  flex: 0 0 72px;
+}
+.coach-lesson {
+  min-width: 0;
+  flex: 1;
+}
+.coach-lesson h2 {
+  font-size: 16px;
+}
+.coach-voice {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 12px;
+}
+.coach-voice label {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+}
+.coach-lesson .level-choice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.coach-lesson .level-choice label {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.evaluation-graph {
+  margin-bottom: 12px;
+}
+.evaluation-graph svg {
+  display: block;
+  width: 100%;
+  height: 72px;
+  background: #242626;
+}
+.evaluation-graph label {
+  font-size: 12px;
+  gap: 0;
+}
+.evaluation-graph input {
+  width: 100%;
+  padding: 0;
+  accent-color: #eac96a;
+}
+.evaluation-graph p {
+  margin: 0;
+  font-size: 12px;
+}
+@media (min-width: 1024px) and (min-height: 750px) {
+  .review-active .masthead,
+  .review-active .intro,
+  .review-active footer,
+  .review-active .discovery,
+  .review-active .game-library {
+    display: none;
+  }
+  .review-active .app {
+    padding-top: 12px;
+  }
+  .review-active .replay-workspace {
+    --board-size: min(
+      calc(100dvh - 160px),
+      calc((min(100vw, 1440px) - 104px) * 0.6),
+      850px
+    );
+  }
+}
+.review-active .masthead,
+.review-active .intro,
+.review-active footer,
+.review-active .discovery,
+.review-active .game-library {
+  display: none;
+}
+.review-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  min-height: 64px;
+  padding-block: 8px;
+}
+.review-heading h1 {
+  font-size: 24px;
+  margin: 0;
+}
+.review-heading span {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.engine-settings summary {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-height: 44px;
+  cursor: pointer;
+}
+.engine-settings label,
+.local-analysis label {
+  margin-block: 8px;
+}
+.local-analysis > label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+}
+.local-analysis input[type="checkbox"] {
+  min-height: 20px;
+  width: 20px;
+}
+.sandbox-panel button {
+  margin: 4px;
+}
+@media (min-width: 1024px) and (min-height: 750px) {
+  .review-active .replay-workspace {
+    --board-size: min(
+      calc(100dvh - 270px),
+      calc((min(100vw, 1440px) - 104px) * 0.6),
+      850px
+    );
+  }
+}
+.coach-lesson h3 {
+  font-size: 14px;
+  margin: 4px 0;
+}
+.coach-lesson p {
+  margin: 4px 0;
+  font-size: 14px;
+}
+.coach-options summary {
+  cursor: pointer;
+  min-height: 44px;
+  padding-block: 12px;
+  font-size: 12px;
+}
+.coach-lesson .move-note-context {
+  font-size: 12px;
+}
+.analysis-tab:has(.review-graph) {
+  grid-template-rows: auto minmax(0, 1fr) minmax(100px, 0.8fr);
+}
+.review-graph {
+  padding: 8px 16px 0;
+  border-bottom: 1px solid #414747;
+}
+.review-graph .evaluation-graph {
+  margin: 0;
+}
+.review-graph .evaluation-graph svg {
+  height: 56px;
+}
+@media (max-width: 1023px), (max-height: 749px) {
+  .replay-workspace .review-panel {
+    height: auto;
+    min-height: 740px;
+    grid-template-rows: auto auto auto auto;
+  }
+  .workspace-coach {
+    max-height: none;
+  }
+  .analysis-tab,
+  .analysis-tab:has(.review-graph) {
+    grid-template-rows: auto minmax(240px, auto) minmax(160px, auto);
+  }
+  .analysis-region {
+    max-height: 420px;
+  }
+  .review-moves {
+    max-height: 280px;
+  }
+  .review-footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+  }
+}
+@media (min-width: 1024px) and (min-height: 750px) {
+  /* Reserve usable scroll regions instead of letting the graph cover controls. */
+  .review-active .replay-workspace .review-panel {
+    height: calc(100dvh - 100px);
+  }
+  .workspace-coach {
+    max-height: clamp(140px, calc(100dvh - 600px), 220px);
+  }
+  .analysis-tab:has(.review-graph) {
+    grid-template-rows: auto minmax(140px, 1fr) minmax(100px, 0.7fr);
+  }
+  .review-graph .evaluation-graph svg {
+    height: 40px;
+  }
+}
+@media (max-width: 1023px), (max-height: 749px) {
+  .replay-workspace .review-panel {
+    overflow: visible;
+  }
+}

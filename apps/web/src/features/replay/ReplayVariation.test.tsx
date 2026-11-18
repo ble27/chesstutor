@@ -35,7 +35,9 @@ it("previews a stored line, bounds keyboard navigation, and returns to the recor
       screen.getByRole("button", { name: "Explore variation 1" }),
     ).toHaveFocus(),
   );
-  expect(fetcher).toHaveBeenCalledTimes(1);
+  expect(
+    fetcher.mock.calls.filter((call) => !String(call[0]).includes("/lessons")),
+  ).toHaveLength(1);
 });
 
 it("restores the exact source candidate and exits preview when selecting a recorded move", async () => {

@@ -1,3 +1,5 @@
+import { EngineSettings, defaultLocalSettings } from "./EngineSettings";
+import type { LocalSettings } from "./EngineSettings";
 import type { Analysis } from "../../api/analysis";
 import { active } from "../../api/analysis";
 import type { Game } from "../../api/discoveryValidation";
@@ -43,18 +45,26 @@ export function EngineView({
   game,
   selectedPly,
   session,
+  positionPly = selectedPly,
   workspace = false,
+  automatic = false,
+  local = defaultLocalSettings,
+  setLocal = () => undefined,
   onVariation,
   variation,
 }: {
   game: Game;
   selectedPly: number;
   session: ReturnType<typeof useAnalysis>;
+  positionPly?: number;
   workspace?: boolean;
+  automatic?: boolean | undefined;
+  local?: LocalSettings;
+  setLocal?: (settings: LocalSettings) => void;
   onVariation?: ((line: VariationLine) => void) | undefined;
   variation?: Variation | undefined;
 }) {
-  const { state, start, cancel, retry } = session;
+  const { state, start, retry } = session;
   const job = state.job;
   const busy = state.status === "loading" || (job !== null && active(job));
   return (
@@ -72,7 +82,7 @@ export function EngineView({
       {workspace && variation?.kind !== "variation" && (
         <PositionEvidence
           game={game}
-          selectedPly={selectedPly}
+          selectedPly={positionPly}
           evidence={job?.evidence ?? []}
           onVariation={onVariation}
         />
@@ -81,24 +91,15 @@ export function EngineView({
         <SelectedMoveClassification job={job} selectedPly={selectedPly} />
       )}
       <AnalysisLimits />
-      <div className="analysis-actions">
-        <button disabled={busy} onClick={() => start("quick")}>
-          Quick review
-        </button>
-        <button disabled={busy} onClick={() => start("deep")}>
-          Deep review
-        </button>
-        {job?.can_cancel && (
-          <button
-            disabled={
-              state.status === "loading" || job.state === "cancel_requested"
-            }
-            onClick={cancel}
-          >
-            Cancel analysis
-          </button>
-        )}
-      </div>
+      {automatic && (
+        <EngineSettings
+          busy={busy}
+          start={start}
+          local={local}
+          setLocal={setLocal}
+        />
+      )}
+      <AnalysisActions session={session} automatic={automatic} busy={busy} />
       {state.status === "loading" && (
         <p aria-live="polite">Sending analysis request…</p>
       )}
@@ -205,5 +206,42 @@ function EngineJob({
         Stockfish {String(job.engine.version)}
       </p>
     </>
+  );
+}
+
+function AnalysisActions({
+  session,
+  automatic,
+  busy,
+}: {
+  session: ReturnType<typeof useAnalysis>;
+  automatic: boolean;
+  busy: boolean;
+}) {
+  const { state, start, cancel } = session;
+  const job = state.job;
+  return (
+    <div className="analysis-actions">
+      {!automatic && (
+        <>
+          <button disabled={busy} onClick={() => start("quick")}>
+            Quick review
+          </button>
+          <button disabled={busy} onClick={() => start("deep")}>
+            Deep review
+          </button>
+        </>
+      )}
+      {job?.can_cancel && (
+        <button
+          disabled={
+            state.status === "loading" || job.state === "cancel_requested"
+          }
+          onClick={cancel}
+        >
+          Cancel analysis
+        </button>
+      )}
+    </div>
   );
 }

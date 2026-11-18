@@ -2,7 +2,7 @@ import type { Game } from "./api/discoveryValidation";
 import { Replay } from "./features/replay/Replay";
 
 export function Workspace({ game }: { game: Game | null }) {
-  if (game) return <Replay game={game} />;
+  if (game) return <Replay game={game} automatic />;
   return (
     <section className="workspace-empty" aria-labelledby="engine-title">
       <h2 id="engine-title">Engine analysis</h2>

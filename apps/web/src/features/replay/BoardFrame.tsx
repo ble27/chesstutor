@@ -37,12 +37,16 @@ export function BoardFrame({
   orientation,
   lastMove,
   arrows,
+  onMove,
+  legalMoves,
 }: {
   players: Pick<Game["game"], "white" | "black">;
   fen: string;
   orientation: Color;
   lastMove: string | null;
   arrows?: BoardArrow[] | undefined;
+  onMove?: ((move: string) => void) | undefined;
+  legalMoves?: readonly string[] | undefined;
 }) {
   const id = useId();
   const topColor = orientation === "white" ? "black" : "white";
@@ -59,6 +63,8 @@ export function BoardFrame({
         orientation={orientation}
         lastMove={lastMove}
         arrows={arrows}
+        onMove={onMove}
+        legalMoves={legalMoves}
         describedBy={`${id}-top ${id}-bottom`}
       />
       <PlayerLabel

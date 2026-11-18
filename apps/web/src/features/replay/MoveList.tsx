@@ -43,18 +43,14 @@ export function MoveList({
   const id = useId();
   useEffect(() => {
     const container = list.current;
-    if (container && selectedPly === 0) {
-      container.scrollTop = 0;
-      return;
-    }
-    const selected = container?.querySelector('[aria-current="step"]');
-    if (!container || !selected) return;
-    const bounds = container.getBoundingClientRect();
-    const move = selected.getBoundingClientRect();
-    // Scroll only the move list; navigating must not pull the board off-screen.
-    if (move.top < bounds.top || move.bottom > bounds.bottom)
-      container.scrollTop += move.top - bounds.top - container.clientHeight / 2;
-  }, [selectedPly]);
+    if (!container) return;
+    const reveal = () => revealSelected(container, selectedPly);
+    reveal();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(reveal);
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [selectedPly, reviews]);
   return (
     <ol ref={list} className="move-list" aria-label="Game moves">
       {moveRows(game.positions).map((row) => (
@@ -107,4 +103,24 @@ function classificationName(
     CLASSIFICATION_LABELS.find(([key]) => key === primaryLabel(move))?.[1] ??
     "Unclassified"
   );
+}
+
+function revealSelected(
+  container: HTMLOListElement,
+  selectedPly: number,
+): void {
+  if (selectedPly === 0) {
+    container.scrollTop = 0;
+    return;
+  }
+  const selected = container.querySelector('[aria-current="step"]');
+  if (!selected) return;
+  const bounds = container.getBoundingClientRect();
+  const move = selected.getBoundingClientRect();
+  const top = bounds.top + container.clientTop;
+  const bottom = top + container.clientHeight;
+  // Centre the whole button, including its label, inside the scroll viewport.
+  if (move.top < top || move.bottom > bottom)
+    container.scrollTop +=
+      move.top - top - (container.clientHeight - move.height) / 2;
 }

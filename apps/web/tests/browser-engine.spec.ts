@@ -55,7 +55,7 @@ for (const threads of [1, 2]) {
     await page.goto("/?engine=browser");
     await page.getByLabel("Chess.com username").fill("alice");
     await page.getByRole("button", { name: "Find games" }).click();
-    await page.getByRole("button", { name: "Open game" }).click();
+    await page.getByRole("button", { name: "Analyze" }).click();
     await page.getByRole("button", { name: "1. White: e4" }).click();
     await page.getByLabel("Engine threads").selectOption(String(threads));
     await page.getByRole("button", { name: "Browser Quick review" }).click();
@@ -117,7 +117,7 @@ test("missing WASM cannot produce completed analysis or evidence", async ({
   await page.goto("/?engine=browser");
   await page.getByLabel("Chess.com username").fill("alice");
   await page.getByRole("button", { name: "Find games" }).click();
-  await page.getByRole("button", { name: "Open game" }).click();
+  await page.getByRole("button", { name: "Analyze" }).click();
   await page.getByRole("button", { name: "Browser Quick review" }).click();
   await expect(page.getByRole("alert")).toContainText(
     "Engine download unavailable",

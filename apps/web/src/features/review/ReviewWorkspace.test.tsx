@@ -49,7 +49,9 @@ it("renders engine-supplied evaluations and keeps the analysis session through t
   );
   fireEvent.click(screen.getByRole("button", { name: "Previous move" }));
   expect(screen.getByRole("list", { name: "Engine variations" })).toBeVisible();
-  expect(fetcher).toHaveBeenCalledTimes(1);
+  expect(
+    fetcher.mock.calls.filter((call) => !String(call[0]).includes("/lessons")),
+  ).toHaveLength(1);
 });
 
 it("synchronizes consecutive White and Black positions with engine values in both directions", async () => {
@@ -159,7 +161,6 @@ it("keeps navigation inside the tabbed workspace and preserves selection across 
   fireEvent.click(within(review).getByRole("button", { name: "Next move" }));
   fireEvent.click(screen.getByRole("tab", { name: "Review" }));
   expect(screen.getByRole("button", { name: "Previous move" })).toBeEnabled();
-  fireEvent.click(screen.getByRole("tab", { name: "Chess guidance" }));
   expect(screen.getByText(/Run a review to get chess guidance/)).toBeVisible();
   fireEvent.click(screen.getByRole("tab", { name: "Analysis" }));
   expect(screen.getByRole("button", { name: "1. White: e4" })).toHaveAttribute(

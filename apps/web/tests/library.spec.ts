@@ -49,7 +49,9 @@ async function mockLibrary(page: Page) {
         },
       });
     if (url.pathname.includes("/analyses"))
-      return route.fulfill({ json: verifiedGreatAnalysis });
+      return route.fulfill({
+        json: { ...verifiedGreatAnalysis, cached: true },
+      });
     return route.fulfill({ json: imported });
   });
 }
@@ -80,18 +82,19 @@ for (const width of [320, 390, 768, 1024, 1440]) {
         fullPage: true,
       });
     }
-    await page.getByRole("button", { name: "Open game" }).first().click();
+    await page.getByRole("button", { name: "Analyze" }).first().click();
     await expect(
       page.getByRole("region", { name: "Game replay" }),
     ).toBeFocused();
-    await page.getByRole("button", { name: "Deep review" }).click();
+    await page.getByLabel("Engine settings").click();
+    await page.getByLabel("Server review").selectOption("deep");
+    await page.getByRole("button", { name: "Run review" }).click();
     await page.getByRole("button", { name: "Next move" }).click();
     await expect(page.locator(".position-score strong")).toBeVisible();
     await page.getByRole("tab", { name: "Review", exact: true }).click();
     await expect(
       page.getByRole("region", { name: "Classification summary" }),
     ).toBeVisible();
-    await page.getByRole("tab", { name: "Chess guidance" }).click();
     await page.getByRole("tab", { name: "Analysis", exact: true }).click();
     if (width >= 1024) {
       const board = await page.locator(".board-frame").boundingBox();

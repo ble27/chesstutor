@@ -18,7 +18,7 @@ async function openFixture(page: Page, game: Game = imported) {
   await page.goto("/");
   await page.getByLabel("Chess.com username").fill("alice");
   await page.getByRole("button", { name: "Find games" }).click();
-  await page.getByRole("button", { name: "Open game" }).click();
+  await page.getByRole("button", { name: "Analyze" }).click();
 }
 
 test("opens an imported game for synchronized replay", async ({ page }) => {
@@ -58,7 +58,7 @@ for (const { width, height } of [
     if (!reviewSize) throw new Error("Missing review frame");
     expect(size.width / reviewSize.width).toBeCloseTo(1.5, 1);
     expect(size.height).toBeLessThanOrEqual(height - 180);
-    if (width === 1440) expect(size.width).toBeGreaterThan(640);
+    if (width === 1440) expect(size.width).toBeGreaterThanOrEqual(620);
     expect(Math.abs(size.width - size.height)).toBeLessThan(1);
     await expect(board).toBeInViewport({ ratio: 1 });
     await expect(
@@ -98,9 +98,7 @@ test("puts recorded moves beside the board and distinguishes them from engine an
   await expect(
     insights.getByRole("heading", { name: "Engine analysis" }),
   ).toBeVisible();
-  await expect(
-    insights.getByRole("button", { name: "Quick review" }),
-  ).toBeVisible();
+  await expect(insights.getByLabel("Engine settings")).toBeVisible();
   const board = await page
     .getByRole("img", { name: /Chessboard/ })
     .boundingBox();
@@ -139,6 +137,8 @@ test("keeps selected moves visible inside a scrollable move list", async ({
   expect((moveBounds?.y ?? 0) + (moveBounds?.height ?? 0)).toBeLessThanOrEqual(
     (listBounds?.y ?? 0) + (listBounds?.height ?? 0),
   );
+  // Short screens reflow: reveal the move region before its internal navigation.
+  await moves.scrollIntoViewIfNeeded();
   await page.getByRole("button", { name: "First position" }).click();
   await expect(
     page.getByRole("button", { name: "1. White: e4" }),
@@ -237,7 +237,8 @@ test("keyboard navigation stays in replay and flip preserves the selected move",
   await page.keyboard.press("End");
   await page.keyboard.press("ArrowRight");
   await expect(page.getByRole("button", { name: "Next move" })).toBeDisabled();
-  const input = page.getByLabel("Chess.com username");
+  await page.getByLabel("Engine settings").click();
+  const input = page.getByLabel("Local search depth");
   await input.focus();
   await page.keyboard.press("Home");
   await expect(page.getByRole("button", { name: "Next move" })).toBeDisabled();

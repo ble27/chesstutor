@@ -30,6 +30,18 @@ export const expansionJob: Analysis = {
       policy_version: "v3",
     },
   })),
+  accuracy: {
+    version: "logistic-v1",
+    complete: false,
+    players: {
+      white: { accuracy: 99.9999, scored_plies: 1, total_plies: 2 },
+      black: { accuracy: 99.9999, scored_plies: 1, total_plies: 1 },
+    },
+    moves: [
+      { ply: 1, mover: "white", accuracy: 99.9999 },
+      { ply: 2, mover: "black", accuracy: 99.9999 },
+    ],
+  },
   summary: {
     players: {
       white: { counts: { best: 1, unclassified: 1 }, average_expected_loss: 0 },

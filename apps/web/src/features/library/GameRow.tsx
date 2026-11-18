@@ -65,7 +65,7 @@ export function GameRow({
       <div className="game-row-actions">
         {game.eligibility === "available" ? (
           <button aria-pressed={selected} onClick={() => open(game.id)}>
-            {selected ? "Reopen game" : "Open game"}
+            {selected ? "Analyze again" : "Analyze"}
           </button>
         ) : (
           <span>{unavailable[game.eligibility]}</span>

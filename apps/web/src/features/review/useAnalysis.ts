@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { cancelAnalysis, createAnalysis } from "../../api/analysis";
 import type { Analysis, Mode } from "../../api/analysis";
 import { ApiError } from "../../api/client";
@@ -35,7 +35,7 @@ function matchingGame(job: Analysis, game: Game) {
   }
 }
 
-export function useAnalysis(game: Game) {
+export function useAnalysis(game: Game, automatic = false) {
   const [state, setState] = useState<State>({ status: "idle", job: null });
   const [mode, setMode] = useState<Mode>("quick");
   const controller = useRef<AbortController | null>(null);
@@ -79,5 +79,16 @@ export function useAnalysis(game: Game) {
     const job = state.job;
     if (job?.can_cancel) void run((signal) => cancelAnalysis(job.id, signal));
   };
+  const begin = useEffectEvent(() => start("quick"));
+  useEffect(() => {
+    let cancelled = false;
+    if (automatic)
+      queueMicrotask(() => {
+        if (!cancelled) begin();
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [automatic]);
   return { state, start, cancel, retry: () => start(mode) };
 }

@@ -9,12 +9,16 @@ export function Board({
   lastMove,
   describedBy,
   arrows = [],
+  onMove,
+  legalMoves = [],
 }: {
   fen: string;
   orientation: "white" | "black";
   lastMove: string | null;
   describedBy: string;
   arrows?: BoardArrow[] | undefined;
+  onMove?: ((move: string) => void) | undefined;
+  legalMoves?: readonly string[] | undefined;
 }) {
   const squareStyles: Record<string, CSSProperties> = {};
   if (lastMove) {
@@ -30,14 +34,25 @@ export function Board({
       aria-label={`Chessboard, ${orientation === "white" ? "White" : "Black"} at bottom`}
       aria-describedby={describedBy}
     >
-      <div aria-hidden="true" inert style={{ height: "100%" }}>
+      <div aria-hidden="true" inert={!onMove} style={{ height: "100%" }}>
         <Chessboard
           options={{
             id: "game-replay",
             position: fen,
             pieces: classicPieces,
             boardOrientation: orientation,
-            allowDragging: false,
+            allowDragging: onMove !== undefined,
+            onPieceDrop: ({ sourceSquare, targetSquare }) => {
+              if (targetSquare) {
+                const choices = legalMoves.filter((move) =>
+                  move.startsWith(sourceSquare + targetSquare),
+                );
+                if (choices.length === 1 && choices[0]) onMove?.(choices[0]);
+                else if (choices.length > 1)
+                  onMove?.(sourceSquare + targetSquare);
+              }
+              return false;
+            },
             allowDrawingArrows: false,
             arrows,
             arrowOptions: {

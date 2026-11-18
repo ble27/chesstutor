@@ -22,8 +22,7 @@ async function openReview(page: Page) {
   await page.goto("/");
   await page.getByLabel("Chess.com username").fill("alice");
   await page.getByRole("button", { name: "Find games" }).click();
-  await page.getByRole("button", { name: "Open game" }).click();
-  await page.getByRole("button", { name: "Quick review" }).click();
+  await page.getByRole("button", { name: "Analyze" }).click();
 }
 
 for (const width of [320, 390, 768, 1024, 1440]) {
@@ -88,7 +87,7 @@ test("review disclosures retain touch size and visible keyboard focus", async ({
   const limits = page.getByText("Review settings and limits", { exact: true });
   const bounds = await limits.boundingBox();
   expect(bounds?.height).toBeGreaterThanOrEqual(44);
-  await page.getByRole("button", { name: "Quick review" }).focus();
+  await page.getByLabel("Engine settings").focus();
   await page.keyboard.press("Shift+Tab");
   await expect(limits).toBeFocused();
   const outline = await limits.evaluate((element) => {
@@ -190,3 +189,28 @@ test("review text and enabled controls meet normal-text contrast", async ({
   for (const item of ratios)
     expect(item.ratio, item.text ?? "text").toBeGreaterThanOrEqual(4.5);
 });
+
+for (const viewport of [
+  { width: 1440, height: 900 },
+  { width: 1024, height: 768 },
+]) {
+  test(`desktop dashboard keeps board, coach, graph and controls in view at ${viewport.width}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport);
+    await openReview(page);
+    await expect(page.locator(".position-score strong")).toHaveText("+1.20");
+    await page.evaluate(() => scrollTo(0, 0));
+    await expect(page.getByRole("img", { name: /Chessboard/ })).toBeInViewport({
+      ratio: 1,
+    });
+    await expect(page.locator(".workspace-coach")).toBeInViewport({ ratio: 1 });
+    await expect(page.locator(".review-graph")).toBeInViewport({ ratio: 1 });
+    await expect(
+      page.getByRole("navigation", { name: "Replay controls" }),
+    ).toBeInViewport({ ratio: 1 });
+    await page.screenshot({
+      path: test.info().outputPath(`dashboard-${viewport.width}.png`),
+    });
+  });
+}

@@ -57,7 +57,7 @@ it("keeps result, winner, validated move count, and opening in one row", () => {
   );
   expect(screen.getByText("alice won")).toBeVisible();
   expect(screen.getByText("Move count unavailable")).toBeVisible();
-  fireEvent.click(screen.getByRole("button", { name: "Open game" }));
+  fireEvent.click(screen.getByRole("button", { name: "Analyze" }));
   expect(open).toHaveBeenCalledWith(summary.id);
   rerender(
     <ul>
@@ -65,7 +65,7 @@ it("keeps result, winner, validated move count, and opening in one row", () => {
     </ul>,
   );
   expect(screen.getByText("1 move · 1 ply")).toBeVisible();
-  expect(screen.getByRole("button", { name: "Reopen game" })).toHaveAttribute(
+  expect(screen.getByRole("button", { name: "Analyze again" })).toHaveAttribute(
     "aria-pressed",
     "true",
   );
