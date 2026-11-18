@@ -68,7 +68,24 @@ export function useLiveEngine(
               publish,
             );
           if (current.signal.aborted) return;
-          await searchPosition(session.engine);
+          await searchPosition({
+            engine: session.engine,
+            position,
+            depth,
+            sessionSignal: session.controller.signal,
+            signal: current.signal,
+            validate: async (raw) => {
+              const result = await sandboxPosition(
+                game,
+                rootPly,
+                moves ? moves.split(" ") : [],
+                current.signal,
+                raw,
+              );
+              return result.lines ?? [];
+            },
+            publish: (lines) => publish("", lines),
+          });
         } catch (error: unknown) {
           publish(
             error instanceof Error
@@ -78,37 +95,6 @@ export function useLiveEngine(
         }
       });
     }, 150);
-
-    async function searchPosition(engine: BrowserEngine) {
-      if (!position || !session) return;
-      let lastValidation = 0;
-      let sequence = 0;
-      const validate = async (raw: Parameters<typeof sandboxPosition>[4]) => {
-        const request = ++sequence;
-        const result = await sandboxPosition(
-          game,
-          rootPly,
-          moves ? moves.split(" ") : [],
-          current.signal,
-          raw,
-        );
-        if (request === sequence) publish("", result.lines ?? []);
-      };
-      const raw = await engine.searchPosition(
-        position.initial_fen,
-        position.moves,
-        depth,
-        session.controller.signal,
-        (raw) => {
-          if (performance.now() - lastValidation >= 500) {
-            lastValidation = performance.now();
-            void validate(raw).catch(() => undefined);
-          }
-        },
-        current.signal,
-      );
-      if (!current.signal.aborted) await validate(raw);
-    }
 
     return () => {
       clearTimeout(timer);
@@ -123,4 +109,46 @@ export function useLiveEngine(
         lines: [],
         message: position?.result ? "Terminal position" : "Analyzing…",
       };
+}
+
+async function searchPosition({
+  engine,
+  position,
+  depth,
+  sessionSignal,
+  signal,
+  validate,
+  publish,
+}: {
+  engine: BrowserEngine;
+  position: SandboxPosition;
+  depth: number;
+  sessionSignal: AbortSignal;
+  signal: AbortSignal;
+  validate: (
+    raw: Parameters<typeof sandboxPosition>[4],
+  ) => Promise<Live["lines"]>;
+  publish: (lines: Live["lines"]) => void;
+}) {
+  let lastValidation = 0;
+  let sequence = 0;
+  const validateLatest = async (raw: Parameters<typeof sandboxPosition>[4]) => {
+    const request = ++sequence;
+    const lines = await validate(raw);
+    if (request === sequence) publish(lines);
+  };
+  const raw = await engine.searchPosition(
+    position.initial_fen,
+    position.moves,
+    depth,
+    sessionSignal,
+    (raw) => {
+      if (performance.now() - lastValidation >= 500) {
+        lastValidation = performance.now();
+        void validateLatest(raw).catch(() => undefined);
+      }
+    },
+    signal,
+  );
+  if (!signal.aborted) await validateLatest(raw);
 }
