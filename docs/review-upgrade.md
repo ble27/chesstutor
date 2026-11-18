@@ -208,3 +208,17 @@ The code review dispositions above remain unchanged after final verification.
 Handoff: recover Docker without deleting persisted data, rerun integration and
 app startup, complete S5/S6 manual acceptance, and resolve all required gates
 before certifying S6 or starting dependent S7 work. No release readiness is claimed.
+
+### Reviewed commit handoff
+
+- Sprint-start baseline: `dd23c1c14d984f581a884444bf7c883d8414f4a1`.
+- Upgrade boundary: `d345cf90318c78ad3cc310f2ac19440ece563a40`.
+- Board and accuracy: `91b8583e029c333048ef00aebd29d10c2323af5a`.
+- Sandbox API and contracts: `86b003d308d07506431667f820b990ccd8413c1c`.
+- Final implementation: `b354c33c64b3b5ee7b9ab0fc36d5a8a911c393ed`.
+
+The subsequent `docs(review): record upgrade verification and remaining gates`
+commit is the evidence-only handoff, identifiable through Git history. Its changes
+only record these IDs; file-link and whitespace checks were repeated. The final
+implementation tree is the tree tested above. All remaining untracked paths are
+pre-existing personal configuration/product notes, not uncommitted upgrade code.
