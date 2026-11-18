@@ -135,6 +135,16 @@ it("puts move classifications on their selectable rows without extra jump contro
   fireEvent.click(screen.getByRole("button", { name: "Quick review" }));
   await screen.findByRole("list", { name: "Engine variations" });
   fireEvent.mouseDown(screen.getByRole("tab", { name: "Report" }));
+  const totals = screen.getByRole("table", { name: "Classification totals" });
+  expect(
+    within(totals).getByRole("row", { name: "Blunder 1 0" }),
+  ).toBeVisible();
+  expect(
+    within(totals).getByRole("row", { name: "Total plies 1 0" }),
+  ).toBeVisible();
+  expect(
+    screen.getByText("Move report", { selector: "summary" }).closest("details"),
+  ).toHaveAttribute("open");
   const move = screen.getByRole("button", { name: "1. White: e4" });
   expect(move).toHaveAccessibleDescription("Blunder");
   fireEvent.click(move);

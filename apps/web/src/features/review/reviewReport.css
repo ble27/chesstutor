@@ -1,0 +1,58 @@
+.moves-module .accuracy-readout {
+  margin-top: 8px;
+}
+
+.report-ply-total,
+.report-totals thead {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.report-totals {
+  width: 100%;
+  margin: 10px 0 12px;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.report-totals :is(th, td) {
+  padding: 5px 8px;
+  text-align: right;
+}
+
+.report-totals th:first-child {
+  text-align: left;
+}
+
+.report-totals tbody th {
+  font-weight: 550;
+}
+
+.report-totals tbody tr:nth-child(odd) {
+  background: var(--inset);
+}
+
+.report-totals :is(thead, tfoot) {
+  border-bottom: 1px solid var(--line);
+}
+
+.report-totals tfoot {
+  border-top: 1px solid var(--line);
+  font-weight: 700;
+}
+
+.report-moves summary {
+  padding: 10px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--inset);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.report-moves summary:hover {
+  background: var(--surface-raised);
+}

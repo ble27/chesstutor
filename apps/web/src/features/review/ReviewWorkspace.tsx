@@ -8,7 +8,7 @@ import { active } from "../../api/analysis";
 import { LocalAnalysisControls } from "../analysis/LocalAnalysisControls";
 import type { LocalAnalysis } from "../analysis/useLocalAnalysis";
 import type { BoardArrow } from "../guidance/arrows";
-import { MoveList } from "../replay/MoveList";
+import { ReviewReport } from "./ReviewReport";
 import { BrowserExperiment } from "../browserExperiment/BrowserExperiment";
 import { useAnalysis } from "./useAnalysis";
 import { WorkspaceEngine } from "./WorkspaceEngine";
@@ -185,7 +185,7 @@ function ReviewLayout(props: LayoutProps) {
             {settings}
           </div>
           <Tabs.Content value="report" className="workspace-view">
-            <Report
+            <ReviewReport
               game={game}
               selectedPly={selectedPly}
               select={select}
@@ -249,62 +249,5 @@ function RecordedAnalysis({
         onArrowsVisible={coachArrows?.setVisible}
       />
     </>
-  );
-}
-
-function Report({
-  game,
-  selectedPly,
-  select,
-  analysis,
-}: Pick<Props, "game" | "selectedPly" | "select"> & {
-  analysis: Analysis | null;
-}) {
-  return (
-    <section className="panel moves-module" aria-labelledby="moves-title">
-      <div className="module-heading">
-        <h2 id="moves-title">Move report</h2>
-        <AccuracyReadout analysis={analysis} />
-      </div>
-      <div className="move-columns" aria-hidden="true">
-        <span>#</span>
-        <span>White</span>
-        <span>Black</span>
-      </div>
-      <MoveList
-        game={game}
-        selectedPly={selectedPly}
-        select={select}
-        reviews={analysis?.classifications ?? []}
-      />
-    </section>
-  );
-}
-
-function AccuracyReadout({ analysis }: { analysis: Analysis | null }) {
-  const accuracy = analysis?.accuracy;
-  if (!accuracy) return null;
-  const players = accuracy.players;
-  return (
-    <div className="accuracy-readout" aria-label="Accuracy">
-      <span>Accuracy</span>
-      {(["white", "black"] as const).map((color) => {
-        const item = players[color];
-        if (!item) return null;
-        return (
-          <span key={color}>
-            <i className={`piece-color ${color}`} aria-hidden="true" />
-            <span className="visually-hidden">{color} </span>
-            {item.accuracy == null ? "—" : `${item.accuracy.toFixed(1)}%`}
-            <span
-              className="accuracy-coverage"
-              aria-label={`${item.scored_plies} of ${item.total_plies} scored plies`}
-            >
-              {item.scored_plies}/{item.total_plies}
-            </span>
-          </span>
-        );
-      })}
-    </div>
   );
 }

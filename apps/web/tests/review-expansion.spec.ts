@@ -40,6 +40,16 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await expect(moves.getByText("100.0%", { exact: false })).toHaveCount(2);
     const white = moves.getByRole("button", { name: "1. White: e4" });
     const black = moves.getByRole("button", { name: "1... Black: e5" });
+    const table = moves.getByRole("table", { name: "Classification totals" });
+    await expect(
+      table.getByRole("row", { name: "Best move 1 1" }),
+    ).toBeVisible();
+    const toggle = moves.locator("summary");
+    await toggle.focus();
+    await toggle.press("Enter");
+    await expect(white).toBeHidden();
+    await expect(table).toBeVisible();
+    await toggle.press("Enter");
     await expect(white).toHaveAccessibleDescription("Best move");
     await expect(black).toHaveAccessibleDescription("Best move");
     expect((await white.boundingBox())?.y).toBe((await black.boundingBox())?.y);
