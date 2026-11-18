@@ -212,6 +212,43 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AccuracyMove */
+        AccuracyMove: {
+            /** Accuracy */
+            accuracy: number;
+            /**
+             * Mover
+             * @enum {string}
+             */
+            mover: "white" | "black";
+            /** Ply */
+            ply: number;
+        };
+        /** AccuracyPlayer */
+        AccuracyPlayer: {
+            /** Accuracy */
+            accuracy: number | null;
+            /** Scored Plies */
+            scored_plies: number;
+            /** Total Plies */
+            total_plies: number;
+        };
+        /** AccuracySummary */
+        AccuracySummary: {
+            /** Complete */
+            complete: boolean;
+            /** Moves */
+            moves: components["schemas"]["AccuracyMove"][];
+            /** Players */
+            players: {
+                [key: string]: components["schemas"]["AccuracyPlayer"];
+            };
+            /**
+             * Version
+             * @constant
+             */
+            version: "logistic-v1";
+        };
         /** AlternativeOut */
         AlternativeOut: {
             /** Rank */
@@ -236,6 +273,7 @@ export interface components {
         };
         /** AnalysisResponse */
         AnalysisResponse: {
+            accuracy?: components["schemas"]["AccuracySummary"] | null;
             /** Attempts */
             attempts: number;
             /** Cached */

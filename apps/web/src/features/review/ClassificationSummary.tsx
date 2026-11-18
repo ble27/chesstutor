@@ -6,15 +6,22 @@ type Summary = components["schemas"]["ClassificationSummary"];
 type Review = components["schemas"]["ReviewedMove"];
 type Props = {
   summary: Summary;
+  accuracy?: components["schemas"]["AccuracySummary"] | null | undefined;
   reviews?: readonly Review[] | undefined;
   players?: Pick<Game["game"], "white" | "black">;
 };
 
-export function ClassificationSummary({ summary, reviews, players }: Props) {
+export function ClassificationSummary({
+  summary,
+  reviews,
+  players,
+  accuracy,
+}: Props) {
   const columns = (["white", "black"] as const).map((color) =>
     summaryColumn(
       summary.players[color],
       reviews?.filter((move) => move.mover === color),
+      accuracy?.players[color],
     ),
   );
   return (
@@ -31,9 +38,15 @@ export function ClassificationSummary({ summary, reviews, players }: Props) {
       <details className="summary-method">
         <summary>How these numbers work</summary>
         <p>
-          Chess Tutor accuracy = 100 × (1 − average expected-score loss), using
-          scored plies only. Unclassified plies are excluded. This independent
-          metric is not Chess.com accuracy.
+          Chess Tutor accuracy — Lichess-inspired (logistic-v1). Win% = 100 / (1
+          + exp(−0.00368208 × centipawns)). Move accuracy = clamp(103.1668 ×
+          exp(−0.04354 × Win% loss) − 3.1669, 0, 100). Game accuracy blends the
+          harmonic and volatility-weighted means. Only usable, unbounded score
+          pairs count; missing scores stay unavailable. This independent metric
+          is not Chess.com CAPS.
+          {accuracy &&
+            !accuracy.complete &&
+            " Accuracy coverage is incomplete."}
         </p>
         <p>
           One primary label per ply: Brilliant, then Great, then Miss, otherwise

@@ -45,18 +45,16 @@ it("defines independent accuracy and never gives an unscored opponent 100 percen
   });
   expect(
     within(table).getByRole("row", {
-      name: /Chess Tutor accuracy 100.0% Unavailable/,
+      name: /Chess Tutor accuracy Unavailable Unavailable/,
     }),
   ).toBeVisible();
+  expect(screen.getByText(/Lichess-inspired/)).toBeInTheDocument();
   expect(
-    screen.getByText(/100.*average expected-score loss/),
-  ).toBeInTheDocument();
-  expect(
-    within(table).getByRole("row", { name: /Scored plies 1 0/ }),
+    within(table).getByRole("row", { name: /Scored plies 0 0/ }),
   ).toBeVisible();
 });
 
-it("shows example 7.2 percent loss as 92.8 percent accuracy and excludes unclassified moves", () => {
+it("does not infer calibrated accuracy from legacy average-loss summaries", () => {
   render(
     <ClassificationSummary
       summary={{
@@ -94,11 +92,11 @@ it("shows example 7.2 percent loss as 92.8 percent accuracy and excludes unclass
   });
   expect(
     within(table).getByRole("row", {
-      name: /Chess Tutor accuracy 92.8% 93.4%/,
+      name: /Chess Tutor accuracy Unavailable Unavailable/,
     }),
   ).toBeVisible();
   expect(
-    within(table).getByRole("row", { name: /Scored plies 56 58/ }),
+    within(table).getByRole("row", { name: /Scored plies 0 0/ }),
   ).toBeVisible();
   expect(screen.getByText(/Summary so far/)).toBeVisible();
 });

@@ -1,3 +1,4 @@
+import { parseAccuracy, validateAccuracy } from "./accuracy";
 import type { components } from "./generated";
 import { ApiError, request } from "./client";
 import { evidence } from "./analysisEvidence";
@@ -47,6 +48,8 @@ export function parseAnalysis(input: unknown): Analysis {
     lines.some((item, index) => item.ply !== index + 1)
   )
     throw new Error("Invalid coverage");
+  const accuracy = parseAccuracy(value.accuracy);
+  validateAccuracy(accuracy, total, state);
   const classifications =
     value.classifications === undefined
       ? []
@@ -92,6 +95,7 @@ export function parseAnalysis(input: unknown): Analysis {
     evidence: lines,
     classifications,
     summary: classificationSummary,
+    accuracy,
     engine: {
       version: text(engine.version, 30),
       binary_sha256: checksum,

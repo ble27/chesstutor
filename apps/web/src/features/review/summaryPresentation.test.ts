@@ -31,8 +31,8 @@ it("counts verified badge labels once rather than counting their underlying base
   );
   expect(result.counts).toEqual({ brilliant: 1, great: 1, miss: 1, good: 1 });
   expect(result.total).toBe(4);
-  expect(result.scored).toBe(4);
-  expect(result.accuracy).toBe("94.0%");
+  expect(result.scored).toBe(0);
+  expect(result.accuracy).toBe("Unavailable");
 });
 
 it("keeps accuracy unavailable when all reviewed plies are unclassified", () => {
@@ -43,4 +43,14 @@ it("keeps accuracy unavailable when all reviewed plies are unclassified", () => 
   expect(result.total).toBe(2);
   expect(result.scored).toBe(0);
   expect(result.accuracy).toBe("Unavailable");
+});
+
+it("uses backend calibration instead of deriving accuracy from average loss", () => {
+  const result = summaryColumn(
+    { counts: { good: 2 }, average_expected_loss: 0.01 },
+    undefined,
+    { accuracy: 74.2, scored_plies: 2, total_plies: 2 },
+  );
+  expect(result.accuracy).toBe("74.2%");
+  expect(result.scored).toBe(2);
 });

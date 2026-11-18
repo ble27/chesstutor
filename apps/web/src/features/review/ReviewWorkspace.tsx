@@ -86,6 +86,7 @@ function ServerWorkspace(props: Props) {
             </p>
             <ClassificationSummary
               summary={summary}
+              accuracy={session.state.job?.accuracy}
               reviews={session.state.job?.classifications}
               players={props.game.game}
             />

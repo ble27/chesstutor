@@ -1,6 +1,101 @@
 {
   "components": {
     "schemas": {
+      "AccuracyMove": {
+        "additionalProperties": false,
+        "properties": {
+          "accuracy": {
+            "title": "Accuracy",
+            "type": "number"
+          },
+          "mover": {
+            "enum": [
+              "white",
+              "black"
+            ],
+            "title": "Mover",
+            "type": "string"
+          },
+          "ply": {
+            "title": "Ply",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "ply",
+          "mover",
+          "accuracy"
+        ],
+        "title": "AccuracyMove",
+        "type": "object"
+      },
+      "AccuracyPlayer": {
+        "additionalProperties": false,
+        "properties": {
+          "accuracy": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accuracy"
+          },
+          "scored_plies": {
+            "title": "Scored Plies",
+            "type": "integer"
+          },
+          "total_plies": {
+            "title": "Total Plies",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "accuracy",
+          "scored_plies",
+          "total_plies"
+        ],
+        "title": "AccuracyPlayer",
+        "type": "object"
+      },
+      "AccuracySummary": {
+        "additionalProperties": false,
+        "properties": {
+          "complete": {
+            "title": "Complete",
+            "type": "boolean"
+          },
+          "moves": {
+            "items": {
+              "$ref": "#/components/schemas/AccuracyMove"
+            },
+            "title": "Moves",
+            "type": "array"
+          },
+          "players": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AccuracyPlayer"
+            },
+            "title": "Players",
+            "type": "object"
+          },
+          "version": {
+            "const": "logistic-v1",
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "version",
+          "players",
+          "moves",
+          "complete"
+        ],
+        "title": "AccuracySummary",
+        "type": "object"
+      },
       "AlternativeOut": {
         "additionalProperties": false,
         "properties": {
@@ -56,6 +151,16 @@
       "AnalysisResponse": {
         "additionalProperties": false,
         "properties": {
+          "accuracy": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AccuracySummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "attempts": {
             "maximum": 2.0,
             "minimum": 0.0,

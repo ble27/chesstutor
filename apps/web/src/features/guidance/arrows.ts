@@ -12,7 +12,7 @@ export type BoardArrow = {
 
 // Colour is never the only cue: the panel lists every arrow in words as well.
 const PLAYED = "#49160e";
-const SUGGESTED = "#31e65c";
+const SUGGESTED = "#ACC65B";
 
 export function toBoardArrows(
   arrows: readonly LessonArrow[],

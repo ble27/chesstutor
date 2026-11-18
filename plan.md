@@ -188,3 +188,10 @@ inspect the complete diff from `13ebdc9` and commit only `plan.md` and `AGENTS.m
 together. Do not claim a new runtime gate. If `/diff` and `/review` cannot be
 invoked, report that limitation and perform equivalent Git diff and review
 against the contributor rules, PRD, and this task's acceptance criteria.
+
+## Approved six-module review upgrade — 2026-11-18
+
+The user approved [the review upgrade](docs/review-upgrade.md) for implementation
+as expanded S6 scope before S7. Its board palette, unified automatic coach,
+accuracy policy, Analyze entry, local settings and sandbox replace conflicting
+older UI requirements. Manual acceptance remains open; S7 is not started.

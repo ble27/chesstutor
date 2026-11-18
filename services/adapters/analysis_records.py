@@ -5,6 +5,7 @@ from pydantic import Field, JsonValue
 
 from services.api.app.analysis_schemas import AnalysisResponse
 from services.api.app.game_schemas import GameResponse, StrictModel
+from services.core.analysis.accuracy import accuracy_summary
 from services.core.analysis.values import ACTIVE_STATES, JobState, Mode, MoveEvidence
 from services.core.classification.review import ReviewedMove, classify_evidence
 from services.core.classification.summary import summarize_game
@@ -67,4 +68,10 @@ class StoredJob(StrictModel):
             evidence=evidence,
             classifications=classified,
             summary=summary,
+            accuracy=accuracy_summary(
+                evidence,
+                self.total_plies,
+                self.state,
+                "white" if self.game_data.initial_fen.split()[1] == "w" else "black",
+            ),
         )

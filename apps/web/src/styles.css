@@ -692,11 +692,17 @@ button:disabled {
   font-size: 13px;
 }
 
-/* A hard dark outline preserves bright arrow contrast against light squares. */
-.replay-board path[marker-end],
-.replay-board marker polygon {
-  filter: drop-shadow(3px 0 0 #092e20) drop-shadow(-3px 0 0 #092e20)
-    drop-shadow(0 3px 0 #092e20) drop-shadow(0 -3px 0 #092e20);
+/* Suggestion paths sit between squares and pieces, keeping pieces readable. */
+.replay-board svg[viewBox="0 0 2048 2048"] {
+  z-index: 1 !important;
+}
+.replay-board [data-piece] {
+  position: relative;
+  z-index: 2;
+}
+.replay-board path[marker-end] {
+  stroke-linejoin: round;
+  filter: drop-shadow(1px 0 0 #253324) drop-shadow(-1px 0 0 #253324);
 }
 
 .recorded-move-label {

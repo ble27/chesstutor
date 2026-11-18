@@ -54,6 +54,7 @@ export function ClassificationPanel({
       {job.summary && (
         <ClassificationSummary
           summary={job.summary}
+          accuracy={job.accuracy}
           reviews={job.classifications}
         />
       )}

@@ -91,20 +91,12 @@ function PieceCredit() {
   return (
     <p className="piece-credit">
       Pieces:{" "}
-      <a
-        href="https://commons.wikimedia.org/wiki/Category:SVG_chess_pieces"
-        target="_blank"
-        rel="noreferrer"
-      >
-        Cburnett
+      <a href="/pieces/classic/README.md" target="_blank" rel="noreferrer">
+        Classic Merida · Armando Hernandez Marroquin
       </a>{" "}
       ·{" "}
-      <a
-        href="https://creativecommons.org/licenses/by-sa/3.0/"
-        target="_blank"
-        rel="noreferrer"
-      >
-        CC BY-SA 3.0
+      <a href="/pieces/classic/LICENSE.txt" target="_blank" rel="noreferrer">
+        GPL-2.0-or-later
       </a>
     </p>
   );

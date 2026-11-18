@@ -60,3 +60,9 @@ The development-only security override pins `minimatch@11.0.1` (BlueOak-1.0.0,
 `@isaacs/nonrecursive-glob-match@1.0.3` (BlueOak-1.0.0); its
 [retained license](docs/licenses/nonrecursive-glob-match.txt) accompanies the
 locked package metadata. These lint dependencies are not frontend runtime code.
+
+## Classic Merida chess pieces
+
+`apps/web/public/pieces/classic/*.svg`: Armando Hernandez Marroquin,
+GPL-2.0-or-later. Unmodified assets from lichess-org/lila public/piece/merida;
+see that project's COPYING.md and the adjacent LICENSE.txt and README.md.

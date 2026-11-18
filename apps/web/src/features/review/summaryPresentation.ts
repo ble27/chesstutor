@@ -32,6 +32,7 @@ export function primaryLabel(move: Review): string {
 export function summaryColumn(
   player: Player | undefined,
   reviews?: readonly Review[],
+  calibrated?: components["schemas"]["AccuracyPlayer"] | undefined,
 ): SummaryColumn {
   const counts: Record<string, number> =
     reviews === undefined ? { ...player?.counts } : {};
@@ -40,7 +41,7 @@ export function summaryColumn(
     counts[label] = (counts[label] ?? 0) + 1;
   }
   const total = Object.values(counts).reduce((sum, count) => sum + count, 0);
-  const scored = total - (counts.unclassified ?? 0);
+  const scored = calibrated?.scored_plies ?? 0;
   const average = player?.average_expected_loss ?? null;
   return {
     counts,
@@ -49,6 +50,8 @@ export function summaryColumn(
     average:
       average === null ? "Unavailable" : `${(average * 100).toFixed(1)}%`,
     accuracy:
-      average === null ? "Unavailable" : `${(100 * (1 - average)).toFixed(1)}%`,
+      calibrated?.accuracy == null
+        ? "Unavailable"
+        : `${calibrated.accuracy.toFixed(1)}%`,
   };
 }

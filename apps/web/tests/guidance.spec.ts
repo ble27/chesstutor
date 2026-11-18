@@ -145,7 +145,7 @@ test("guidance works at a phone width without horizontal scrolling", async ({
   await page.screenshot({ path: test.info().outputPath("guidance-phone.png") });
 });
 
-test("bright green guidance arrows have a contrasting outline on both board squares", async ({
+test("thin light-green suggestions remain below pieces with a contrasting edge", async ({
   page,
 }) => {
   await mockGuidance(page, { mode: "ok" });
@@ -153,10 +153,16 @@ test("bright green guidance arrows have a contrasting outline on both board squa
   const paths = page.locator(".replay-board path[marker-end]");
   await expect(paths).toHaveCount(2);
   await expect(
-    page.locator('.replay-board path[stroke="#31e65c"]'),
+    page.locator('.replay-board path[stroke="#ACC65B"]'),
   ).toHaveCount(1);
+  expect(
+    await paths
+      .first()
+      .locator("..")
+      .evaluate((svg) => getComputedStyle(svg).zIndex),
+  ).toBe("1");
   for (const path of await paths.all()) {
-    await expect(path).toHaveAttribute("opacity", "1");
+    await expect(path).toHaveAttribute("opacity", "0.8");
     const filter = await path.evaluate(
       (element) => getComputedStyle(element).filter,
     );
@@ -166,7 +172,7 @@ test("bright green guidance arrows have a contrasting outline on both board squa
       .slice(1)
       .map((channel) => Number(channel).toString(16).padStart(2, "0"))
       .join("")}`;
-    for (const square of ["#637878", "#e0dfd5"]) {
+    for (const square of ["#B58B64", "#F0D9B5"]) {
       const values = [luminance(stroke), luminance(square)].sort(
         (a, b) => a - b,
       );

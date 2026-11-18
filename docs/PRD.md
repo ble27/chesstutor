@@ -625,3 +625,15 @@ Optional model selection must not block the core experience. Primary risks are
 shallow-search labels, unsupported advice, upstream availability, and compute
 cost; explicit uncertainty, verified evidence, caching/backoff, and bounded jobs
 address those risks within this scope.
+
+## Approved review upgrade — 2026-11-18
+
+The approved [six-module upgrade](review-upgrade.md) supersedes conflicting prior
+requirements for preserved teal squares, standalone guidance/chat, Quick/Deep entry
+buttons and expected-score-retention accuracy. It adds licensed Classic equivalents,
+tan/cream squares, thin reference-green arrows, unified automatic NPC coaching with
+opt-in device voice, a responsive dashboard/graph, Analyze auto-start, bounded local
+WASM depth settings and backend-validated free analysis. Server preset budgets and
+chess grounding remain unchanged. Small/zoomed screens may reflow vertically.
+Accuracy uses the approved independent best-versus-played logistic policy, not a
+claim of Chess.com CAPS parity. Existing human gates remain open.

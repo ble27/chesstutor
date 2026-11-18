@@ -1,3 +1,4 @@
+import { boardTheme, classicPieces } from "./boardTheme";
 import type { CSSProperties } from "react";
 import { Chessboard, defaultArrowOptions } from "react-chessboard";
 import type { BoardArrow } from "../guidance/arrows";
@@ -34,15 +35,20 @@ export function Board({
           options={{
             id: "game-replay",
             position: fen,
+            pieces: classicPieces,
             boardOrientation: orientation,
             allowDragging: false,
             allowDrawingArrows: false,
             arrows,
-            arrowOptions: { ...defaultArrowOptions, opacity: 1 },
+            arrowOptions: {
+              ...defaultArrowOptions,
+              opacity: 0.8,
+              arrowWidthDenominator: 12.5,
+            },
             showAnimations: false,
-            darkSquareStyle: { backgroundColor: "#637878" },
-            lightSquareStyle: { backgroundColor: "#e0dfd5" },
-            darkSquareNotationStyle: { color: "#ffffff" },
+            darkSquareStyle: { backgroundColor: boardTheme.dark },
+            lightSquareStyle: { backgroundColor: boardTheme.light },
+            darkSquareNotationStyle: { color: "#181818" },
             lightSquareNotationStyle: { color: "#181818" },
             squareStyles,
           }}
