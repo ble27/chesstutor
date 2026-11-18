@@ -22,6 +22,7 @@ export function CoachVoice({
         key={`${analysisId}:${ply}:${text}`}
         analysisId={analysisId}
         ply={ply}
+        text={text}
         muted={muted}
       />
       <button
@@ -38,16 +39,19 @@ export function CoachVoice({
 function PlaybackControl({
   analysisId,
   ply,
+  text,
   muted,
 }: {
   analysisId: string | undefined;
   ply: number;
+  text: string | undefined;
   muted: boolean;
 }) {
   const audio = useRef<HTMLAudioElement>(null);
   const source = useRef<string>(null);
   const request = useRef<AbortController>(null);
   const [state, setState] = useState<Playback>("idle");
+  const speech = useDeviceVoice(state, setState, muted);
   useEffect(() => {
     const player = audio.current;
     return () => {
@@ -59,13 +63,17 @@ function PlaybackControl({
       }
     };
   }, []);
-
   async function toggle() {
     const player = audio.current;
-    if (!analysisId || !player || request.current) return;
+    if (!analysisId || !text || !player || request.current) return;
     if (state === "playing") {
-      player.pause();
+      if (speech.used) speech.pause();
+      else player.pause();
       setState("paused");
+      return;
+    }
+    if (speech.used) {
+      speech.play(text);
       return;
     }
     const controller = new AbortController();
@@ -81,7 +89,7 @@ function PlaybackControl({
       await player.play();
       if (!controller.signal.aborted) setState("playing");
     } catch {
-      if (!controller.signal.aborted) setState("unavailable");
+      if (!controller.signal.aborted) speech.play(text);
     } finally {
       request.current = null;
     }
@@ -91,7 +99,7 @@ function PlaybackControl({
     <>
       <audio ref={audio} muted={muted} onEnded={() => setState("idle")} />
       <button
-        disabled={!analysisId || state === "loading"}
+        disabled={!analysisId || muted || state === "loading"}
         aria-label={
           state === "playing" ? "Pause coach voice" : "Play coach voice"
         }
@@ -103,6 +111,11 @@ function PlaybackControl({
             ? "Loading…"
             : "Play"}
       </button>
+      {speech.used && state !== "unavailable" && (
+        <span className="voice-error" role="status">
+          Device voice
+        </span>
+      )}
       {state === "unavailable" && (
         <span className="voice-error" role="status">
           Voice unavailable
@@ -110,4 +123,66 @@ function PlaybackControl({
       )}
     </>
   );
+}
+
+function useDeviceVoice(
+  state: Playback,
+  setState: (state: Playback) => void,
+  muted: boolean,
+) {
+  const speech = useRef<SpeechSynthesisUtterance>(null);
+  const [used, setDevice] = useState(false);
+  useEffect(
+    () => () => {
+      if (!speech.current) return;
+      speech.current.onend = null;
+      speech.current.onerror = null;
+      window.speechSynthesis?.cancel();
+    },
+    [],
+  );
+  useEffect(() => {
+    if (speech.current && muted) window.speechSynthesis?.pause();
+    if (speech.current && !muted && state === "playing")
+      window.speechSynthesis?.resume();
+  }, [muted, state]);
+
+  function playDevice(note: string) {
+    const synth = window.speechSynthesis;
+    if (!synth || typeof SpeechSynthesisUtterance === "undefined") {
+      setState("unavailable");
+      return;
+    }
+    if (speech.current) {
+      synth.resume();
+      setState("playing");
+      return;
+    }
+    const utterance = new SpeechSynthesisUtterance(note);
+    utterance.lang = "en-US";
+    utterance.voice =
+      synth
+        .getVoices()
+        .find((voice) => voice.localService && voice.lang.startsWith("en")) ??
+      null;
+    utterance.rate = 0.94;
+    utterance.onend = () => {
+      speech.current = null;
+      setState("idle");
+    };
+    utterance.onerror = () => {
+      speech.current = null;
+      setState("unavailable");
+    };
+    speech.current = utterance;
+    setDevice(true);
+    setState("playing");
+    synth.speak(utterance);
+  }
+
+  return {
+    used,
+    play: playDevice,
+    pause: () => window.speechSynthesis?.pause(),
+  };
 }

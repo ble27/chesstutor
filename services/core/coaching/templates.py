@@ -33,9 +33,25 @@ def both(beginner: str, intermediate: str | None = None) -> dict[Level, str]:
 
 TEMPLATES: dict[str, dict[Level, str]] = {
     "played_move": both("Your {piece} moved from {from_square} to {to_square}."),
-    "selected_best": both("This matches Stockfish's first choice."),
-    "selected_good": both("The checked lines show little loss."),
-    "selected_inaccuracy": both("The engine found a stronger option."),
+    "played_capture": both(
+        "Your {piece} on {from_square} captured the {target_piece} on {to_square}."
+    ),
+    "played_en_passant": both(
+        "Your pawn moved from {from_square} to {to_square}, capturing en passant."
+    ),
+    "played_center_pawn": both(
+        "Your pawn advanced from {from_square} to {to_square}, "
+        "controlling {first_square} and {second_square}."
+    ),
+    "played_development": both("Your {piece} developed from {from_square} to {to_square}."),
+    "played_check": both("Your {piece} moved from {from_square} to {to_square}, giving check."),
+    "played_castle": both("Your king castled from {from_square} to {to_square}."),
+    "played_promotion": both(
+        "Your pawn moved from {from_square} to {to_square} and became a {target_piece}."
+    ),
+    "selected_inaccuracy": both(
+        "Try moving the {piece} from {from_square} to {to_square} instead."
+    ),
     "selected_forced": both("This was the only legal move."),
     "selected_unclassified": both("Insufficient evidence to judge this move."),
     "refusal": both(REFUSAL),

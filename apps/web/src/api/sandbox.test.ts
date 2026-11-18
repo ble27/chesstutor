@@ -11,6 +11,7 @@ const initial = {
   result: null,
   claimable_draw: false,
   line: null,
+  lines: [],
 };
 it("accepts canonical initial context and rejects a response for another position", async () => {
   vi.stubGlobal(

@@ -62,6 +62,7 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await expect(
       page.getByRole("img", { name: "Chessboard, Black at bottom" }),
     ).toBeVisible();
+    await page.getByRole("tab", { name: "Report" }).click();
     await expect(
       page.getByRole("button", { name: "1. White: e4" }),
     ).toHaveAttribute("aria-current", "step");

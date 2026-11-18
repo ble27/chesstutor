@@ -38,11 +38,15 @@ it("renders engine-supplied evaluations and keeps one analysis session while nav
   expect(
     screen.queryByRole("list", { name: "Engine variations" }),
   ).not.toBeInTheDocument();
-  expect(screen.queryByRole("tablist")).not.toBeInTheDocument();
+  expect(
+    screen.queryByRole("list", { name: "Game moves" }),
+  ).not.toBeInTheDocument();
+  fireEvent.mouseDown(screen.getByRole("tab", { name: "Report" }));
   expect(screen.getByRole("button", { name: "1. White: e4" })).toHaveAttribute(
     "aria-current",
     "step",
   );
+  fireEvent.mouseDown(screen.getByRole("tab", { name: "Analysis" }));
   fireEvent.click(screen.getByRole("button", { name: "Previous move" }));
   expect(screen.getByRole("list", { name: "Engine variations" })).toBeVisible();
   expect(
@@ -129,7 +133,8 @@ it("puts move classifications on their selectable rows without extra jump contro
   vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json(payload)));
   render(<ReviewHarness />);
   fireEvent.click(screen.getByRole("button", { name: "Quick review" }));
-  await screen.findByRole("status", { name: "Analysis progress" });
+  await screen.findByRole("list", { name: "Engine variations" });
+  fireEvent.mouseDown(screen.getByRole("tab", { name: "Report" }));
   const move = screen.getByRole("button", { name: "1. White: e4" });
   expect(move).toHaveAccessibleDescription("Blunder");
   fireEvent.click(move);
@@ -139,7 +144,7 @@ it("puts move classifications on their selectable rows without extra jump contro
   ).not.toBeInTheDocument();
 });
 
-it("keeps navigation and the coach available alongside paired moves", () => {
+it("keeps navigation across coach and move report modes", () => {
   render(<ReviewHarness />);
   const review = screen.getByRole("complementary", { name: "Game insights" });
   expect(
@@ -150,6 +155,7 @@ it("keeps navigation and the coach available alongside paired moves", () => {
   ).toBeVisible();
   fireEvent.click(within(review).getByRole("button", { name: "Next move" }));
   expect(screen.getByRole("button", { name: "Previous move" })).toBeEnabled();
+  fireEvent.mouseDown(screen.getByRole("tab", { name: "Report" }));
   expect(screen.getByRole("button", { name: "1. White: e4" })).toHaveAttribute(
     "aria-current",
     "step",

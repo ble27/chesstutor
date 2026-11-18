@@ -1866,6 +1866,22 @@
               }
             ]
           },
+          "lines": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/BrowserLine"
+                },
+                "maxItems": 2,
+                "minItems": 1,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lines"
+          },
           "pgn_hash": {
             "pattern": "^[a-f0-9]{64}$",
             "title": "Pgn Hash",
@@ -1918,6 +1934,15 @@
                 "type": "null"
               }
             ]
+          },
+          "lines": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/EngineLine"
+            },
+            "maxItems": 2,
+            "title": "Lines",
+            "type": "array"
           },
           "moves": {
             "items": {

@@ -107,31 +107,16 @@ function ReplaySession({
               />
             }
             footer={footer}
-            onMove={
-              local.sandbox.enabled && !local.sandbox.busy
-                ? local.play
-                : undefined
+            onMove={local.sandbox.enabled ? local.play : undefined}
+            legalMoves={
+              local.sandbox.busy
+                ? undefined
+                : local.sandbox.position?.legal_moves
             }
-            legalMoves={local.sandbox.position?.legal_moves}
           />
         )}
       />
     </section>
-  );
-}
-
-function PieceCredit() {
-  return (
-    <p className="piece-credit">
-      Pieces:{" "}
-      <a href="/pieces/classic/README.md" target="_blank" rel="noreferrer">
-        Classic Merida · Armando Hernandez Marroquin
-      </a>{" "}
-      ·{" "}
-      <a href="/pieces/classic/LICENSE.txt" target="_blank" rel="noreferrer">
-        GPL-2.0-or-later
-      </a>
-    </p>
   );
 }
 
@@ -183,7 +168,6 @@ function ReplayBoard({
       />
       {footer}
       <PositionText fen={fen} />
-      <PieceCredit />
     </section>
   );
 }

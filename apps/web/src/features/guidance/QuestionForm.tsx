@@ -1,3 +1,4 @@
+import { SelectField } from "../../components/ui/Select";
 import { useState } from "react";
 import type { FormEvent } from "react";
 import type { CoachRequest, Intent, Level } from "../../api/coaching";
@@ -37,18 +38,15 @@ export function QuestionForm({ ply, mover, level, ask, state }: Props) {
   return (
     <section aria-labelledby="coach-questions-title">
       <h3 id="coach-questions-title">Ask the coach</h3>
-      <label>
-        Advice for
-        <select
-          value={color ?? "white"}
-          onChange={(event) =>
-            setAdvisee(event.target.value === "black" ? "black" : "white")
-          }
-        >
-          <option value="white">White</option>
-          <option value="black">Black</option>
-        </select>
-      </label>
+      <SelectField
+        label="Advice for"
+        value={color ?? "white"}
+        onChange={(value) => setAdvisee(value === "black" ? "black" : "white")}
+        options={[
+          { value: "white", label: "White" },
+          { value: "black", label: "Black" },
+        ]}
+      />
       <div className="suggested-questions">
         {QUESTIONS.map(([intent, label]) => (
           <button

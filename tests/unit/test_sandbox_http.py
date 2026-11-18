@@ -38,3 +38,24 @@ def test_sandbox_validates_live_lines_at_branch_root() -> None:
         assert response.json()["line"]["pv"][0]["san"] == "e4"
         line["pv"] = ["a1a8"]
         assert client.post(path, json=body, headers=HEADERS).status_code == 422
+
+
+def test_sandbox_validates_both_ranked_lines_and_rejects_bad_pairs() -> None:
+    path = f"/api/v1/games/{game.game.id}/sandbox"
+    best = payload()["positions"][0]["best"]
+    alternative = {**best, "pv": ["d2d4"]}
+    body = {"game_version": 1, "pgn_hash": "a" * 64, "root_ply": 0, "branch": []}
+    with TestClient(app) as client:
+        client.post(path, json=body, headers=HEADERS)
+        response = client.post(path, json={**body, "lines": [best, alternative]}, headers=HEADERS)
+        assert response.status_code == 200
+        assert [item["pv"][0]["san"] for item in response.json()["lines"]] == ["e4", "d4"]
+        for invalid in (
+            [best, best],
+            [best, {**alternative, "pv": ["a1a8"]}],
+            [best, {**alternative, "depth": best["depth"] + 1}],
+        ):
+            assert (
+                client.post(path, json={**body, "lines": invalid}, headers=HEADERS).status_code
+                == 422
+            )

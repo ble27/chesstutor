@@ -55,3 +55,13 @@ export function summaryColumn(
         : `${calibrated.accuracy.toFixed(1)}%`,
   };
 }
+
+export function moveRating(move: Review | undefined, lessonKind?: string) {
+  const kind = move ? primaryLabel(move) : (lessonKind ?? "pending");
+  const name =
+    kind === "unclassified"
+      ? "Review needed"
+      : (CLASSIFICATION_LABELS.find(([key]) => key === kind)?.[1] ??
+        "Awaiting analysis");
+  return { kind, name };
+}

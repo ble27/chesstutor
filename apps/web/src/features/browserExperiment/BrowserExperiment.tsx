@@ -1,3 +1,4 @@
+import { SelectField } from "../../components/ui/Select";
 import { useState } from "react";
 import type { ReactNode } from "react";
 import type { Game } from "../../api/discoveryValidation";
@@ -62,17 +63,20 @@ function BrowserSession({
         <EngineDepth position={position} />
       </div>
       <p className="engine-status">Stockfish 17.1 · Provisional</p>
-      <label>
-        Engine threads{" "}
-        <select
-          value={threads}
-          disabled={busy}
-          onChange={(event) => setThreads(Number(event.target.value))}
-        >
-          <option value={1}>1 · single-thread fallback</option>
-          {supportsThreads && <option value={2}>2 · isolated worker</option>}
-        </select>
-      </label>
+      <SelectField
+        label="Engine threads"
+        value={String(threads)}
+        disabled={busy}
+        onChange={(value) => setThreads(Number(value))}
+        options={
+          supportsThreads
+            ? [
+                { value: "1", label: "1" },
+                { value: "2", label: "2" },
+              ]
+            : [{ value: "1", label: "1" }]
+        }
+      />
       <div className="analysis-actions">
         <button disabled={busy} onClick={() => void run(selectedPly, false)}>
           Browser Quick review

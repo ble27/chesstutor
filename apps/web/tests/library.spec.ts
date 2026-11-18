@@ -1,3 +1,4 @@
+import { selectOption } from "./ui";
 import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
 import {
@@ -68,11 +69,11 @@ for (const width of [320, 390, 768, 1024, 1440]) {
       page.getByRole("list", { name: "Recent games" }).getByRole("listitem"),
     ).toHaveCount(2);
     await expect(page.getByText("32 moves", { exact: true })).toBeVisible();
-    const filter = page.getByLabel("Time control");
-    await filter.selectOption("blitz");
+    const filter = page.getByRole("combobox", { name: "Time control" });
+    await selectOption(page, "Time control", "Blitz");
     await page.getByRole("button", { name: "Apply filters" }).click();
-    await expect(filter).toHaveValue("blitz");
-    await filter.selectOption("");
+    await expect(filter).toHaveText("Blitz");
+    await selectOption(page, "Time control", "All");
     await page.getByRole("button", { name: "Apply filters" }).click();
     if (process.env.CAPTURE_UI && [390, 1440].includes(width)) {
       await page.evaluate(() => window.scrollTo(0, 0));
@@ -86,17 +87,18 @@ for (const width of [320, 390, 768, 1024, 1440]) {
       page.getByRole("region", { name: "Game replay" }),
     ).toBeFocused();
     await page.getByRole("button", { name: "Engine settings" }).click();
-    await page.getByLabel("Server review").selectOption("deep");
+    await selectOption(page, "Server review", "Thorough");
     await page.getByRole("button", { name: "Run review" }).click();
     await page.getByRole("button", { name: "Next move" }).click();
     await expect(page.locator(".evaluation-rail strong")).toBeVisible();
     await expect(
-      page.getByRole("region", { name: "Moves", exact: true }),
-    ).toBeVisible();
-    await expect(
       page.getByRole("region", { name: "Move coach" }),
     ).toBeVisible();
-    await expect(page.getByRole("tablist")).toHaveCount(0);
+    await page.getByRole("tab", { name: "Report" }).click();
+    await expect(
+      page.getByRole("region", { name: "Move report" }),
+    ).toBeVisible();
+    await page.getByRole("tab", { name: "Analysis", exact: true }).click();
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= window.innerWidth,

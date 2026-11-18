@@ -6,7 +6,7 @@ import type { SandboxPosition } from "../../api/sandbox";
 import { openBrowserEngine } from "../browserExperiment/engine";
 import type { LocalSettings } from "../review/EngineSettings";
 
-type Live = { key: string; line: Evidence["played"] | null; message: string };
+type Live = { key: string; lines: Evidence["played"][]; message: string };
 export function useLiveEngine(
   game: Game,
   rootPly: number,
@@ -21,11 +21,8 @@ export function useLiveEngine(
   useEffect(() => {
     if (!enabled || !position || position.result) return;
     const current = new AbortController();
-    const publish = (
-      message: string,
-      line: Evidence["played"] | null = null,
-    ) => {
-      if (!current.signal.aborted) setState({ key, line, message });
+    const publish = (message: string, lines: Evidence["played"][] = []) => {
+      if (!current.signal.aborted) setState({ key, lines, message });
     };
     const timer = setTimeout(() => {
       void (async () => {
@@ -46,10 +43,7 @@ export function useLiveEngine(
             raw,
           );
           if (!current.signal.aborted && request === sequence)
-            publish(
-              `Local depth ${result.line?.depth ?? 0} / requested ${settings.depth}`,
-              result.line,
-            );
+            publish("", result.lines ?? []);
         };
         try {
           const raw = await engine.searchPosition(
@@ -94,7 +88,7 @@ export function useLiveEngine(
     ? state
     : {
         key,
-        line: null,
+        lines: [],
         message: position?.result
           ? "Terminal position"
           : "Local engine waiting…",

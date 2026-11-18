@@ -101,9 +101,13 @@ for (const width of [320, 390, 1024, 1366, 1440]) {
     await expect(
       page.getByRole("region", { name: "Game replay" }),
     ).toBeVisible();
-    await expect(
-      page.locator("details, [role=tablist], [role=tabpanel]"),
-    ).toHaveCount(0);
+    await expect(page.locator("details")).toHaveCount(0);
+    const tab = page.getByRole("tab", { name: "Analysis", exact: true });
+    await expect(tab).toHaveAttribute("aria-selected", "true");
+    await tab.focus();
+    await page.keyboard.press("Home");
+    await expect(page.getByRole("tab", { name: "Report" })).toBeFocused();
+    await page.keyboard.press("Enter");
     const row = page
       .getByRole("list", { name: "Game moves" })
       .getByRole("listitem")
@@ -111,6 +115,14 @@ for (const width of [320, 390, 1024, 1366, 1440]) {
     const white = row.getByRole("button", { name: "1. White: e4" });
     const black = row.getByRole("button", { name: "1... Black: e5" });
     expect((await white.boundingBox())?.y).toBe((await black.boundingBox())?.y);
+    await expect(white).toHaveAccessibleDescription("Best move");
+    await expect(black).toHaveAccessibleDescription("Best move");
+    await page.screenshot({
+      path: test.info().outputPath("report.png"),
+      fullPage: true,
+    });
+    await tab.click();
+    await expect(page.getByRole("list", { name: "Game moves" })).toHaveCount(0);
     await page.getByRole("button", { name: "Next move", exact: true }).click();
     const score = page.locator(".evaluation-rail strong");
     await expect(score).toHaveText("-0.35");
@@ -129,15 +141,13 @@ for (const width of [320, 390, 1024, 1366, 1440]) {
       160,
     );
     if (width >= 1024) {
-      expect(
-        (await getScrollers(page)).every((name) => name === "move-list"),
-      ).toBe(true);
+      expect(await getScrollers(page)).toEqual([]);
       expect(
         await page.evaluate(
           () => document.documentElement.scrollHeight <= innerHeight,
         ),
       ).toBe(true);
-      for (const name of ["Engine analysis", "Move coach", "Moves"])
+      for (const name of ["Engine analysis", "Move coach"])
         await expect(
           page.getByRole("region", { name, exact: true }),
         ).toBeInViewport({ ratio: 1 });
@@ -170,43 +180,28 @@ for (const width of [320, 390, 1024, 1366, 1440]) {
   });
 }
 
-test("a long game uses only the move list for desktop scrolling", async ({
+test("a long report uses page scrolling and includes every recorded ply", async ({
   page,
 }) => {
-  await page.setViewportSize({ width: 1366, height: 768 });
+  await page.setViewportSize({ width: 1366, height: 620 });
   await mockReview(page, true);
   await openReview(page);
   await page.getByRole("button", { name: "Last position" }).click();
+  await page.getByRole("tab", { name: "Report" }).click();
   await expect(
-    page.getByRole("button", { name: "10... Black: Nbd7" }),
-  ).toBeInViewport();
-  expect(await getScrollers(page)).toEqual(["move-list"]);
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollHeight <= innerHeight,
-    ),
-  ).toBe(true);
-});
-
-test("tall review content switches desktop to page scrolling", async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 1366, height: 768 });
-  await mockReview(page, true);
-  await openReview(page);
-  await expect.poll(() => getScrollers(page)).toEqual(["move-list"]);
-  await page.locator(".coach-note").evaluate((note) => {
-    note.style.minHeight = "55vh";
-  });
-  await expect(
-    page.getByRole("complementary", { name: "Game insights" }),
-  ).toHaveAttribute("data-page-scroll", "");
+    page.getByRole("list", { name: "Game moves" }).getByRole("button"),
+  ).toHaveCount(20);
+  const last = page.getByRole("button", { name: "10... Black: Nbd7" });
+  await expect(last).toHaveAttribute("aria-current", "step");
+  await expect(last).toHaveAccessibleDescription("Awaiting analysis");
   expect(await getScrollers(page)).toEqual([]);
   expect(
     await page.evaluate(
       () => document.documentElement.scrollHeight > innerHeight,
     ),
   ).toBe(true);
+  await last.scrollIntoViewIfNeeded();
+  await expect(last).toBeInViewport();
 });
 
 test("coach playback is click-only and stops on navigation", async ({
@@ -240,6 +235,7 @@ test("coach playback is click-only and stops on navigation", async ({
   await mute.click();
   await expect(mute).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator("audio")).toHaveJSProperty("muted", true);
+  await mute.click();
   await pause.click();
   await play.click();
   await expect(pause).toBeVisible();

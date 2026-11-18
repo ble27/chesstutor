@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
+import type { Lesson } from "../../api/coaching";
 import type { Analysis } from "../../api/analysis";
 import { useLessons } from "../guidance/useGuidance";
 import { arrowDescription, toBoardArrows } from "../guidance/arrows";
 import type { BoardArrow } from "../guidance/arrows";
+import { CheckField } from "../../components/ui/Checkbox";
+import { moveRating } from "./summaryPresentation";
 import { CoachVoice } from "./CoachVoice";
 
 export function CoachPanel({
@@ -31,6 +34,10 @@ export function CoachPanel({
     !suspended && state.status === "ready" && move
       ? state.lessons.lessons.find((item) => item.ply === selectedPly)
       : undefined;
+  const rating = moveRating(
+    analysis?.classifications?.find((item) => item.ply === selectedPly),
+    lesson?.kind,
+  );
   useEffect(() => {
     onArrows(
       showArrows && lesson && move ? toBoardArrows(lesson.arrows, move) : [],
@@ -58,31 +65,24 @@ export function CoachPanel({
             onMute={setMuted}
           />
         </div>
-        <p
-          aria-live="polite"
-          role={state.status === "error" && !suspended ? "alert" : undefined}
-          className="coach-note"
-        >
-          {lesson?.text ??
-            (suspended
-              ? "Recorded moves only"
-              : selectedPly === 0
-                ? "Starting position"
-                : state.status === "error"
-                  ? state.error.message
-                  : state.status === "loading"
-                    ? "Loading move note…"
-                    : "No move note")}
-        </p>
+        {selectedPly > 0 && !suspended && (
+          <strong className="coach-rating" data-rating={rating.kind}>
+            {rating.name}
+          </strong>
+        )}
+        <CoachNote
+          lesson={lesson}
+          state={state}
+          selectedPly={selectedPly}
+          suspended={suspended}
+        />
         {lesson && lesson.arrows.length > 0 && (
-          <label className="coach-arrows">
-            <input
-              type="checkbox"
-              aria-label="Board arrows"
+          <>
+            <CheckField
+              label="Board arrows"
               checked={showArrows}
-              onChange={(event) => setShowArrows(event.target.checked)}
+              onChange={setShowArrows}
             />
-            Board arrows
             {showArrows && (
               <span className="visually-hidden">
                 {lesson.arrows
@@ -90,7 +90,7 @@ export function CoachPanel({
                   .join(". ")}
               </span>
             )}
-          </label>
+          </>
         )}
         {!suspended && state.status === "error" && state.error.retryable && (
           <button onClick={() => setRevision((value) => value + 1)}>
@@ -99,5 +99,54 @@ export function CoachPanel({
         )}
       </div>
     </section>
+  );
+}
+
+function CoachNote({
+  lesson,
+  state,
+  selectedPly,
+  suspended,
+}: {
+  lesson: Lesson | undefined;
+  state: ReturnType<typeof useLessons>;
+  selectedPly: number;
+  suspended: boolean;
+}) {
+  const alternative = lesson?.alternatives[0];
+  const status = suspended
+    ? "Return to the recorded move for its note."
+    : selectedPly === 0
+      ? "Starting position"
+      : state.status === "error"
+        ? state.error.message
+        : state.status === "loading"
+          ? "Loading move note…"
+          : null;
+  return (
+    <>
+      <p
+        aria-live="polite"
+        role={state.status === "error" && !suspended ? "alert" : undefined}
+        className="coach-note"
+      >
+        {lesson ? <HighlightedNote text={lesson.text} /> : status}
+      </p>
+      {alternative && (
+        <p className="coach-alternative">
+          <strong>Try instead</strong>{" "}
+          <HighlightedNote text={alternative.text} />
+        </p>
+      )}
+    </>
+  );
+}
+
+function HighlightedNote({ text }: { text: string }) {
+  const parts = text.split(
+    /(\b[a-h][1-8]\b|\b(?:bishop|king|knight|pawn|queen|rook)s?\b)/gi,
+  );
+  return parts.map((part, index) =>
+    index % 2 === 0 ? part : <strong key={index}>{part}</strong>,
   );
 }

@@ -56,3 +56,13 @@ export function parseInfo(message: string): RawLine | null {
     bounded: tokens.includes("lowerbound") || tokens.includes("upperbound"),
   };
 }
+
+export function rankedLine(
+  message: string,
+): { rank: 1 | 2; line: RawLine } | null {
+  const line = parseInfo(message);
+  const rank = Number(message.match(/\bmultipv (\d+)/)?.[1] ?? "1");
+  return line && !line.bounded && (rank === 1 || rank === 2)
+    ? { rank, line }
+    : null;
+}

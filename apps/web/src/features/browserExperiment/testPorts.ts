@@ -57,6 +57,12 @@ export class FakeWorker {
         send(
           `info depth 12 score cp 120 wdl 600 300 100 nodes 30000 time 20 pv ${move}`,
         );
+        if (command.startsWith("go depth")) {
+          const second = this.ply === 1 ? "d2d4" : "c7c5";
+          send(
+            `info depth 12 multipv 2 score cp 75 nodes 31000 time 21 pv ${second}`,
+          );
+        }
         send(`bestmove ${move}`);
       }
     });

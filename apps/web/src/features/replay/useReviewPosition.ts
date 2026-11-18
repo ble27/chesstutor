@@ -48,7 +48,8 @@ export function useReviewPosition(game: Game) {
       ? replay.selectedPly - 1
       : replay.selectedPly;
   const selectedMove = local.sandbox.enabled
-    ? `Free analysis · root ply ${local.sandbox.root} · branch ply ${local.sandbox.branch.length}`
+    ? (local.sandbox.position?.positions.at(-1)?.san ??
+      "Branch starting position")
     : local.refine
       ? `Local refinement · position ply ${local.refineRoot}`
       : variation.kind === "variation"
@@ -99,7 +100,7 @@ function suggestionArrows(
   fen: string | undefined,
   ply: number,
 ): BoardArrow[] {
-  const first = local.live.line?.pv[0]?.uci;
+  const first = local.live.lines[0]?.pv[0]?.uci;
   if (
     !first ||
     !fen ||

@@ -3,7 +3,6 @@ import { active } from "../../api/analysis";
 import type { PositionAnalysis } from "./positionAnalysis";
 import type { useAnalysis } from "./useAnalysis";
 import type { VariationLine } from "./useVariation";
-import { reviewPresentation } from "./reviewPresentation";
 import { formatScore } from "./EngineEvidence";
 
 type Props = {
@@ -12,7 +11,7 @@ type Props = {
   automatic: boolean;
   position: PositionAnalysis | null;
   ply: number;
-  preview: string | null;
+  preview: boolean;
   showPrimaryScore: boolean;
   onVariation?: ((line: VariationLine) => void) | undefined;
 };
@@ -22,35 +21,21 @@ export function WorkspaceEngine(props: Props) {
   const { state, start, cancel, retry } = session;
   const job = state.job;
   const busy = state.status === "loading" || (job !== null && active(job));
-  const progress =
-    job &&
-    reviewPresentation({
-      gameId: job.game_id,
-      selectedPly: props.ply,
-      evidence: null,
-      state: job.state,
-      mode: job.mode,
-      completedPlies: job.completed_plies,
-      totalPlies: job.total_plies,
-    });
   return (
     <>
       <div className="module-heading engine-heading">
         <h2>{job ? `Stockfish ${job.engine.version}` : "Engine"}</h2>
         <EngineDepth position={position} />
       </div>
-      {preview ? (
-        <p className="engine-status" role="status">
-          {preview}
-        </p>
-      ) : (
-        <EngineLines {...props} />
-      )}
-      {job && progress && (
+      {!preview && <EngineLines {...props} />}
+      {job && active(job) && (
         <div className="engine-job">
           <span role="status" aria-label="Analysis progress">
-            {job.mode === "quick" ? "Standard" : "Thorough"} ·{" "}
-            {progress.statusText} · {progress.coverageText}
+            {job.state === "queued"
+              ? "Queued"
+              : job.state === "cancel_requested"
+                ? "Cancelling…"
+                : "Analyzing game…"}
           </span>
           {job.can_cancel && (
             <button

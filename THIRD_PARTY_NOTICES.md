@@ -66,3 +66,11 @@ locked package metadata. These lint dependencies are not frontend runtime code.
 `apps/web/public/pieces/classic/*.svg`: Armando Hernandez Marroquin,
 GPL-2.0-or-later. Unmodified assets from lichess-org/lila public/piece/merida;
 see that project's COPYING.md and the adjacent LICENSE.txt and README.md.
+
+## Inter and Radix UI
+
+The web workspace self-hosts Inter Variable through the locked Fontsource
+package. Inter is distributed under the SIL Open Font License 1.1
+(`apps/web/public/Inter-OFL.txt`). The shadcn/ui-style controls use locked
+Radix UI Tabs, Select, Dialog, and Checkbox primitives under MIT
+(`apps/web/public/Radix-MIT.txt`). The existing CSS supplies their theme.

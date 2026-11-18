@@ -41,6 +41,8 @@ export function parseSandbox(input: unknown): SandboxPosition {
     result,
     claimable_draw: flag(value.claimable_draw),
     line: value.line === null ? null : engineLine(value.line),
+    lines:
+      value.lines === undefined ? [] : array(value.lines, 2).map(engineLine),
   };
 }
 export async function sandboxPosition(
@@ -48,7 +50,7 @@ export async function sandboxPosition(
   rootPly: number,
   branch: readonly string[],
   signal: AbortSignal,
-  line?: RawLine,
+  line?: RawLine | RawLine[],
 ): Promise<SandboxPosition> {
   const validate = (input: unknown) => {
     const position = parseSandbox(input);
@@ -56,7 +58,21 @@ export async function sandboxPosition(
       ...game.positions.slice(1, rootPly + 1).map((p) => p.uci),
       ...branch,
     ];
+    const candidates = position.lines ?? [];
     if (
+      (Array.isArray(line) && candidates.length !== line.length) ||
+      candidates.some(
+        (candidate, index) =>
+          !candidate.pv[0] ||
+          !position.legal_moves.includes(candidate.pv[0].uci) ||
+          candidate.bounded ||
+          candidate.depth !== candidates[0]?.depth ||
+          (Array.isArray(line) &&
+            candidate.pv.map((step) => step.uci).join(" ") !==
+              line[index]?.pv.join(" ")),
+      ) ||
+      new Set(candidates.map((candidate) => candidate.pv[0]?.uci)).size !==
+        candidates.length ||
       position.initial_fen !== game.initial_fen ||
       JSON.stringify(position.moves) !== JSON.stringify(expected) ||
       position.positions.length !== branch.length ||
@@ -78,7 +94,7 @@ export async function sandboxPosition(
         pgn_hash: game.pgn_hash,
         root_ply: rootPly,
         branch,
-        ...(line ? { line } : {}),
+        ...(Array.isArray(line) ? { lines: line } : line ? { line } : {}),
       }),
     });
   try {

@@ -12,7 +12,13 @@ it("automatically explains the ply without exposing standalone chat", async () =
       onArrows={vi.fn()}
     />,
   );
-  expect(await screen.findByText(/leaves your rook/)).toBeVisible();
+  expect(
+    await screen.findByText(
+      (_, node) =>
+        node?.matches(".coach-note") === true &&
+        (node.textContent ?? "").includes("leaves your rook"),
+    ),
+  ).toBeVisible();
   expect(
     screen.queryByRole("textbox", { name: /question/i }),
   ).not.toBeInTheDocument();
@@ -35,7 +41,11 @@ it("suspends arrows during previews and preserves the user's arrow choice on ret
       onArrows={onArrows}
     />,
   );
-  await screen.findByText(/leaves your rook/);
+  await screen.findByText(
+    (_, node) =>
+      node?.matches(".coach-note") === true &&
+      (node.textContent ?? "").includes("leaves your rook"),
+  );
   rerender(
     <CoachPanel
       analysis={guidanceAnalysis}

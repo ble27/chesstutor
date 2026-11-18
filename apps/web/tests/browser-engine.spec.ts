@@ -1,3 +1,4 @@
+import { selectOption } from "./ui";
 import { expect, test, type Page } from "@playwright/test";
 import { archive, imported, listing } from "../src/testFixtures/discovery";
 
@@ -56,8 +57,8 @@ for (const threads of [1, 2]) {
     await page.getByLabel("Chess.com username").fill("alice");
     await page.getByRole("button", { name: "Find games" }).click();
     await page.getByRole("button", { name: "Analyze" }).click();
-    await page.getByRole("button", { name: "1. White: e4" }).click();
-    await page.getByLabel("Engine threads").selectOption(String(threads));
+    await page.getByRole("button", { name: "Next move" }).click();
+    await selectOption(page, "Engine threads", String(threads));
     await page.getByRole("button", { name: "Browser Quick review" }).click();
     await expect(
       page.getByRole("status", { name: "Browser analysis progress" }),
@@ -80,7 +81,7 @@ for (const threads of [1, 2]) {
     await expect(
       page.getByRole("list", { name: "Engine variations" }),
     ).toBeVisible();
-    await page.getByRole("button", { name: "1. White: e4" }).click();
+    await page.getByRole("button", { name: "Next move" }).click();
     await expect.poll(() => page.workers().length).toBe(0);
     await page.getByRole("button", { name: "Deepen selected move" }).click();
     await expect(

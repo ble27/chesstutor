@@ -1,3 +1,4 @@
+import { SelectField } from "../../components/ui/Select";
 import { useState } from "react";
 import type { Filters } from "../../api/discovery";
 
@@ -23,47 +24,37 @@ function FilterForm({ month, months, filters, apply }: Props) {
         apply(month, draft);
       }}
     >
-      <label>
-        Archive month
-        <select
-          value={month}
-          onChange={(event) => apply(event.target.value, draft)}
-        >
-          {months.map((value) => (
-            <option key={value}>{value}</option>
-          ))}
-        </select>
-      </label>
-      <label>
-        Time control
-        <select
-          value={draft.time_class}
-          onChange={(event) =>
-            setDraft({ ...draft, time_class: event.target.value })
-          }
-        >
-          <option value="">All</option>
-          <option value="rapid">Rapid</option>
-          <option value="blitz">Blitz</option>
-          <option value="bullet">Bullet</option>
-          <option value="daily">Daily</option>
-        </select>
-      </label>
-      <label>
-        Player color
-        <select
-          value={draft.color}
-          onChange={(event) => {
-            const color = event.target.value;
-            if (color === "" || color === "white" || color === "black")
-              setDraft({ ...draft, color });
-          }}
-        >
-          <option value="">Either</option>
-          <option value="white">White</option>
-          <option value="black">Black</option>
-        </select>
-      </label>
+      <SelectField
+        label="Archive month"
+        value={month}
+        onChange={(value) => apply(value, draft)}
+        options={months.map((value) => ({ value, label: value }))}
+      />
+      <SelectField
+        label="Time control"
+        value={draft.time_class || "all"}
+        onChange={(value) =>
+          setDraft({ ...draft, time_class: value === "all" ? "" : value })
+        }
+        options={["All", "Rapid", "Blitz", "Bullet", "Daily"].map((label) => ({
+          label,
+          value: label.toLowerCase(),
+        }))}
+      />
+      <SelectField
+        label="Player color"
+        value={draft.color || "either"}
+        onChange={(value) =>
+          setDraft({
+            ...draft,
+            color: value === "white" || value === "black" ? value : "",
+          })
+        }
+        options={["Either", "White", "Black"].map((label) => ({
+          label,
+          value: label.toLowerCase(),
+        }))}
+      />
       <label>
         Opponent
         <input

@@ -12,17 +12,18 @@ Mode: Operate
 **Thesis.** Take a player search directly to the game. Give each review task a
 defined place in the same viewport.
 
-**Visual world.** Ink-blue surfaces, brass actions and focused states, tan and
+**Visual world.** Black and charcoal surfaces, brass actions and focused states, tan and
 cream Merida squares, an ivory knight portrait, and tabular scores.
 
 **First viewport.** Open on the Chess.com username field and Find games action.
-Results add ratings, visible filters and chronological rows. Review puts the
-board, evaluation rail and replay controls beside the engine, history, coach
-and paired moves. Engine settings uses one modal.
+Results add ratings, visible filters and chronological rows. Review places the larger board and
+persistent playback beside the Report, Self-analysis, and Analysis tabs.
+Settings opens beside the tabs. Full notation and classifications live
+in Report. The live branch uses the board as its move input.
 
-**Interaction.** The score rail follows the displayed position and the graph
-scrubs recorded history. Desktop can dedicate scrolling to a long move list.
-Smaller and content-heavy layouts use page scrolling.
+**Interaction.** Analysis keeps the move commentary and engine evidence beside
+the current position. Report follows page scroll with paired full moves.
+Self-analysis shows up to two verified-legal local candidate lines.
 
 **Sources.** See [DESIGN.md](../../DESIGN.md) and the
 [redesign audit and component map](../../docs/review-redesign.md).

@@ -51,9 +51,11 @@ export function VariationFooter({
         flip={flip}
       />
       <p id="replay-help">
-        {preview
-          ? `${preview.step} / ${preview.length}`
-          : `${selectedPly} / ${lastPly}`}
+        {sandbox?.enabled
+          ? `${sandbox.branch.length} / ${sandbox.branch.length + sandbox.future.length}`
+          : preview
+            ? `${preview.step} / ${preview.length}`
+            : `${selectedPly} / ${lastPly}`}
       </p>
     </div>
   );

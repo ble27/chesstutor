@@ -81,9 +81,8 @@ it("preserves advanced filters when changing time control", () => {
       apply={apply}
     />,
   );
-  fireEvent.change(screen.getByLabelText("Time control"), {
-    target: { value: "blitz" },
-  });
+  fireEvent.click(screen.getByRole("combobox", { name: "Time control" }));
+  fireEvent.click(screen.getByRole("option", { name: "Blitz" }));
   fireEvent.click(screen.getByRole("button", { name: "Apply filters" }));
   expect(apply).toHaveBeenCalledWith("2026-11", {
     opponent: "bobby",

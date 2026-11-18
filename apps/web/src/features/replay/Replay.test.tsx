@@ -4,16 +4,15 @@ import { imported } from "../../testFixtures/discovery";
 import { replayFixtures } from "../../testFixtures/replay";
 import { Replay } from "./Replay";
 
-it("groups engine analysis above the selectable game moves", () => {
+it("puts engine analysis and the selectable move report in separate modes", () => {
   render(<Replay game={imported} />);
   const review = screen.getByRole("complementary", { name: "Game insights" });
   const engine = within(review).getByRole("heading", {
     name: "Engine",
   });
+  fireEvent.mouseDown(screen.getByRole("tab", { name: "Report" }));
   const moves = within(review).getByRole("list", { name: "Game moves" });
-  expect(
-    engine.compareDocumentPosition(moves) & Node.DOCUMENT_POSITION_FOLLOWING,
-  ).toBeTruthy();
+  expect(engine).not.toBeInTheDocument();
   fireEvent.click(within(moves).getByRole("button", { name: "1. White: e4" }));
   expect(screen.getByLabelText("Position FEN")).toHaveTextContent(
     "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
@@ -34,6 +33,7 @@ it("keeps player names and piece colors at the matching board edges when flipped
   expect(within(top).getByText(/White pieces/)).toBeVisible();
   expect(within(bottom).getByText("bobby")).toBeVisible();
   expect(within(bottom).getByText("Black pieces")).toBeVisible();
+  fireEvent.mouseDown(screen.getByRole("tab", { name: "Report" }));
   expect(screen.getByRole("button", { name: "1. White: e4" })).toHaveAttribute(
     "aria-current",
     "step",
@@ -58,6 +58,7 @@ it("starts at the imported initial position and bounds forward/backward navigati
   );
   expect(screen.getByRole("button", { name: "Next move" })).toBeDisabled();
   expect(screen.getByRole("button", { name: "Last position" })).toBeDisabled();
+  fireEvent.mouseDown(screen.getByRole("tab", { name: "Report" }));
   const moves = screen.getByRole("list", { name: "Game moves" });
   expect(
     within(moves).getByRole("button", { name: "1. White: e4" }),
@@ -153,6 +154,7 @@ it("renders the imported board and flips orientation without changing selection"
   expect(screen.getByLabelText("Position FEN")).toHaveTextContent(
     "2kr3r/8/8/8/8/8/8/R4RK1 w - - 2 2",
   );
+  fireEvent.mouseDown(screen.getByRole("tab", { name: "Report" }));
   expect(
     screen.getByRole("button", { name: "1... Black: O-O-O" }),
   ).toHaveAttribute("aria-current", "step");
@@ -164,6 +166,7 @@ it("pairs moves by the starting FEN full-move number and color", () => {
   );
   if (!fixture) throw new Error("Missing fixture");
   render(<Replay game={fixture.game} />);
+  fireEvent.mouseDown(screen.getByRole("tab", { name: "Report" }));
   fireEvent.click(screen.getByRole("button", { name: "17... Black: e5" }));
   expect(screen.getByLabelText("Position FEN")).toHaveTextContent(
     "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 18",

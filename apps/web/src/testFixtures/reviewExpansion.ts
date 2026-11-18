@@ -63,7 +63,7 @@ export const expansionNotes: Lessons = {
     {
       ply: 1,
       kind: "best",
-      text: "Your pawn moved from e2 to e4. Best move: you chose the engine's strongest checked option.",
+      text: "Your pawn advanced from e2 to e4, controlling d5 and f5.",
       evidence_ids: [],
       alternatives: [],
       arrows: [],
@@ -71,7 +71,7 @@ export const expansionNotes: Lessons = {
     {
       ply: 2,
       kind: "best",
-      text: "Your pawn moved from e7 to e5. Best move: you chose the engine's strongest checked option.",
+      text: "Your pawn advanced from e7 to e5, controlling d4 and f4.",
       evidence_ids: [],
       alternatives: [],
       arrows: [],
@@ -79,7 +79,7 @@ export const expansionNotes: Lessons = {
     {
       ply: 3,
       kind: "unclassified",
-      text: "Your knight moved from g1 to f3. Unclassified: there is not enough reliable engine evidence. Run Deep for a closer look.",
+      text: "Your knight developed from g1 to f3. Insufficient evidence to judge this move.",
       evidence_ids: [],
       alternatives: [],
       arrows: [],

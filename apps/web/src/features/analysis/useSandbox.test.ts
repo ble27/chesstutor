@@ -2,9 +2,10 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { expect, it, vi } from "vitest";
 import { useSandbox } from "./useSandbox";
 import { imported } from "../../testFixtures/discovery";
+import type { SandboxPosition } from "../../api/sandbox";
 import { sandboxPosition } from "../../api/sandbox";
 vi.mock("../../api/sandbox", () => ({ sandboxPosition: vi.fn() }));
-const position = {
+const position: SandboxPosition = {
   trust: "client_unverified",
   fen: imported.initial_fen,
   initial_fen: imported.initial_fen,
@@ -14,7 +15,8 @@ const position = {
   result: null,
   claimable_draw: false,
   line: null,
-} as const;
+  lines: [],
+};
 it("keeps recorded replay separate and saves a branch when replacing a redo move", async () => {
   vi.mocked(sandboxPosition).mockImplementation(async () => ({
     ...position,

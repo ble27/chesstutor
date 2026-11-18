@@ -117,14 +117,14 @@ The search screen contains the Chess.com username field, the Find games action a
 results when available. Ratings, the month and filters sit above a chronological
 game list. Analyze opens a dedicated replay screen and starts Standard analysis.
 
-The review uses flat ink-blue panels, brass selection and licensed tan/cream
+The review uses flat black and charcoal panels, brass selection and licensed tan/cream
 Merida pieces. The supplied screenshots are references for layout and paired
 notation. [The redesign audit and component map](review-redesign.md) document
 the consolidation.
 
 | Viewport | Layout |
 | --- | --- |
-| Desktop, at least 1024 CSS px and 740 px tall | Board, players, compact evaluation rail and replay controls on the left. Engine lines, evaluation history, coach and paired moves on the right. A long move list may scroll within its own module. |
+| Desktop, at least 1024 CSS px and 740 px tall | Board, players, compact evaluation rail and replay controls on the left. Report, Self-analysis and Analysis tabs on the right. Long reports use page scrolling. |
 | Below 1024 CSS px | Board first, then the review modules. The page scrolls and the move list expands with its content. |
 | Short wide viewports | Side-by-side modules use page scrolling when required. The move list expands with its content. |
 
@@ -141,15 +141,20 @@ last played move, and variation. Provide visible focus, accessible board/piece
 descriptions, textual position/variation alternatives, reduced motion, and 200%
 zoom support. Target WCAG 2.2 AA, including normal-text contrast >=4.5:1.
 
-The engine module shows mode, status, achieved depth and up to three legal
-lines. The rail reports a White-perspective score (`+1.2` or `M3`). Label
+The engine module shows achieved depth and up to three legal recorded-review
+lines. In Self-analysis, local Stockfish produces up to two candidates at a common
+depth, validated before display. The board accepts drag, click or keyboard moves. The rail reports a White-perspective score (`+1.2` or `M3`). Label
 whether evidence describes the displayed position or a played-line evaluation
 after the selected move. Match current-position lines by root FEN and pre-move
 ply; do not show a preceding root's candidate moves as current-position lines.
 When the final position has no unrestricted search, label the actual played-line
 score and omit unavailable candidates. Never insert illustrative engine scores.
 Future Chess guidance explains the move, alternative, plan, and follow-up questions.
-Pending or incomplete evidence must appear as pending rather than a guessed score.
+Every recorded ply has a report label. Unprocessed plies show Awaiting analysis.
+Evidence that fails the grading policy shows Review needed. Neither status is
+a chess grade.
+
+For coach playback, use ElevenLabs when available and device speech as a fallback.
 
 ## 5. Stack and modular architecture
 

@@ -38,8 +38,8 @@ specifications remain visible and keep the aggregate `make verify` gate red.
 Set `CHESS_ELEVENLABS_API_KEY` in the API environment or local `.env` and restart
 the API. Play requests synthesis of the selected move's reviewed note. The
 application sends only that note to ElevenLabs George (Multilingual v2).
-Play and mute are independent, and changing plies stops playback. The text coach
-works without credentials. Audio generation can use ElevenLabs account credits.
+Play and mute are independent, and changing plies stops playback. When provider audio is unavailable, playback uses a device voice where supported.
+The text coach remains available across both audio paths. Audio generation can use ElevenLabs account credits.
 
 ## Local setup
 

@@ -12,9 +12,9 @@ from tests.unit.test_lessons import loose_rook, reviewed
 @pytest.mark.parametrize(
     ("label", "explanation"),
     [
-        ("best", "matches Stockfish's first choice"),
-        ("good", "checked lines show little loss"),
-        ("inaccuracy", "engine found a stronger option"),
+        ("best", "moved from g1 to h1"),
+        ("good", "moved from g1 to h1"),
+        ("inaccuracy", "Try moving the rook from d1 to d4 instead"),
         ("forced", "only legal move"),
         ("unclassified", "Insufficient evidence"),
     ],
@@ -28,6 +28,7 @@ def test_selected_ply_has_its_actual_label_and_played_piece(label, explanation):
     assert len(note) == 1 and note[0].kind == label
     assert "king" in note[0].text and "g1" in note[0].text and "h1" in note[0].text
     assert explanation in note[0].text
+    assert "Stockfish" not in note[0].text and "little loss" not in note[0].text
     if label == "unclassified":
         assert not note[0].arrows and not note[0].alternatives
 

@@ -20,6 +20,7 @@ export function replayKeyDown(
   select: (ply: number) => void,
 ) {
   if (
+    event.defaultPrevented ||
     event.altKey ||
     event.ctrlKey ||
     event.metaKey ||
@@ -30,7 +31,7 @@ export function replayKeyDown(
   if (
     event.target instanceof HTMLElement &&
     event.target.closest(
-      'dialog, input, textarea, select, [contenteditable]:not([contenteditable="false"])',
+      '[role=tablist], [role=dialog], [role=combobox], [role=listbox], [data-board-input], dialog, input, textarea, select, [contenteditable]:not([contenteditable="false"])',
     )
   )
     return;

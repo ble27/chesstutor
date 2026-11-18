@@ -15,6 +15,7 @@ class SandboxRequest(StrictModel):
     root_ply: int = Field(ge=0, le=300)
     branch: list[Uci] = Field(max_length=100)
     line: BrowserLine | None = None
+    lines: list[BrowserLine] | None = Field(default=None, min_length=1, max_length=2)
 
 
 class SandboxResponse(StrictModel):
@@ -27,3 +28,4 @@ class SandboxResponse(StrictModel):
     result: str | None
     claimable_draw: bool
     line: EngineLine | None
+    lines: tuple[EngineLine, ...] = Field(default=(), max_length=2)

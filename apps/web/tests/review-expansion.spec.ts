@@ -32,8 +32,11 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await page.getByLabel("Chess.com username").fill("alice");
     await page.getByRole("button", { name: "Find games" }).click();
     await page.getByRole("button", { name: "Analyze" }).click();
-    await expect(page.getByText("Completed · 3/3 plies")).toBeVisible();
-    const moves = page.getByRole("region", { name: "Moves", exact: true });
+    await page.getByRole("tab", { name: "Report" }).click();
+    const moves = page.getByRole("region", {
+      name: "Move report",
+      exact: true,
+    });
     await expect(moves.getByText("100.0%", { exact: false })).toHaveCount(2);
     const white = moves.getByRole("button", { name: "1. White: e4" });
     const black = moves.getByRole("button", { name: "1... Black: e5" });
@@ -48,25 +51,36 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await page.screenshot({
       path: test.info().outputPath("classification-summary.png"),
     });
+    await page.getByRole("tab", { name: "Analysis", exact: true }).click();
     await page.getByRole("button", { name: "Next move", exact: true }).click();
-    await expect(page.getByText(/Your pawn moved from e2 to e4/)).toBeVisible();
+    await expect(page.locator(".coach-note")).toContainText(
+      "Your pawn advanced from e2 to e4",
+    );
     await page.getByRole("button", { name: "Next move", exact: true }).click();
-    await expect(page.getByText(/Your pawn moved from e7 to e5/)).toBeVisible();
+    await expect(page.locator(".coach-note")).toContainText(
+      "Your pawn advanced from e7 to e5",
+    );
+    await page.getByRole("tab", { name: "Report" }).click();
     await expect(black).toHaveAttribute("aria-current", "step");
+    await page.getByRole("tab", { name: "Analysis", exact: true }).click();
     await page.getByRole("button", { name: "Next move", exact: true }).click();
-    await expect(
-      page.getByText(/Your knight moved from g1 to f3/),
-    ).toBeVisible();
+    await expect(page.locator(".coach-note")).toContainText(
+      "Your knight developed from g1 to f3",
+    );
+    await page.getByRole("tab", { name: "Report" }).click();
     await expect(
       moves.getByRole("button", { name: "2. White: Nf3" }),
-    ).toHaveAccessibleDescription("Unclassified");
+    ).toHaveAccessibleDescription("Review needed");
     await expect(
       page.getByRole("button", { name: "Next move", exact: true }),
     ).toBeDisabled();
+    await page.getByRole("tab", { name: "Analysis", exact: true }).click();
     await page
       .getByRole("button", { name: "Previous move", exact: true })
       .click();
-    await expect(page.getByText(/Your pawn moved from e7 to e5/)).toBeVisible();
+    await expect(page.locator(".coach-note")).toContainText(
+      "Your pawn advanced from e7 to e5",
+    );
     expect(questions).toBe(0);
     await page.screenshot({
       path: test.info().outputPath("selected-ply-note.png"),

@@ -92,126 +92,126 @@
         "role": "neutral",
         "displayName": "Ink Canvas",
         "tonalRamp": [
-          "oklch(15% 0.0051 258.3)",
-          "oklch(27% 0.0112 258.3)",
-          "oklch(39% 0.0173 258.3)",
-          "oklch(51% 0.0203 258.3)",
-          "oklch(63% 0.0203 258.3)",
-          "oklch(75% 0.0162 258.3)",
-          "oklch(87% 0.0091 258.3)",
-          "oklch(95% 0.0041 258.3)"
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(87% 0 0)",
+          "oklch(95% 0 0)"
         ]
       },
       "panel": {
         "role": "neutral",
         "displayName": "Ink Panel",
         "tonalRamp": [
-          "oklch(15% 0.0070 257.5)",
-          "oklch(27% 0.0154 257.5)",
-          "oklch(39% 0.0237 257.5)",
-          "oklch(51% 0.0279 257.5)",
-          "oklch(63% 0.0279 257.5)",
-          "oklch(75% 0.0223 257.5)",
-          "oklch(87% 0.0126 257.5)",
-          "oklch(95% 0.0056 257.5)"
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(87% 0 0)",
+          "oklch(95% 0 0)"
         ]
       },
       "inset": {
         "role": "neutral",
         "displayName": "Inset Ink",
         "tonalRamp": [
-          "oklch(15% 0.0061 256.5)",
-          "oklch(27% 0.0135 256.5)",
-          "oklch(39% 0.0208 256.5)",
-          "oklch(51% 0.0245 256.5)",
-          "oklch(63% 0.0245 256.5)",
-          "oklch(75% 0.0196 256.5)",
-          "oklch(87% 0.0110 256.5)",
-          "oklch(95% 0.0049 256.5)"
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(87% 0 0)",
+          "oklch(95% 0 0)"
         ]
       },
       "line": {
         "role": "neutral",
         "displayName": "Slate Divider",
         "tonalRamp": [
-          "oklch(15% 0.0086 253.6)",
-          "oklch(27% 0.0190 253.6)",
-          "oklch(39% 0.0293 253.6)",
-          "oklch(51% 0.0345 253.6)",
-          "oklch(63% 0.0345 253.6)",
-          "oklch(75% 0.0276 253.6)",
-          "oklch(87% 0.0155 253.6)",
-          "oklch(95% 0.0069 253.6)"
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(87% 0 0)",
+          "oklch(95% 0 0)"
         ]
       },
       "surface-raised": {
         "role": "neutral",
         "displayName": "Raised Ink",
         "tonalRamp": [
-          "oklch(15% 0.0092 256.6)",
-          "oklch(27% 0.0203 256.6)",
-          "oklch(39% 0.0313 256.6)",
-          "oklch(51% 0.0369 256.6)",
-          "oklch(63% 0.0369 256.6)",
-          "oklch(75% 0.0295 256.6)",
-          "oklch(87% 0.0166 256.6)",
-          "oklch(95% 0.0074 256.6)"
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(87% 0 0)",
+          "oklch(95% 0 0)"
         ]
       },
       "surface-hover": {
         "role": "neutral",
         "displayName": "Raised Ink Hover",
         "tonalRamp": [
-          "oklch(15% 0.0110 253.8)",
-          "oklch(27% 0.0242 253.8)",
-          "oklch(39% 0.0374 253.8)",
-          "oklch(51% 0.0440 253.8)",
-          "oklch(63% 0.0440 253.8)",
-          "oklch(75% 0.0352 253.8)",
-          "oklch(87% 0.0198 253.8)",
-          "oklch(95% 0.0088 253.8)"
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(87% 0 0)",
+          "oklch(95% 0 0)"
         ]
       },
       "field-border": {
         "role": "neutral",
         "displayName": "Field Stroke",
         "tonalRamp": [
-          "oklch(15% 0.0097 251.3)",
-          "oklch(27% 0.0214 251.3)",
-          "oklch(39% 0.0330 251.3)",
-          "oklch(51% 0.0388 251.3)",
-          "oklch(63% 0.0388 251.3)",
-          "oklch(75% 0.0311 251.3)",
-          "oklch(87% 0.0175 251.3)",
-          "oklch(95% 0.0078 251.3)"
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(87% 0 0)",
+          "oklch(95% 0 0)"
         ]
       },
       "text": {
         "role": "neutral",
         "displayName": "Ice White",
         "tonalRamp": [
-          "oklch(15% 0.0004 247.8)",
-          "oklch(27% 0.0009 247.8)",
-          "oklch(39% 0.0015 247.8)",
-          "oklch(51% 0.0017 247.8)",
-          "oklch(63% 0.0017 247.8)",
-          "oklch(75% 0.0014 247.8)",
-          "oklch(87% 0.0008 247.8)",
-          "oklch(95% 0.0003 247.8)"
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(87% 0 0)",
+          "oklch(95% 0 0)"
         ]
       },
       "text-secondary": {
         "role": "neutral",
         "displayName": "Muted Blue-Gray",
         "tonalRamp": [
-          "oklch(15% 0.0058 254.4)",
-          "oklch(27% 0.0128 254.4)",
-          "oklch(39% 0.0197 254.4)",
-          "oklch(51% 0.0232 254.4)",
-          "oklch(63% 0.0232 254.4)",
-          "oklch(75% 0.0186 254.4)",
-          "oklch(87% 0.0104 254.4)",
-          "oklch(95% 0.0046 254.4)"
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(87% 0 0)",
+          "oklch(95% 0 0)"
         ]
       }
     },
@@ -275,9 +275,9 @@
       "name": "Settings trigger",
       "kind": "button",
       "refersTo": "button-secondary",
-      "description": "Raised ink action within the Engine module.",
+      "description": "Raised charcoal action within the Engine module.",
       "html": "<button class=\"ds-secondary\" aria-haspopup=\"dialog\">Settings</button>",
-      "css": ".ds-secondary { font: 14px ui-sans-serif, system-ui, sans-serif; font-weight: 600; min-height: 44px; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: background-color 150ms ease-out, border-color 150ms ease-out; background: var(--surface-raised, #263345); color: var(--text, #f3f4f5); border: 1px solid var(--line, #354354); } .ds-secondary:hover { background: #35475d; } .ds-secondary:active { background: #35475d; } .ds-secondary:focus-visible { outline: 2px solid var(--accent, #e9c67d); outline-offset: 3px; } @media (prefers-reduced-motion: reduce) { .ds-secondary { transition: none; } }"
+      "css": ".ds-secondary { font: 14px ui-sans-serif, system-ui, sans-serif; font-weight: 600; min-height: 44px; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: background-color 150ms ease-out, border-color 150ms ease-out; background: var(--surface-raised, #262626); color: var(--text, #f4f4f4); border: 1px solid var(--line, #343434); } .ds-secondary:hover { background: #373737; } .ds-secondary:active { background: #373737; } .ds-secondary:focus-visible { outline: 2px solid var(--accent, #e9c67d); outline-offset: 3px; } @media (prefers-reduced-motion: reduce) { .ds-secondary { transition: none; } }"
     },
     {
       "name": "Username field",
@@ -285,7 +285,7 @@
       "refersTo": "input",
       "description": "A visible label above an inset field.",
       "html": "<label class=\"ds-field\">Chess.com username<input autocomplete=\"username\"></label>",
-      "css": ".ds-field { display: grid; gap: 8px; font: 14px ui-sans-serif, system-ui, sans-serif; color: var(--text, #f3f4f5); } .ds-field input { box-sizing: border-box; font: 14px ui-sans-serif, system-ui, sans-serif; min-height: 44px; padding: 10px 12px; border: 1px solid #536579; border-radius: 8px; background: var(--inset, #151d28); color: inherit; } .ds-field input:hover { border-color: #899595; } .ds-field input:focus-visible { outline: 2px solid var(--accent, #e9c67d); outline-offset: 3px; }"
+      "css": ".ds-field { display: grid; gap: 8px; font: 14px ui-sans-serif, system-ui, sans-serif; color: var(--text, #f4f4f4); } .ds-field input { box-sizing: border-box; font: 14px ui-sans-serif, system-ui, sans-serif; min-height: 44px; padding: 10px 12px; border: 1px solid #535353; border-radius: 8px; background: var(--inset, #111111); color: inherit; } .ds-field input:hover { border-color: #899595; } .ds-field input:focus-visible { outline: 2px solid var(--accent, #e9c67d); outline-offset: 3px; }"
     },
     {
       "name": "Back to library",
@@ -293,7 +293,7 @@
       "refersTo": "button-secondary",
       "description": "The return action at the start of the review header.",
       "html": "<button class=\"ds-back\">Back to library</button>",
-      "css": ".ds-back { font: 14px ui-sans-serif, system-ui, sans-serif; font-weight: 600; min-height: 44px; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: background-color 150ms ease-out, border-color 150ms ease-out; background: var(--surface-raised, #263345); color: var(--text, #f3f4f5); border: 1px solid var(--line, #354354); } .ds-back:hover { background: #35475d; } .ds-back:active { background: #35475d; } .ds-back:focus-visible { outline: 2px solid var(--accent, #e9c67d); outline-offset: 3px; } @media (prefers-reduced-motion: reduce) { .ds-back { transition: none; } }"
+      "css": ".ds-back { font: 14px ui-sans-serif, system-ui, sans-serif; font-weight: 600; min-height: 44px; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: background-color 150ms ease-out, border-color 150ms ease-out; background: var(--surface-raised, #262626); color: var(--text, #f4f4f4); border: 1px solid var(--line, #343434); } .ds-back:hover { background: #373737; } .ds-back:active { background: #373737; } .ds-back:focus-visible { outline: 2px solid var(--accent, #e9c67d); outline-offset: 3px; } @media (prefers-reduced-motion: reduce) { .ds-back { transition: none; } }"
     },
     {
       "name": "Evaluation history",
@@ -301,7 +301,7 @@
       "refersTo": "panel",
       "description": "Inset plot with a gold selected-ply marker and a focusable range control.",
       "html": "<section class=\"ds-graph\"><h2>Evaluation history</h2><div class=\"ds-track\"><svg viewBox=\"0 0 1000 100\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><path d=\"M0 50H1000\" stroke=\"#8f9693\"/><path d=\"M0 50Q160 54 260 45T510 39T1000 46V100H0Z\" fill=\"#f0e6d6\" opacity=\".9\"/><path d=\"M0 50Q160 54 260 45T510 39T1000 46V0H0Z\" fill=\"#424b42\"/><path d=\"M0 50Q160 54 260 45T510 39T1000 46\" stroke=\"#ACC65B\" stroke-width=\"2\" vector-effect=\"non-scaling-stroke\" fill=\"none\"/><path d=\"M500 0V100\" stroke=\"#eac96a\" stroke-width=\"2\" vector-effect=\"non-scaling-stroke\"/></svg><input type=\"range\" aria-label=\"Position on graph\"></div></section>",
-      "css": ".ds-graph { background: var(--panel, #1a2330); color: var(--text, #f3f4f5); border: 1px solid var(--line, #354354); border-radius: 12px; padding: 12px; } .ds-graph h2 { font: 700 15px ui-sans-serif, system-ui, sans-serif; margin: 0; } .ds-track { position: relative; margin-top: 6px; } .ds-track svg { display: block; width: 100%; height: 44px; background: var(--inset, #151d28); } .ds-track input { position: absolute; inset: 0; appearance: none; border: 0; border-radius: 3px; padding: 0; margin: 0; width: 100%; height: 100%; cursor: crosshair; background: transparent; } .ds-track input::-webkit-slider-thumb { appearance: none; width: 12px; height: 26px; background: transparent; } .ds-track input::-moz-range-thumb { width: 12px; height: 26px; border: 0; background: transparent; } .ds-track input:focus-visible { outline: 2px solid var(--accent, #e9c67d); outline-offset: 3px; }"
+      "css": ".ds-graph { background: var(--panel, #171717); color: var(--text, #f4f4f4); border: 1px solid var(--line, #343434); border-radius: 12px; padding: 12px; } .ds-graph h2 { font: 700 15px ui-sans-serif, system-ui, sans-serif; margin: 0; } .ds-track { position: relative; margin-top: 6px; } .ds-track svg { display: block; width: 100%; height: 44px; background: var(--inset, #111111); } .ds-track input { position: absolute; inset: 0; appearance: none; border: 0; border-radius: 3px; padding: 0; margin: 0; width: 100%; height: 100%; cursor: crosshair; background: transparent; } .ds-track input::-webkit-slider-thumb { appearance: none; width: 12px; height: 26px; background: transparent; } .ds-track input::-moz-range-thumb { width: 12px; height: 26px; border: 0; background: transparent; } .ds-track input:focus-visible { outline: 2px solid var(--accent, #e9c67d); outline-offset: 3px; }"
     },
     {
       "name": "Paired moves",
@@ -309,7 +309,7 @@
       "refersTo": "move-selected",
       "description": "Full-move rows pair White and Black SAN and show the current ply in brass.",
       "html": "<section class=\"ds-moves\"><h2>Moves</h2><div class=\"ds-move-columns\"><span>#</span><span>White</span><span>Black</span></div><ol aria-label=\"Game moves\"><li><span>1.</span><button aria-current=\"step\">e4</button><button>e5</button></li><li><span>2.</span><button>Nf3</button><button>Nc6</button></li></ol></section>",
-      "css": ".ds-moves { background: var(--panel, #1a2330); color: var(--text, #f3f4f5); border: 1px solid var(--line, #354354); border-radius: 12px; font: 14px ui-sans-serif, system-ui, sans-serif; padding: 12px; font-variant-numeric: tabular-nums; } .ds-moves h2 { font-size: 15px; margin: 0; } .ds-move-columns, .ds-moves li { display: grid; grid-template-columns: 3ch repeat(2, minmax(0, 1fr)); gap: 8px; align-items: center; } .ds-move-columns { margin-top: 6px; padding: 4px 8px; color: var(--text-secondary, #b6c1cf); font-size: 12px; } .ds-moves ol { border: 1px solid var(--line, #354354); border-radius: 8px; padding: 4px; margin: 0; list-style: none; } .ds-moves li { padding: 2px 4px; } .ds-moves li:nth-child(odd) { background: var(--inset, #151d28); } .ds-moves button { font: 14px ui-sans-serif, system-ui, sans-serif; font-weight: 600; min-height: 44px; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: background-color 150ms ease-out, border-color 150ms ease-out; text-align: left; background: transparent; border: 1px solid transparent; color: inherit; font-weight: 400; } .ds-moves button:not([aria-current]):hover { background: var(--surface-raised, #263345); } .ds-moves button[aria-current=step] { background: var(--accent, #e9c67d); color: var(--accent-text, #1e180e); border: 1px solid transparent; font-weight: 700; } .ds-moves button:focus-visible { outline: 2px solid var(--accent, #e9c67d); outline-offset: 3px; } @media (prefers-reduced-motion: reduce) { .ds-moves button { transition: none; } }"
+      "css": ".ds-moves { background: var(--panel, #171717); color: var(--text, #f4f4f4); border: 1px solid var(--line, #343434); border-radius: 12px; font: 14px ui-sans-serif, system-ui, sans-serif; padding: 12px; font-variant-numeric: tabular-nums; } .ds-moves h2 { font-size: 15px; margin: 0; } .ds-move-columns, .ds-moves li { display: grid; grid-template-columns: 3ch repeat(2, minmax(0, 1fr)); gap: 8px; align-items: center; } .ds-move-columns { margin-top: 6px; padding: 4px 8px; color: var(--text-secondary, #b6b6b6); font-size: 12px; } .ds-moves ol { border: 1px solid var(--line, #343434); border-radius: 8px; padding: 4px; margin: 0; list-style: none; } .ds-moves li { padding: 2px 4px; } .ds-moves li:nth-child(odd) { background: var(--inset, #111111); } .ds-moves button { font: 14px ui-sans-serif, system-ui, sans-serif; font-weight: 600; min-height: 44px; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: background-color 150ms ease-out, border-color 150ms ease-out; text-align: left; background: transparent; border: 1px solid transparent; color: inherit; font-weight: 400; } .ds-moves button:not([aria-current]):hover { background: var(--surface-raised, #262626); } .ds-moves button[aria-current=step] { background: var(--accent, #e9c67d); color: var(--accent-text, #1e180e); border: 1px solid transparent; font-weight: 700; } .ds-moves button:focus-visible { outline: 2px solid var(--accent, #e9c67d); outline-offset: 3px; } @media (prefers-reduced-motion: reduce) { .ds-moves button { transition: none; } }"
     },
     {
       "name": "Engine module",
@@ -317,16 +317,16 @@
       "refersTo": "panel",
       "description": "A flat panel with a depth readout and ranked lines divided by thin rules.",
       "html": "<section class=\"ds-engine\"><header><h2>Stockfish</h2><span>Depth 18</span></header><ol aria-label=\"Engine variations\"><li><strong>PV</strong><span>Nf3 Nc6 Bb5</span></li><li><strong>+0.24</strong><span>Bc4 Nf6</span></li></ol></section>",
-      "css": ".ds-engine { background: var(--panel, #1a2330); color: var(--text, #f3f4f5); border: 1px solid var(--line, #354354); border-radius: 12px; padding: 12px; font: 13px ui-sans-serif, system-ui, sans-serif; } .ds-engine header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; } .ds-engine h2 { font-size: 15px; margin: 0; } .ds-engine header span { color: var(--text-secondary, #b6c1cf); font-size: 12px; } .ds-engine ol { list-style: none; padding: 0; margin: 4px 0; } .ds-engine li { display: grid; grid-template-columns: 6ch minmax(0, 1fr); gap: 8px; padding: 4px 6px; font-weight: 500; font-variant-numeric: tabular-nums; } .ds-engine li + li { border-top: 1px solid var(--line, #354354); } .ds-engine strong { color: var(--accent, #e9c67d); }"
+      "css": ".ds-engine { background: var(--panel, #171717); color: var(--text, #f4f4f4); border: 1px solid var(--line, #343434); border-radius: 12px; padding: 12px; font: 13px ui-sans-serif, system-ui, sans-serif; } .ds-engine header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; } .ds-engine h2 { font-size: 15px; margin: 0; } .ds-engine header span { color: var(--text-secondary, #b6b6b6); font-size: 12px; } .ds-engine ol { list-style: none; padding: 0; margin: 4px 0; } .ds-engine li { display: grid; grid-template-columns: 6ch minmax(0, 1fr); gap: 8px; padding: 4px 6px; font-weight: 500; font-variant-numeric: tabular-nums; } .ds-engine li + li { border-top: 1px solid var(--line, #343434); } .ds-engine strong { color: var(--accent, #e9c67d); }"
     }
   ],
   "narrative": {
     "northStar": "The Chess Review Workbench",
-    "overview": "The warm chessboard anchors a compact ink-blue workbench. Distinct modules make engine evidence, evaluation history, coaching, and paired notation easy to scan alongside the position. Brass draws attention to the current move and primary actions.",
+    "overview": "The warm chessboard anchors a compact black and charcoal workbench. Distinct modules make engine evidence, evaluation history, coaching, and paired notation easy to scan alongside the position. Brass draws attention to the current move and primary actions.",
     "keyCharacteristics": [
       "Tan and cream squares with locally served Merida pieces.",
-      "Flat ink-blue panels with restrained brass selection.",
-      "One system sans stack with tabular scores and move numbers.",
+      "Flat black and charcoal panels with restrained brass selection.",
+      "Inter Variable with tabular scores and move numbers.",
       "A graph that also serves as the position scrubber."
     ],
     "rules": [],

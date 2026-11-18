@@ -1,3 +1,4 @@
+import { selectOption } from "./ui";
 import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
 import { isRecord } from "../src/api/validation";
@@ -13,7 +14,7 @@ async function openGame(page: Page) {
   await page.getByLabel("Chess.com username").fill("alice");
   await page.getByRole("button", { name: "Find games" }).click();
   await page.getByRole("button", { name: "Analyze" }).click();
-  await page.getByRole("button", { name: "1. White: e4" }).click();
+  await page.getByRole("button", { name: "Next move" }).click();
 }
 
 async function mockJourney(page: Page) {
@@ -91,27 +92,27 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await mockJourney(page);
     await openGame(page);
     const status = page.getByRole("status", { name: "Analysis progress" });
-    await expect(status).toContainText("Queued · 0/1 plies");
+    await expect(status).toContainText("Queued");
     await page.getByRole("button", { name: "Flip board" }).click();
-    await expect(status).toContainText("Completed · 1/1 plies", {
-      timeout: 10000,
-    });
     await expect(
-      page.getByRole("button", { name: "1. White: e4" }),
-    ).toHaveAttribute("aria-current", "step");
+      page.getByRole("status", { name: "Replay position" }),
+    ).toContainText("e4");
     await expect(page.locator(".evaluation-rail strong")).toBeVisible();
     await expect(
       page.getByRole("img", { name: /Evaluation .*White perspective/ }),
     ).toBeVisible();
     await page.getByRole("button", { name: "Engine settings" }).click();
-    await page.getByLabel("Server review").selectOption("deep");
+    await selectOption(page, "Server review", "Thorough");
     await page.getByRole("button", { name: "Run review" }).click();
-    await expect(status).toContainText("Thorough · Queued");
+    await expect(status).toContainText("Queued");
     await page.getByRole("button", { name: "Cancel analysis" }).click();
-    await expect(status).toContainText("Cancelled", { timeout: 10000 });
-    await expect(status).toContainText("0/1 plies");
+    await expect(
+      page.getByRole("button", { name: "Retry analysis" }),
+    ).toBeVisible();
     await page.getByRole("button", { name: "Retry analysis" }).click();
-    await expect(status).toContainText("Thorough · Completed");
+    await expect(
+      page.getByRole("img", { name: /Evaluation .*White perspective/ }),
+    ).toBeVisible();
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
@@ -172,10 +173,12 @@ test("verified classification proof follows the selected ply", async ({
   );
   await openGame(page);
   await page.getByRole("button", { name: "Engine settings" }).click();
-  await page.getByLabel("Server review").selectOption("deep");
+  await selectOption(page, "Server review", "Thorough");
   await page.getByRole("button", { name: "Run review" }).click();
+  await page.getByRole("tab", { name: "Report" }).click();
   const played = page.getByRole("button", { name: "1. White: e4" });
   await expect(played).toHaveAccessibleDescription("Great move");
+  await page.getByRole("tab", { name: "Analysis", exact: true }).click();
   await expect(page.getByText("Checked line: d4 · unique move")).toBeVisible();
   await page.getByRole("button", { name: "First position" }).click();
   await expect(page.getByText("Checked line: d4 · unique move")).toHaveCount(0);

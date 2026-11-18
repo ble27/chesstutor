@@ -27,7 +27,7 @@ it("labels analyzed plies and keeps unclassified distinct from pending", () => {
   ).toHaveTextContent("Best move");
   expect(
     screen.getByRole("button", { name: "2. White: Nf3" }),
-  ).toHaveTextContent("Unclassified");
+  ).toHaveTextContent("Review needed");
 });
 
 it("shows pending for unprocessed plies without borrowing another ply's label", () => {
@@ -44,11 +44,11 @@ it("shows pending for unprocessed plies without borrowing another ply's label", 
   ).toHaveTextContent("Best move");
   expect(
     screen.getByRole("button", { name: "1... Black: e5" }),
-  ).toHaveTextContent("Pending");
+  ).toHaveTextContent("Awaiting analysis");
   expect(
     screen.getByRole("button", { name: "1... Black: e5" }),
-  ).toHaveAccessibleDescription("Pending");
+  ).toHaveAccessibleDescription("Awaiting analysis");
   expect(
     screen.getByRole("button", { name: "2. White: Nf3" }),
-  ).toHaveTextContent("Pending");
+  ).toHaveTextContent("Awaiting analysis");
 });

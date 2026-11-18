@@ -882,6 +882,8 @@ export interface components {
             /** Game Version */
             game_version: number;
             line?: components["schemas"]["BrowserLine"] | null;
+            /** Lines */
+            lines?: components["schemas"]["BrowserLine"][] | null;
             /** Pgn Hash */
             pgn_hash: string;
             /** Root Ply */
@@ -898,6 +900,11 @@ export interface components {
             /** Legal Moves */
             legal_moves: string[];
             line: components["schemas"]["EngineLine"] | null;
+            /**
+             * Lines
+             * @default []
+             */
+            lines: components["schemas"]["EngineLine"][];
             /** Moves */
             moves: string[];
             /** Positions */

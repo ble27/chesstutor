@@ -1,3 +1,4 @@
+import * as Tabs from "@radix-ui/react-tabs";
 import { useState } from "react";
 import type { ReactNode } from "react";
 import type { Game } from "../../api/discoveryValidation";
@@ -9,7 +10,6 @@ import type { LocalAnalysis } from "../analysis/useLocalAnalysis";
 import type { BoardArrow } from "../guidance/arrows";
 import { MoveList } from "../replay/MoveList";
 import { BrowserExperiment } from "../browserExperiment/BrowserExperiment";
-import { useReviewScroll } from "./useReviewScroll";
 import { useAnalysis } from "./useAnalysis";
 import { WorkspaceEngine } from "./WorkspaceEngine";
 import { EngineSettings, defaultLocalSettings } from "./EngineSettings";
@@ -77,7 +77,7 @@ function ServerWorkspace(props: Props) {
       analysis={job}
       score={
         localActive
-          ? (localAnalysis?.live.line?.score ?? null)
+          ? (localAnalysis?.live.lines[0]?.score ?? null)
           : (position?.score ?? null)
       }
       engine={
@@ -87,8 +87,8 @@ function ServerWorkspace(props: Props) {
           automatic={props.automatic === true}
           position={position}
           ply={ply}
-          preview={sandbox ? "Free analysis" : preview ? "Variation" : null}
-          showPrimaryScore={!props.board || localActive}
+          preview={preview}
+          showPrimaryScore={!props.board}
           onVariation={
             variation &&
             ((line) => {
@@ -109,54 +109,51 @@ function ServerWorkspace(props: Props) {
         />
       }
       graph={
-        !sandbox && (
-          <EvaluationGraph
-            game={game}
-            evidence={job?.evidence ?? []}
-            reviews={job?.classifications}
-            selectedPly={ply}
-            select={props.selectPosition ?? props.select}
-          />
-        )
+        <EvaluationGraph
+          game={game}
+          evidence={job?.evidence ?? []}
+          reviews={job?.classifications}
+          selectedPly={ply}
+          select={props.selectPosition ?? props.select}
+        />
       }
-      local={
-        localAnalysis && (
-          <LocalAnalysisControls
-            local={localAnalysis}
-            selectedPly={ply}
-            leaveVariation={variation?.exit ?? noArrows}
-          />
-        )
-      }
+      local={localAnalysis && <LocalAnalysisControls local={localAnalysis} />}
     />
   );
 }
 
-function ReviewLayout({
-  game,
-  selectedPly,
-  select,
-  flip,
-  localAnalysis,
-  variation,
-  coachArrows,
-  onArrows,
-  board,
-  score,
-  engine,
-  graph,
-  settings,
-  analysis,
-  local,
-}: Props & {
+type LayoutProps = Props & {
   score: Score | null;
   engine: ReactNode;
   graph?: ReactNode;
   settings?: ReactNode;
   analysis: Analysis | null;
   local?: ReactNode;
-}) {
-  const scroll = useReviewScroll();
+};
+
+function ReviewLayout(props: LayoutProps) {
+  const {
+    game,
+    selectedPly,
+    select,
+    flip,
+    localAnalysis,
+    variation,
+    board,
+    score,
+    settings,
+    analysis,
+    local,
+  } = props;
+  const [mode, setMode] = useState("analysis");
+  const changeMode = (value: string) => {
+    variation?.exit();
+    localAnalysis?.setRefine(false);
+    localAnalysis?.setPromotion(null);
+    if (value === "self") localAnalysis?.sandbox.begin(selectedPly);
+    else localAnalysis?.sandbox.exit();
+    setMode(value);
+  };
   const footer = (
     <VariationFooter
       selectedPly={selectedPly}
@@ -170,54 +167,117 @@ function ReviewLayout({
   return (
     <>
       {board?.(score, footer)}
-      <aside ref={scroll} className="review-modules" aria-label="Game insights">
-        <section className="panel review-engine" aria-label="Engine analysis">
-          {settings}
-          {engine}
-          {local}
-          {!localAnalysis?.sandbox.enabled &&
-            variation?.kind !== "variation" && (
-              <ProofEvidence
-                compact
-                move={analysis?.classifications?.find(
-                  (move) => move.ply === selectedPly,
-                )}
-                themes={[]}
-              />
-            )}
-        </section>
-        {graph}
-        <CoachPanel
-          analysis={analysis}
-          selectedPly={selectedPly}
-          onArrows={onArrows ?? noArrows}
-          suspended={
-            localAnalysis?.sandbox.enabled === true ||
-            variation?.kind === "variation"
-          }
-          arrowsVisible={coachArrows?.visible}
-          onArrowsVisible={coachArrows?.setVisible}
-        />
-        <section className="panel moves-module" aria-labelledby="moves-title">
-          <div className="module-heading">
-            <h2 id="moves-title">Moves</h2>
-            <AccuracyReadout analysis={analysis} />
+      <aside
+        className="review-modules workspace-modes"
+        aria-label="Game insights"
+      >
+        <Tabs.Root
+          value={mode}
+          onValueChange={changeMode}
+          activationMode="manual"
+        >
+          <div className="workspace-nav">
+            <Tabs.List aria-label="Review mode" className="workspace-tablist">
+              <Tabs.Trigger value="report">Report</Tabs.Trigger>
+              {local && <Tabs.Trigger value="self">Self-analysis</Tabs.Trigger>}
+              <Tabs.Trigger value="analysis">Analysis</Tabs.Trigger>
+            </Tabs.List>
+            {settings}
           </div>
-          <div className="move-columns" aria-hidden="true">
-            <span>#</span>
-            <span>White</span>
-            <span>Black</span>
-          </div>
-          <MoveList
-            game={game}
-            selectedPly={selectedPly}
-            select={select}
-            reviews={analysis?.classifications}
-          />
-        </section>
+          <Tabs.Content value="report" className="workspace-view">
+            <Report
+              game={game}
+              selectedPly={selectedPly}
+              select={select}
+              analysis={analysis}
+            />
+          </Tabs.Content>
+          {local && (
+            <Tabs.Content value="self" className="workspace-view">
+              {local}
+            </Tabs.Content>
+          )}
+          <Tabs.Content value="analysis" className="workspace-view">
+            <RecordedAnalysis {...props} />
+          </Tabs.Content>
+        </Tabs.Root>
         {!board && footer}
       </aside>
     </>
+  );
+}
+
+function RecordedAnalysis({
+  engine,
+  graph,
+  variation,
+  analysis,
+  selectedPly,
+  onArrows,
+  coachArrows,
+}: Pick<
+  LayoutProps,
+  | "engine"
+  | "graph"
+  | "variation"
+  | "analysis"
+  | "selectedPly"
+  | "onArrows"
+  | "coachArrows"
+>) {
+  return (
+    <>
+      <section className="panel review-engine" aria-label="Engine analysis">
+        {engine}
+        {variation?.kind !== "variation" && (
+          <ProofEvidence
+            compact
+            move={analysis?.classifications?.find(
+              (move) => move.ply === selectedPly,
+            )}
+            themes={[]}
+          />
+        )}
+      </section>
+      {graph}
+      <CoachPanel
+        analysis={analysis}
+        selectedPly={selectedPly}
+        onArrows={onArrows ?? noArrows}
+        suspended={variation?.kind === "variation"}
+        arrowsVisible={coachArrows?.visible}
+        onArrowsVisible={coachArrows?.setVisible}
+      />
+    </>
+  );
+}
+
+function Report({
+  game,
+  selectedPly,
+  select,
+  analysis,
+}: Pick<Props, "game" | "selectedPly" | "select"> & {
+  analysis: Analysis | null;
+}) {
+  return (
+    <section className="panel moves-module" aria-labelledby="moves-title">
+      <div className="module-heading">
+        <h2 id="moves-title">Move report</h2>
+        <AccuracyReadout analysis={analysis} />
+      </div>
+      <div className="move-columns" aria-hidden="true">
+        <span>#</span>
+        <span>White</span>
+        <span>Black</span>
+      </div>
+      <MoveList
+        game={game}
+        selectedPly={selectedPly}
+        select={select}
+        reviews={analysis?.classifications ?? []}
+      />
+    </section>
   );
 }
 

@@ -40,7 +40,7 @@ it("previews a stored line, bounds keyboard navigation, and returns to the recor
   ).toHaveLength(1);
 });
 
-it("restores the exact source candidate and exits preview when selecting a recorded move", async () => {
+it("restores the exact source candidate and exits preview when opening Report and selecting a recorded move", async () => {
   const first = positionJob.evidence[0];
   if (!first) throw new Error("Missing fixture");
   const job = {
@@ -63,6 +63,7 @@ it("restores the exact source candidate and exits preview when selecting a recor
     ).toHaveFocus(),
   );
   fireEvent.click(screen.getByRole("button", { name: "Explore variation 2" }));
+  fireEvent.mouseDown(screen.getByRole("tab", { name: "Report" }));
   fireEvent.click(screen.getByRole("button", { name: "1... Black: e5" }));
   expect(
     screen.queryByRole("button", { name: "Return to game" }),

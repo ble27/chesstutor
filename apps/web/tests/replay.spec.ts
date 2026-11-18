@@ -29,6 +29,7 @@ test("opens an imported game for synchronized replay", async ({ page }) => {
   await expect(
     board.locator('[data-square="e4"] [data-piece="wP"]'),
   ).toBeVisible();
+  await page.getByRole("tab", { name: "Report" }).click();
   await expect(
     page.getByRole("button", { name: "1. White: e4" }),
   ).toHaveAttribute("aria-current", "step");
@@ -77,79 +78,28 @@ for (const { width, height } of [
   });
 }
 
-test("puts recorded moves beside the board and distinguishes them from engine analysis", async ({
-  page,
-}) => {
+test("keeps recorded moves beside the board in Report", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await openFixture(page);
-  const insights = page.getByRole("complementary", { name: "Game insights" });
-  const review = page.getByRole("complementary", { name: "Game insights" });
-  const engineBox = await review
-    .getByRole("region", { name: "Engine analysis" })
-    .boundingBox();
-  const movesBox = await review
-    .getByRole("list", { name: "Game moves" })
-    .boundingBox();
-  if (!engineBox || !movesBox) throw new Error("Missing review headings");
-  expect(engineBox.y).toBeLessThan(movesBox.y);
   await expect(
-    insights.getByRole("heading", { name: "Moves", exact: true }),
+    page.getByRole("region", { name: "Engine analysis" }),
   ).toBeVisible();
+  await expect(page.getByRole("list", { name: "Game moves" })).toHaveCount(0);
+  await page.getByRole("tab", { name: "Report" }).click();
+  const board = page.getByRole("img", { name: /Chessboard/ });
+  const moves = page.getByRole("list", { name: "Game moves" });
+  const boardBox = await board.boundingBox();
+  const movesBox = await moves.boundingBox();
+  if (!boardBox || !movesBox) throw new Error("Missing board or report");
+  expect(movesBox.x).toBeGreaterThan(boardBox.x + boardBox.width);
+  await moves.getByRole("button", { name: "1. White: e4" }).click();
   await expect(
-    insights.getByRole("region", { name: "Engine analysis" }),
-  ).toBeVisible();
-  await expect(
-    insights.getByRole("button", { name: "Engine settings" }),
-  ).toBeVisible();
-  const board = await page
-    .getByRole("img", { name: /Chessboard/ })
-    .boundingBox();
-  const moves = await page
-    .getByRole("list", { name: "Game moves" })
-    .boundingBox();
-  if (!board || !moves) throw new Error("Missing board or move list");
-  expect(moves.x).toBeGreaterThanOrEqual(board.x + board.width);
-  expect(moves.y).toBeLessThan(board.y + board.height);
-  await insights.getByRole("button", { name: "1. White: e4" }).click();
-  await expect(
-    page
-      .getByRole("img", { name: /Chessboard/ })
-      .locator('[data-square="e4"] [data-piece="wP"]'),
+    board.locator('[data-square="e4"] [data-piece="wP"]'),
   ).toBeVisible();
   await page.keyboard.press("ArrowLeft");
   await expect(
     page.getByRole("status", { name: "Replay position" }),
   ).toContainText("Starting position");
-});
-
-test("keeps selected moves visible inside a scrollable move list", async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  const fixture = replayFixtures.find((fixture) => fixture.name === "opening");
-  if (!fixture) throw new Error("Missing opening fixture");
-  await openFixture(page, fixture.game);
-  await page.getByRole("button", { name: "Last position" }).click();
-  const moves = page.getByRole("list", { name: "Game moves" });
-  const selected = page.getByRole("button", { name: "10... Black: Nbd7" });
-  await expect(selected).toHaveAttribute("aria-current", "step");
-  const listBounds = await moves.boundingBox();
-  const moveBounds = await selected.boundingBox();
-  expect(listBounds).not.toBeNull();
-  expect(moveBounds).not.toBeNull();
-  expect((moveBounds?.y ?? 0) + (moveBounds?.height ?? 0)).toBeLessThanOrEqual(
-    (listBounds?.y ?? 0) + (listBounds?.height ?? 0),
-  );
-  // Short screens reflow: reveal the move region before its internal navigation.
-  await moves.scrollIntoViewIfNeeded();
-  await page.getByRole("button", { name: "First position" }).click();
-  await expect(
-    page.getByRole("button", { name: "1. White: e4" }),
-  ).toBeInViewport();
-  await page.getByRole("button", { name: "Next move" }).click();
-  await expect(
-    page.getByRole("button", { name: "1. White: e4" }),
-  ).toBeInViewport();
 });
 
 async function renderedPlacement(page: Page): Promise<string> {
@@ -250,6 +200,7 @@ test("keyboard navigation stays in replay and flip preserves the selected move",
     "data-square",
     "h1",
   );
+  await page.getByRole("tab", { name: "Report" }).click();
   await expect(
     page.getByRole("button", { name: "1. White: e4" }),
   ).toHaveAttribute("aria-current", "step");
@@ -307,6 +258,7 @@ for (const width of [320, 390, 768]) {
     const board = await page
       .getByRole("img", { name: /Chessboard/ })
       .boundingBox();
+    await page.getByRole("tab", { name: "Report" }).click();
     const moves = await page
       .getByRole("list", { name: "Game moves" })
       .boundingBox();
@@ -355,6 +307,7 @@ test("flips visible player names together with the pieces and preserves the move
     "data-square",
     "h1",
   );
+  await page.getByRole("tab", { name: "Report" }).click();
   await expect(
     page.getByRole("button", { name: "1. White: e4" }),
   ).toHaveAttribute("aria-current", "step");

@@ -1,6 +1,6 @@
 import type { Game } from "../../api/discoveryValidation";
 import { engineScript, prepareEngine } from "../../api/browserEngineAssets";
-import { parseInfo } from "./uci";
+import { parseInfo, rankedLine } from "./uci";
 import type { RawLine } from "./uci";
 
 export class BrowserEngine {
@@ -83,30 +83,40 @@ export class BrowserEngine {
     moves: readonly string[],
     depth: number,
     signal: AbortSignal,
-    update: (line: RawLine) => void,
-  ): Promise<RawLine> {
+    update: (lines: RawLine[]) => void,
+  ): Promise<RawLine[]> {
     if (!Number.isInteger(depth) || depth < 1 || depth > 40)
       throw new Error("Invalid local depth");
     if (moves.some((move) => !/^[a-h][1-8][a-h][1-8][qrbn]?$/.test(move)))
       throw new Error("Invalid position history");
+    this.worker.postMessage("setoption name MultiPV value 2");
     this.worker.postMessage(
       `position fen ${initialFen}${moves.length ? ` moves ${moves.join(" ")}` : ""}`,
     );
-    let latest: RawLine | null = null;
+    let lead: RawLine | undefined;
+    let latest: RawLine[] = [];
     await this.command(
       `go depth ${depth} movetime 9500`,
       (line) => line.startsWith("bestmove "),
       signal,
       10500,
       (message) => {
-        const line = parseInfo(message);
-        if (line && !line.bounded) {
-          latest = line;
-          update(line);
+        const entry = rankedLine(message);
+        if (!entry) return;
+        if (entry.rank === 1) {
+          lead = entry.line;
+          if (latest.length < 2) latest = [lead];
+        } else if (
+          lead?.depth === entry.line.depth &&
+          lead.pv[0] !== entry.line.pv[0]
+        ) {
+          latest = [lead, entry.line];
+          update(latest);
         }
       },
     );
-    if (!latest) throw new Error("No complete local engine line was returned.");
+    if (!latest.length)
+      throw new Error("No complete local engine line was returned.");
     return latest;
   }
 

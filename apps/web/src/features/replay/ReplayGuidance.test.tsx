@@ -39,10 +39,13 @@ it("previews the pre-move board for guidance arrows and restores replay when hid
     ),
   );
   render(<Replay game={imported} />);
-  fireEvent.click(screen.getByRole("button", { name: "1. White: e4" }));
+  fireEvent.click(screen.getByRole("button", { name: "Next move" }));
   fireEvent.click(screen.getByRole("button", { name: "Quick review" }));
-  await screen.findByText(/Completed · 1\/1 plies/);
-  await screen.findByText(/leaves your rook/);
+  await screen.findByText(
+    (_, node) =>
+      node?.matches(".coach-note") === true &&
+      (node.textContent ?? "").includes("leaves your rook"),
+  );
   await waitFor(() =>
     expect(screen.getByLabelText("Position FEN")).toHaveTextContent(
       imported.initial_fen,
@@ -60,7 +63,7 @@ it("previews the pre-move board for guidance arrows and restores replay when hid
   ).toHaveTextContent("After 1. White: e4");
 });
 
-it("starts free analysis at the displayed pre-move preview without changing recorded selection", async () => {
+it("starts self-analysis at the selected recorded position without changing recorded selection", async () => {
   const lesson = lessons.lessons[0];
   if (!lesson) throw new Error("Missing fixture");
   const fetcher = vi.fn<(url: string, init?: RequestInit) => Promise<Response>>(
@@ -106,9 +109,13 @@ it("starts free analysis at the displayed pre-move preview without changing reco
   );
   vi.stubGlobal("fetch", fetcher);
   render(<Replay game={imported} />);
-  fireEvent.click(screen.getByRole("button", { name: "1. White: e4" }));
+  fireEvent.click(screen.getByRole("button", { name: "Next move" }));
   fireEvent.click(screen.getByRole("button", { name: "Quick review" }));
-  await screen.findByText("Your pawn moved from e2 to e4.");
+  await screen.findByText(
+    (_, node) =>
+      node?.matches(".coach-note") === true &&
+      node.textContent === "Your pawn moved from e2 to e4.",
+  );
   await waitFor(() =>
     expect(screen.getByLabelText("Position FEN")).toHaveTextContent(
       imported.initial_fen,
@@ -132,9 +139,7 @@ it("starts free analysis at the displayed pre-move preview without changing reco
       imported.initial_fen,
     ),
   );
-  fireEvent.click(
-    screen.getByRole("checkbox", { name: "Self-analysis / Free play" }),
-  );
+  fireEvent.mouseDown(screen.getByRole("tab", { name: "Self-analysis" }));
   await waitFor(() =>
     expect(fetcher.mock.calls.some(([url]) => url.endsWith("/sandbox"))).toBe(
       true,
@@ -142,10 +147,11 @@ it("starts free analysis at the displayed pre-move preview without changing reco
   );
   const call = fetcher.mock.calls.find(([url]) => url.endsWith("/sandbox"));
   expect(JSON.parse(String(call?.[1]?.body))).toMatchObject({
-    root_ply: 0,
+    root_ply: 1,
     branch: [],
   });
-  await screen.findByText(/branch 0\/100 plies/);
+  await screen.findByText("0/100 plies");
+  fireEvent.mouseDown(screen.getByRole("tab", { name: "Report" }));
   expect(screen.getByRole("button", { name: "1. White: e4" })).toHaveAttribute(
     "aria-current",
     "step",

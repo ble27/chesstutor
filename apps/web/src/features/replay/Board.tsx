@@ -1,3 +1,4 @@
+import { BoardInput, useBoardInput } from "./BoardInput";
 import { boardTheme, classicPieces } from "./boardTheme";
 import type { CSSProperties } from "react";
 import { Chessboard, defaultArrowOptions } from "react-chessboard";
@@ -20,6 +21,7 @@ export function Board({
   onMove?: ((move: string) => void) | undefined;
   legalMoves?: readonly string[] | undefined;
 }) {
+  const input = useBoardInput(fen, legalMoves, onMove);
   const squareStyles: Record<string, CSSProperties> = {};
   if (lastMove) {
     for (const square of [lastMove.slice(0, 2), lastMove.slice(2, 4)])
@@ -27,10 +29,12 @@ export function Board({
         boxShadow: "inset 0 0 0 3px #181818, inset 0 0 0 6px #eac96a",
       };
   }
+  if (input.selected)
+    squareStyles[input.selected] = { boxShadow: "inset 0 0 0 3px #eac96a" };
   return (
     <div
       className="replay-board"
-      role="img"
+      role={onMove ? "group" : "img"}
       aria-label={`Chessboard, ${orientation === "white" ? "White" : "Black"} at bottom`}
       aria-describedby={describedBy}
     >
@@ -42,15 +46,11 @@ export function Board({
             pieces: classicPieces,
             boardOrientation: orientation,
             allowDragging: onMove !== undefined,
+            ...(onMove && {
+              onSquareClick: ({ square }) => input.choose(square),
+            }),
             onPieceDrop: ({ sourceSquare, targetSquare }) => {
-              if (targetSquare) {
-                const choices = legalMoves.filter((move) =>
-                  move.startsWith(sourceSquare + targetSquare),
-                );
-                if (choices.length === 1 && choices[0]) onMove?.(choices[0]);
-                else if (choices.length > 1)
-                  onMove?.(sourceSquare + targetSquare);
-              }
+              if (targetSquare) input.move(sourceSquare, targetSquare);
               return false;
             },
             allowDrawingArrows: false,
@@ -69,6 +69,14 @@ export function Board({
           }}
         />
       </div>
+      {onMove && (
+        <BoardInput
+          fen={fen}
+          reversed={orientation === "black"}
+          disabled={legalMoves.length === 0}
+          {...input}
+        />
+      )}
     </div>
   );
 }
