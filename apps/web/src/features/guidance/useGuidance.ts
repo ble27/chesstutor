@@ -32,13 +32,14 @@ type Settled = Extract<LessonState, { status: "ready" | "error" }>;
 export function useLessons(
   analysis: Analysis | null,
   level: Level,
+  revision = 0,
 ): LessonState {
   const [settled, setSettled] = useState<{
     scope: string;
     value: Settled;
   } | null>(null);
   const id = analysis?.id;
-  const scope = id ? `${id}:${level}` : null;
+  const scope = id ? `${id}:${level}:${revision}` : null;
   const progress = `${analysis?.state}:${analysis?.completed_plies}`;
   useEffect(() => {
     if (!id || !scope) return;

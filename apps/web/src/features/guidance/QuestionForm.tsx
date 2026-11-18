@@ -25,7 +25,7 @@ export function QuestionForm({ ply, mover, level, ask, state }: Props) {
   const [advisee, setAdvisee] = useState<Color | null>(null);
   const [question, setQuestion] = useState("");
   const color = advisee ?? mover;
-  const ready = mover !== null && color !== null;
+  const ready = mover !== null && color !== null && state.status !== "asking";
   const send = (extra: Pick<CoachRequest, "intent" | "question">) => {
     if (color) ask({ ply, player_color: color, level, ...extra });
   };
@@ -61,7 +61,7 @@ export function QuestionForm({ ply, mover, level, ask, state }: Props) {
           </button>
         ))}
       </div>
-      <form onSubmit={submit}>
+      <form onSubmit={submit} aria-busy={state.status === "asking"}>
         <label htmlFor="coach-question">Ask a chess question</label>
         <textarea
           id="coach-question"

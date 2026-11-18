@@ -182,6 +182,8 @@ button {
 }
 input:focus-visible,
 select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
 button:focus-visible {
   outline: 2px solid white;
   outline-offset: 3px;
@@ -247,7 +249,8 @@ button:focus-visible {
 }
 .analysis-limits summary {
   cursor: pointer;
-  padding: 6px 0;
+  padding: 12px 0;
+  min-height: 44px;
 }
 .analysis-limits p {
   margin: 4px 0 12px;
@@ -518,15 +521,19 @@ button:disabled {
 }
 .position-score {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   gap: 12px;
 }
 .position-score strong {
+  flex-shrink: 0;
+  white-space: nowrap;
   font-size: 28px;
   color: #fff;
   font-variant-numeric: tabular-nums;
 }
 .position-score span {
+  flex: 1 1 120px;
   font-size: 12px;
 }
 .candidate-lines {
@@ -698,4 +705,19 @@ button:disabled {
   font-size: 11px;
   line-height: 1.3;
   color: inherit;
+}
+
+.candidate-lines button {
+  grid-column: 2;
+  justify-self: start;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation: none !important;
+    transition: none !important;
+  }
 }

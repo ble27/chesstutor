@@ -285,3 +285,17 @@ consistency review. This document does not repair them or certify pending gates.
 Extraction sources: `apps/web/src/styles.css`, `library.css`, `App.tsx`,
 `Discovery.tsx`, `features/library/`, and `features/replay/Board.tsx`; visual
 cross-checks: `.impeccable/review/library-1440.png` and `workspace-390.png`.
+
+## S6 review interactions
+
+Unbounded stored server-engine candidates have an Explore action. A variation
+previews its stored positions using the persistent navigation; Return restores
+the recorded selection and source-control focus. The board status names the
+variation/root/step. Recorded-position scores and labels are hidden during preview,
+and switching tabs or selecting a recorded move returns to the game.
+
+Evaluation numbers stay together on narrow screens; their context can wrap below.
+Disclosures keep 44px targets, and textareas/disclosures share visible keyboard
+focus. Reduced-motion preference disables transitions and animation. Move-note
+outages offer an explicit retry without rerunning analysis; partial notes never
+claim a stopped job is running. Manual accessibility acceptance remains open.

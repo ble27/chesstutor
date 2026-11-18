@@ -179,3 +179,51 @@ test("bright green guidance arrows have a contrasting outline on both board squa
     path: test.info().outputPath("guidance-arrows.png"),
   });
 });
+
+test("completes username to Quick, replay, coaching, Deep cancellation and retry", async ({
+  page,
+}) => {
+  await mockGuidance(page, { mode: "ok" });
+  await openGuidance(page);
+  await page.getByRole("button", { name: "Explain this move" }).click();
+  await expect(
+    page.getByText(/can capture the opponent's queen/),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Previous move" }).click();
+  await page.getByRole("button", { name: "Next move" }).click();
+  await expect(
+    page.getByText(/leaves your rook on d1 undefended/),
+  ).toBeVisible();
+  await page.getByRole("tab", { name: "Analysis" }).click();
+  const { queuedAnalysis } = await import("../src/testFixtures/analysis");
+  let submissions = 0;
+  const queued = { ...queuedAnalysis, mode: "deep" };
+  await page.route("**/api/v1/analyses", (route) => {
+    submissions++;
+    return route.fulfill({
+      json: submissions === 1 ? queued : { ...guidanceAnalysis, mode: "deep" },
+    });
+  });
+  await page.route("**/api/v1/analyses/**", (route) =>
+    route.fulfill({
+      json: {
+        ...queued,
+        state: "cancelled",
+        can_cancel: false,
+        dispatch_pending: false,
+      },
+    }),
+  );
+  await page.getByRole("button", { name: "Deep review" }).click();
+  const progress = page.getByRole("status", { name: "Analysis progress" });
+  await expect(progress).toContainText("Deep · Queued");
+  await page.getByRole("button", { name: "Cancel analysis" }).click();
+  await expect(progress).toContainText("Cancelled");
+  await expect(page.getByText(/Partial evidence retained/)).toBeVisible();
+  await page.getByRole("button", { name: "Retry analysis" }).click();
+  await expect(progress).toContainText("Deep · Completed");
+  await expect(
+    page.getByRole("button", { name: "1. White: Kh1" }),
+  ).toHaveAttribute("aria-current", "step");
+  expect(submissions).toBe(2);
+});

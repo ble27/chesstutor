@@ -182,7 +182,7 @@ it("reports unavailable notes without hiding the question controls", async () =>
 it("labels notes from an unfinished analysis as incomplete", async () => {
   route({ lessons: () => Response.json({ ...lessons, complete: false }) });
   setup();
-  expect(await screen.findByText(/analysis is still running/i)).toBeVisible();
+  expect(await screen.findByText(/analysis is incomplete/i)).toBeVisible();
 });
 
 it("shows the matching suggested move's engine score with its perspective", async () => {
@@ -265,3 +265,40 @@ it("updates the selected ply's label and explanation for either player without a
   expect(screen.getByText(/not enough evidence/)).toBeVisible();
   expect(onArrows).toHaveBeenLastCalledWith([]);
 });
+
+it("recovers a failed move-note request without rerunning engine analysis", async () => {
+  let outage = true;
+  const fetcher = route({
+    lessons: () =>
+      outage
+        ? Response.json(
+            {
+              code: "unavailable",
+              message: "Notes are busy",
+              retryable: true,
+              request_id: "test",
+            },
+            { status: 503 },
+          )
+        : Response.json(lessons),
+  });
+  setup();
+  expect(await screen.findByRole("alert")).toHaveTextContent("Notes are busy");
+  outage = false;
+  fireEvent.click(screen.getByRole("button", { name: "Retry move notes" }));
+  expect(await screen.findByText(/leaves your rook/)).toBeVisible();
+  expect(fetcher).toHaveBeenCalledTimes(2);
+});
+
+it.each(["cancelled", "failed"] as const)(
+  "keeps %s move notes explicitly incomplete without claiming the job runs",
+  async (state) => {
+    route({ lessons: () => Response.json({ ...lessons, complete: false }) });
+    setup(1, { ...completedAnalysis, state });
+    await screen.findByText(/leaves your rook/);
+    expect(
+      screen.queryByText(/analysis is still running/),
+    ).not.toBeInTheDocument();
+    expect(screen.getByText(/analysis is incomplete/i)).toBeVisible();
+  },
+);

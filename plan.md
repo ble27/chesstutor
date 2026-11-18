@@ -131,6 +131,10 @@ unsupported detector coverage rather than claiming comprehensive guidance.
 
 ## S6 — Complete UI/accessibility
 
+User authorization (2026-11-17): begin S6 while manual verification is deferred.
+The earlier S5 accessibility entry hold is superseded; its evidence remains open,
+not passed or waived. Track the fixed S6 baseline and gates in docs/sprints/S6.md.
+
 **Implementation:** Finish the gray-gradient workspace hierarchy, variations and
 return, loading/empty/error/partial states, quota feedback, evaluation formatting,
 and accessible interactions. Extend existing components within PRD scope.

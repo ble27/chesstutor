@@ -1,5 +1,9 @@
 # S5 handoff: grounded coaching
 
+Update (2026-11-17): the user authorized starting S6 and checking manually later.
+The S6 entry hold below is historical and superseded by that instruction.
+S5 manual evidence remains open. See [S6.md](S6.md) for current work and gates.
+
 Read `AGENTS.md`, `docs/PRD.md` sections 6–7, `plan.md`, and the continuation
 record in [S5.md](S5.md). **S5 is not complete. S6 and S7 have not started.**
 The user explicitly kept the manual screen-reader gate open on 2026-11-12.

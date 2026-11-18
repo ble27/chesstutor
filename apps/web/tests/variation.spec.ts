@@ -35,6 +35,13 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await page.getByRole("button", { name: "Next move" }).click();
     const evaluation = page.locator(".position-score strong");
     await expect(evaluation).toHaveText("-0.35");
+    expect(
+      await evaluation.evaluate((element) => {
+        const range = document.createRange();
+        range.selectNodeContents(element);
+        return range.getClientRects().length;
+      }),
+    ).toBe(1);
     await page.getByRole("button", { name: "Explore variation 1" }).click();
     await expect(evaluation).toHaveCount(0);
     await page.getByText("Text position and FEN").click();
@@ -72,3 +79,114 @@ for (const width of [320, 390, 768, 1024, 1440]) {
         .screenshot({ path: `/tmp/chesstutor-s6-variation-${width}.png` });
   });
 }
+
+test("review disclosures retain touch size and visible keyboard focus", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openReview(page);
+  const limits = page.getByText("Review settings and limits", { exact: true });
+  const bounds = await limits.boundingBox();
+  expect(bounds?.height).toBeGreaterThanOrEqual(44);
+  await page.getByRole("button", { name: "Quick review" }).focus();
+  await page.keyboard.press("Shift+Tab");
+  await expect(limits).toBeFocused();
+  const outline = await limits.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return {
+      style: style.outlineStyle,
+      width: Number.parseFloat(style.outlineWidth),
+    };
+  });
+  expect(outline.style).not.toBe("none");
+  expect(outline.width).toBeGreaterThanOrEqual(2);
+});
+
+test("review reflows at a 200 percent zoom-equivalent viewport with reduced motion", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 720, height: 450 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await openReview(page);
+  await expect(
+    page.getByRole("button", { name: "Explore variation 1" }),
+  ).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await page.getByRole("button", { name: "Explore variation 1" }).click();
+  await page.getByRole("button", { name: "Next move" }).click();
+  await page.getByRole("button", { name: "Return to game" }).click();
+  await expect(
+    page.getByRole("button", { name: "Explore variation 1" }),
+  ).toBeFocused();
+  const motion = await page.locator(".workspace").evaluate((element) => {
+    const style = getComputedStyle(element);
+    return {
+      animation: style.animationName,
+      transition: style.transitionDuration,
+      scroll: style.scrollBehavior,
+    };
+  });
+  expect(motion).toEqual({
+    animation: "none",
+    transition: "0s",
+    scroll: "auto",
+  });
+  await page
+    .locator(".workspace")
+    .screenshot({ path: "/tmp/chesstutor-s6-zoom.png" });
+});
+
+test("review text and enabled controls meet normal-text contrast", async ({
+  page,
+}) => {
+  await openReview(page);
+  const ratios = await page
+    .locator(".workspace p, .workspace button:enabled, .workspace summary")
+    .evaluateAll((elements) => {
+      const luminance = (color: string) => {
+        const channels = color
+          .match(/[\d.]+/g)
+          ?.slice(0, 3)
+          .map((part) => {
+            const value = Number(part) / 255;
+            return value <= 0.04045
+              ? value / 12.92
+              : ((value + 0.055) / 1.055) ** 2.4;
+          });
+        return (
+          (channels?.[0] ?? 0) * 0.2126 +
+          (channels?.[1] ?? 0) * 0.7152 +
+          (channels?.[2] ?? 0) * 0.0722
+        );
+      };
+      return elements
+        .filter((element) => element.getClientRects().length > 0)
+        .map((element) => {
+          let parent: Element | null = element;
+          let background = "rgb(36, 36, 36)";
+          while (parent) {
+            const color = getComputedStyle(parent).backgroundColor;
+            if (color !== "rgba(0, 0, 0, 0)" && color !== "transparent") {
+              background = color;
+              break;
+            }
+            parent = parent.parentElement;
+          }
+          const foreground = luminance(getComputedStyle(element).color);
+          const surface = luminance(background);
+          return {
+            text: element.textContent,
+            ratio:
+              (Math.max(foreground, surface) + 0.05) /
+              (Math.min(foreground, surface) + 0.05),
+          };
+        });
+    });
+  expect(ratios.length).toBeGreaterThan(10);
+  for (const item of ratios)
+    expect(item.ratio, item.text ?? "text").toBeGreaterThanOrEqual(4.5);
+});
