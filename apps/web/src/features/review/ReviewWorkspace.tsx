@@ -1,15 +1,16 @@
+import type { Variation } from "./useVariation";
 import { useState } from "react";
 import type { ReactNode } from "react";
 import type { Game } from "../../api/discoveryValidation";
 import type { Analysis } from "../../api/analysis";
 import { MoveList } from "../replay/MoveList";
-import { ReplayControls } from "../replay/ReplayControls";
 import { BrowserExperiment } from "../browserExperiment/BrowserExperiment";
 import { useAnalysis } from "./useAnalysis";
 import { EngineView } from "./EnginePanel";
 import { ClassificationSummary } from "./ClassificationSummary";
 import { GuidancePanel } from "../guidance/GuidancePanel";
 import type { BoardArrow } from "../guidance/arrows";
+import { VariationFooter } from "./VariationFooter";
 import { ReviewTabs } from "./ReviewTabs";
 import type { ReviewTab } from "./ReviewTabs";
 
@@ -20,6 +21,7 @@ type Props = {
   flip: () => void;
   onArrows?: (arrows: BoardArrow[]) => void;
   moveReviews?: Analysis["classifications"];
+  variation?: Variation | undefined;
 };
 
 const noArrows = () => undefined;
@@ -63,6 +65,8 @@ function ServerWorkspace(props: Props) {
           selectedPly={props.selectedPly}
           session={session}
           workspace
+          onVariation={props.variation?.enter}
+          variation={props.variation}
         />
       }
       guidance={() => (
@@ -108,6 +112,7 @@ function ReviewShell({
   select,
   flip,
   moveReviews,
+  variation,
   analysis,
   guidance,
   review,
@@ -125,7 +130,13 @@ function ReviewShell({
   return (
     <aside className="insights" aria-label="Game insights">
       <section className="panel review-panel" aria-label="Game review">
-        <ReviewTabs selected={tab} select={setTab} />
+        <ReviewTabs
+          selected={tab}
+          select={(next) => {
+            variation?.exit();
+            setTab(next);
+          }}
+        />
         <div
           id="view-analysis"
           role="tabpanel"
@@ -162,18 +173,13 @@ function ReviewShell({
           <h2>Chess guidance</h2>
           {tab === "Chess guidance" && guidance()}
         </div>
-        <div className="review-footer">
-          <ReplayControls
-            selectedPly={selectedPly}
-            lastPly={game.positions.length - 1}
-            select={select}
-            flip={flip}
-          />
-          <p id="replay-help">
-            Ply {selectedPly} of {game.positions.length - 1} · Use Left/Right,
-            Home or End in the replay area.
-          </p>
-        </div>
+        <VariationFooter
+          selectedPly={selectedPly}
+          lastPly={game.positions.length - 1}
+          select={select}
+          flip={flip}
+          variation={variation}
+        />
       </section>
     </aside>
   );

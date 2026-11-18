@@ -9,14 +9,8 @@ import {
   SelectedMoveClassification,
 } from "./ClassificationPanel";
 
-const statuses = {
-  queued: "Queued",
-  running: "Running",
-  cancel_requested: "Cancellation requested",
-  cancelled: "Cancelled",
-  completed: "Completed",
-  failed: "Failed",
-};
+import type { Variation, VariationLine } from "./useVariation";
+import { reviewPresentation } from "./reviewPresentation";
 
 export function EnginePanel({
   game,
@@ -50,11 +44,15 @@ export function EngineView({
   selectedPly,
   session,
   workspace = false,
+  onVariation,
+  variation,
 }: {
   game: Game;
   selectedPly: number;
   session: ReturnType<typeof useAnalysis>;
   workspace?: boolean;
+  onVariation?: ((line: VariationLine) => void) | undefined;
+  variation?: Variation | undefined;
 }) {
   const { state, start, cancel, retry } = session;
   const job = state.job;
@@ -62,14 +60,24 @@ export function EngineView({
   return (
     <section className="panel engine-panel" aria-labelledby="engine-title">
       <h2 id="engine-title">Engine analysis</h2>
-      {workspace && (
+      {workspace && variation?.kind === "variation" && (
+        <p role="status">
+          Exploring variation from ply {variation.rootPly}, step{" "}
+          {variation.step}
+          {variation.san && ` · ${variation.san}`}. No separate evaluation was
+          computed for this preview. Return to game for recorded-position
+          evidence.
+        </p>
+      )}
+      {workspace && variation?.kind !== "variation" && (
         <PositionEvidence
           game={game}
           selectedPly={selectedPly}
           evidence={job?.evidence ?? []}
+          onVariation={onVariation}
         />
       )}
-      {workspace && job && (
+      {workspace && variation?.kind !== "variation" && job && (
         <SelectedMoveClassification job={job} selectedPly={selectedPly} />
       )}
       <AnalysisLimits />
@@ -136,17 +144,34 @@ function EngineJob({
   workspace: boolean;
 }) {
   const evidence = job.evidence.find((item) => item.ply === selectedPly);
+  const presentation = reviewPresentation({
+    gameId: job.game_id,
+    selectedPly,
+    evidence: evidence
+      ? { gameId: job.game_id, ply: evidence.ply, score: evidence.played.score }
+      : null,
+    state: job.state,
+    completedPlies: job.completed_plies,
+    totalPlies: job.total_plies,
+    mode: job.mode,
+  });
   return (
     <>
       <p role="status" aria-label="Analysis progress">
-        {job.mode === "quick" ? "Quick" : "Deep"} · {statuses[job.state]} ·{" "}
-        {job.completed_plies}/{job.total_plies} plies
+        {job.mode === "quick" ? "Quick" : "Deep"} · {presentation.statusText} ·{" "}
+        {presentation.coverageText}
       </p>
       <progress
         aria-label="Analysed plies"
         value={job.completed_plies}
         max={job.total_plies}
       />
+      {presentation.provisional && !job.classifications?.length && (
+        <p>Quick evaluations are provisional relative to Deep.</p>
+      )}
+      {!presentation.isFinal && job.state === "completed" && (
+        <p>Analysis incomplete; some plies have no evidence.</p>
+      )}
       {job.dispatch_pending && (
         <p>Waiting for worker dispatch; the job is saved.</p>
       )}

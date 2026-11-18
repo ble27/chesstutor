@@ -1,14 +1,7 @@
 import type { Evidence } from "../../api/analysisEvidence";
-import type { components } from "../../api/generated";
+import { formatWhiteEvaluation } from "./reviewPresentation";
 
-type Score =
-  components["schemas"]["CentipawnScore"] | components["schemas"]["MateScore"];
-
-export function formatScore(score: Score, digits = 1): string {
-  if (score.kind === "mate")
-    return `${score.moves < 0 ? "-" : ""}M${Math.abs(score.moves)}`;
-  return `${score.centipawns >= 0 ? "+" : ""}${(score.centipawns / 100).toFixed(digits)}`;
-}
+export const formatScore = formatWhiteEvaluation;
 
 export function EngineEvidence({ evidence }: { evidence: Evidence }) {
   const best = evidence.best[0];

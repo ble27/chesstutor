@@ -85,3 +85,15 @@ it("variation navigation bounds its endpoints and flipping preserves the game se
   expect(result.current.fen).toBe(e4Fen);
   expect(result.current.orientation).toBe("black");
 });
+
+it("drops a variation when its recorded game context changes", async () => {
+  const { useVariation } = await variationModule();
+  const { result, rerender } = renderHook((input) => useVariation(input), {
+    initialProps: { selectedPly: 1, fen: e4Fen, orientation: "white" as const },
+  });
+  act(() => result.current.enter(line));
+  act(() => result.current.next());
+  rerender({ selectedPly: 2, fen: e5Fen, orientation: "white" });
+  expect(result.current.kind).toBe("game");
+  expect(result.current.fen).toBe(e5Fen);
+});

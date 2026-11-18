@@ -1,3 +1,4 @@
+import type { VariationLine } from "./useVariation";
 import { useEffect, useRef } from "react";
 import type { Game } from "../../api/discoveryValidation";
 import type { Evidence } from "../../api/analysisEvidence";
@@ -8,10 +9,12 @@ export function PositionEvidence({
   game,
   selectedPly,
   evidence,
+  onVariation,
 }: {
   game: Game;
   selectedPly: number;
   evidence: readonly Evidence[];
+  onVariation?: ((line: VariationLine) => void) | undefined;
 }) {
   const view = positionAnalysis(game, selectedPly, evidence);
   const content = useRef<HTMLDivElement>(null);
@@ -51,6 +54,21 @@ export function PositionEvidence({
               <strong>{formatScore(line.score, 2)}</strong>
               <span>{line.pv.map((move) => move.san).join(" ")}</span>
               <small>Depth {line.depth}</small>
+              {onVariation && !line.bounded && (
+                <button
+                  id={`explore-variation-${index}`}
+                  onClick={() =>
+                    onVariation({
+                      triggerId: `explore-variation-${index}`,
+                      rootPly: selectedPly,
+                      rootFen: game.positions[selectedPly]?.fen ?? "",
+                      positions: line.pv,
+                    })
+                  }
+                >
+                  Explore variation {index + 1}
+                </button>
+              )}
             </li>
           ))}
         </ol>
