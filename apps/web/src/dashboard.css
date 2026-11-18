@@ -850,8 +850,15 @@ button {
 }
 
 .local-engine .engine-lines div {
-  min-height: 40px;
-  overflow-wrap: anywhere;
+  min-height: 44px;
+}
+
+.local-engine .engine-lines div > span {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  line-height: 17px;
 }
 
 .sandbox-panel .module-heading span {

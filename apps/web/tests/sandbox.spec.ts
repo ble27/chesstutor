@@ -33,6 +33,8 @@ test("free analysis validates branches, publishes real WASM scores, and restores
       return route.fulfill({ json: { status: "ready" } });
     return route.fulfill({ json: imported });
   });
+  const workers: string[] = [];
+  page.on("worker", (worker) => workers.push(worker.url()));
   await page.goto("/");
   await page.getByLabel("Chess.com username").fill("alice");
   await page.getByRole("button", { name: "Find games" }).click();
@@ -44,6 +46,11 @@ test("free analysis validates branches, publishes real WASM scores, and restores
   await expect(page.getByRole("combobox", { name: "Legal move" })).toHaveCount(
     0,
   );
+  const lines = page.getByRole("list", { name: "Local engine variations" });
+  await expect(lines.locator(".line-score").first()).toHaveText(/[+−-]\d/, {
+    timeout: 45000,
+  });
+  const firstRow = await lines.getByRole("listitem").first().elementHandle();
   const board = page.getByRole("group", { name: "Play on board" });
   const e2 = board.getByRole("button", { name: "e2, White pawn" });
   await expect(e2).toBeEnabled();
@@ -79,6 +86,18 @@ test("free analysis validates branches, publishes real WASM scores, and restores
   await expect(page.getByLabel("Position FEN")).toHaveText(
     imported.positions[1]?.fen ?? "missing",
   );
+  await expect(lines.locator(".line-score").first()).toHaveText(/[+−-]\d/, {
+    timeout: 45000,
+  });
+  expect(
+    workers.filter((url) => new URL(url).pathname.startsWith("/engine/")),
+  ).toHaveLength(1);
+  expect(
+    await lines
+      .getByRole("listitem")
+      .first()
+      .evaluate((row, first) => row === first, firstRow),
+  ).toBe(true);
   await page.getByRole("checkbox", { name: "Engine arrows" }).click();
   await expect(
     page.getByRole("checkbox", { name: "Engine arrows" }),

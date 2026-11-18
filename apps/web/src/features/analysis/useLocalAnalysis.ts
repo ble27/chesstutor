@@ -44,9 +44,9 @@ export function useLocalAnalysis(game: Game, selectedPly: number) {
     game,
     sandbox.root ?? root,
     sandbox.enabled ? sandbox.branch : [],
-    position,
+    sandbox.busy ? null : position,
     settings,
-    (refine || sandbox.enabled) && !sandbox.busy,
+    refine || sandbox.enabled,
   );
   const play = (move: string) => {
     const choices =

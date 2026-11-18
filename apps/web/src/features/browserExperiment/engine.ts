@@ -13,7 +13,15 @@ export class BrowserEngine {
     signal.addEventListener("abort", this.abort, { once: true });
     if (signal.aborted) this.close();
   }
+  private closed = false;
+
+  get isClosed() {
+    return this.closed;
+  }
+
   close() {
+    if (this.closed) return;
+    this.closed = true;
     this.signal.removeEventListener("abort", this.abort);
     this.worker.terminate();
   }
@@ -24,11 +32,13 @@ export class BrowserEngine {
     signal: AbortSignal,
     timeout: number,
     info?: (line: string) => void,
+    stopSignal?: AbortSignal,
   ): Promise<void> {
     return new Promise((resolve, reject) => {
       const cleanup = () => {
         clearTimeout(timer);
         signal.removeEventListener("abort", aborted);
+        stopSignal?.removeEventListener("abort", stop);
         this.worker.onmessage = null;
         this.worker.onerror = null;
       };
@@ -38,6 +48,7 @@ export class BrowserEngine {
         reject(new Error(message));
       };
       const aborted = () => fail("Analysis cancelled.");
+      const stop = () => this.worker.postMessage("stop");
       const timer = setTimeout(
         () => fail("Browser engine deadline exceeded."),
         timeout,
@@ -47,6 +58,7 @@ export class BrowserEngine {
         aborted();
         return;
       }
+      stopSignal?.addEventListener("abort", stop, { once: true });
       this.worker.onerror = () =>
         fail("Browser engine unavailable on this device.");
       this.worker.onmessage = (event: MessageEvent<unknown>) => {
@@ -55,7 +67,7 @@ export class BrowserEngine {
           return;
         }
         for (const line of event.data.split("\n")) {
-          info?.(line);
+          if (!stopSignal?.aborted) info?.(line);
           if (finish(line)) {
             cleanup();
             resolve();
@@ -84,7 +96,9 @@ export class BrowserEngine {
     depth: number,
     signal: AbortSignal,
     update: (lines: RawLine[]) => void,
+    stopSignal?: AbortSignal,
   ): Promise<RawLine[]> {
+    if (stopSignal?.aborted) return [];
     if (!Number.isInteger(depth) || depth < 1 || depth > 40)
       throw new Error("Invalid local depth");
     if (moves.some((move) => !/^[a-h][1-8][a-h][1-8][qrbn]?$/.test(move)))
@@ -114,7 +128,9 @@ export class BrowserEngine {
           update(latest);
         }
       },
+      stopSignal,
     );
+    if (stopSignal?.aborted) return [];
     if (!latest.length)
       throw new Error("No complete local engine line was returned.");
     return latest;

@@ -11,28 +11,26 @@ export function LocalAnalysisControls({ local }: { local: LocalAnalysis }) {
       <section className="panel local-engine" aria-label="Local engine">
         <div className="module-heading">
           <h2>Stockfish 17.1</h2>
-          {depth !== undefined && (
-            <span className="engine-depth">Depth {depth}</span>
-          )}
+          <span className="engine-depth" role="status">
+            {depth === undefined ? local.live.message : `Depth ${depth}`}
+          </span>
         </div>
-        {lines.length > 0 ? (
-          <ol className="engine-lines" aria-label="Local engine variations">
-            {lines.map((line) => (
-              <li key={line.pv[0]?.uci}>
+        <ol className="engine-lines" aria-label="Local engine variations">
+          {[0, 1].map((rank) => {
+            const line = lines[rank];
+            const notation = line?.pv.map((step) => step.san).join(" ");
+            return (
+              <li key={rank}>
                 <div>
                   <strong className="line-score">
-                    {formatWhiteEvaluation(line.score, 2)}
+                    {line ? formatWhiteEvaluation(line.score, 2) : "—"}
                   </strong>
-                  <span>{line.pv.map((step) => step.san).join(" ")}</span>
+                  <span title={notation}>{notation ?? "—"}</span>
                 </div>
               </li>
-            ))}
-          </ol>
-        ) : (
-          <p className="engine-status" role="status">
-            {local.live.message}
-          </p>
-        )}
+            );
+          })}
+        </ol>
         <CheckField
           label="Engine arrows"
           checked={local.suggestions}

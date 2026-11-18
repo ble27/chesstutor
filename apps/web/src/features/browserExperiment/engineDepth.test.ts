@@ -62,3 +62,37 @@ it("requests two ranked lines for live analysis", async () => {
   expect(FakeWorker.commands).toContain("setoption name MultiPV value 2");
   engine.close();
 });
+
+it("stops a superseded position without terminating the engine", async () => {
+  const session = new AbortController();
+  const position = new AbortController();
+  const engine = new BrowserEngine("single-a496a04", session.signal);
+  await engine.ready(1, session.signal);
+  FakeWorker.held = true;
+  const search = engine.searchPosition(
+    imported.initial_fen,
+    [],
+    18,
+    session.signal,
+    () => undefined,
+    position.signal,
+  );
+  position.abort();
+  expect(FakeWorker.commands.at(-1)).toBe("stop");
+  const worker = [...FakeWorker.active][0];
+  worker?.onmessage?.(new MessageEvent("message", { data: "bestmove e2e4" }));
+  await expect(search).resolves.toEqual([]);
+  expect(FakeWorker.active.size).toBe(1);
+  FakeWorker.held = false;
+  await expect(
+    engine.searchPosition(
+      imported.initial_fen,
+      ["e2e4"],
+      18,
+      session.signal,
+      () => undefined,
+    ),
+  ).resolves.toHaveLength(2);
+  session.abort();
+  expect(FakeWorker.active.size).toBe(0);
+});
