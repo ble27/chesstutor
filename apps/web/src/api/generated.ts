@@ -123,6 +123,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/games/{game_id}/sandbox": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Replay */
+        post: operations["sandbox_position"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/health/live": {
         parameters: {
             query?: never;
@@ -841,6 +858,42 @@ export interface components {
             /** Provisional */
             provisional: boolean;
         };
+        /** SandboxRequest */
+        SandboxRequest: {
+            /** Branch */
+            branch: string[];
+            /** Game Version */
+            game_version: number;
+            line?: components["schemas"]["BrowserLine"] | null;
+            /** Pgn Hash */
+            pgn_hash: string;
+            /** Root Ply */
+            root_ply: number;
+        };
+        /** SandboxResponse */
+        SandboxResponse: {
+            /** Claimable Draw */
+            claimable_draw: boolean;
+            /** Fen */
+            fen: string;
+            /** Initial Fen */
+            initial_fen: string;
+            /** Legal Moves */
+            legal_moves: string[];
+            line: components["schemas"]["EngineLine"] | null;
+            /** Moves */
+            moves: string[];
+            /** Positions */
+            positions: components["schemas"]["VariationMove"][];
+            /** Result */
+            result: string | null;
+            /**
+             * Trust
+             * @default client_unverified
+             * @constant
+             */
+            trust: "client_unverified";
+        };
         /** VariationMove */
         VariationMove: {
             /** Fen */
@@ -1431,6 +1484,59 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BrowserEvidence"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    sandbox_position: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SandboxRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SandboxResponse"];
                 };
             };
             /** @description Not Found */

@@ -62,3 +62,16 @@ Equivalent whole-upgrade review covers the fixed baseline, new files and unrelat
 untracked inventory. Corrected the arrow overlay's actual 2048-unit viewBox selector,
 missing GPL-2 license retrieval, Black-start totals, signed mate zero, missing-window
 breaks and runtime accuracy coverage validation. No mandatory length exception.
+
+## Backend free-analysis boundary checkpoint
+
+Added stateless `/api/v1/games/{id}/sandbox` with typed bounded branch and optional
+local UCI-line validation. It reconstructs canonical recorded history, validates
+all legal moves with Python chess rules, preserves draw history and setup FEN,
+and returns legal moves, canonical branch positions and client-unverified lines.
+Session/origin checks and a 16KiB body limit apply; branches are capped at 100 plies.
+No persistence, migration, server engine allocation or score trust promotion.
+Domain tests ran red on the missing module before implementation; HTTP tests were
+added after implementation. Domain/HTTP cases cover illegal moves, underpromotion,
+castling, en passant, repetition history, session challenge, origin, version, size
+and illegal PV rejection. The frontend integration and final gates follow.

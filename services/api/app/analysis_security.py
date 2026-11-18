@@ -98,6 +98,7 @@ class AnalysisBodyLimit:
             or not (
                 scope["path"].startswith("/api/v1/analyses")
                 or scope["path"].endswith("/browser-evidence")
+                or scope["path"].endswith("/sandbox")
             )
         ):
             await self.app(scope, receive, send)
@@ -108,7 +109,13 @@ class AnalysisBodyLimit:
             if message["type"] == "http.disconnect":
                 return
             body.extend(message.get("body", b""))
-            maximum = 65536 if scope["path"].endswith("/browser-evidence") else 4096
+            maximum = (
+                16384
+                if scope["path"].endswith("/sandbox")
+                else 65536
+                if scope["path"].endswith("/browser-evidence")
+                else 4096
+            )
             if len(body) > maximum:
                 response = JSONResponse(
                     status_code=413,

@@ -1838,6 +1838,132 @@
         "title": "ReviewedMove",
         "type": "object"
       },
+      "SandboxRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "branch": {
+            "items": {
+              "maxLength": 5,
+              "pattern": "^[a-h][1-8][a-h][1-8][qrbn]?$",
+              "type": "string"
+            },
+            "maxItems": 100,
+            "title": "Branch",
+            "type": "array"
+          },
+          "game_version": {
+            "minimum": 1.0,
+            "title": "Game Version",
+            "type": "integer"
+          },
+          "line": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BrowserLine"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pgn_hash": {
+            "pattern": "^[a-f0-9]{64}$",
+            "title": "Pgn Hash",
+            "type": "string"
+          },
+          "root_ply": {
+            "maximum": 300.0,
+            "minimum": 0.0,
+            "title": "Root Ply",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "game_version",
+          "pgn_hash",
+          "root_ply",
+          "branch"
+        ],
+        "title": "SandboxRequest",
+        "type": "object"
+      },
+      "SandboxResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "claimable_draw": {
+            "title": "Claimable Draw",
+            "type": "boolean"
+          },
+          "fen": {
+            "title": "Fen",
+            "type": "string"
+          },
+          "initial_fen": {
+            "title": "Initial Fen",
+            "type": "string"
+          },
+          "legal_moves": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Legal Moves",
+            "type": "array"
+          },
+          "line": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EngineLine"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "moves": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Moves",
+            "type": "array"
+          },
+          "positions": {
+            "items": {
+              "$ref": "#/components/schemas/VariationMove"
+            },
+            "title": "Positions",
+            "type": "array"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Result"
+          },
+          "trust": {
+            "const": "client_unverified",
+            "default": "client_unverified",
+            "title": "Trust",
+            "type": "string"
+          }
+        },
+        "required": [
+          "fen",
+          "initial_fen",
+          "moves",
+          "positions",
+          "legal_moves",
+          "result",
+          "claimable_draw",
+          "line"
+        ],
+        "title": "SandboxResponse",
+        "type": "object"
+      },
       "VariationMove": {
         "additionalProperties": false,
         "properties": {
@@ -2613,6 +2739,76 @@
           }
         },
         "summary": "Validate"
+      }
+    },
+    "/api/v1/games/{game_id}/sandbox": {
+      "post": {
+        "operationId": "sandbox_position",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "game_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Game Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SandboxRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SandboxResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Replay"
       }
     },
     "/api/v1/health/live": {

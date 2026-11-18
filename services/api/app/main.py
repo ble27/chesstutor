@@ -21,6 +21,7 @@ from services.api.app.analysis_security import AnalysisBodyLimit
 from services.api.app.browser_routes import browser_router
 from services.api.app.coaching_routes import coaching_router
 from services.api.app.game_routes import discovery_router
+from services.api.app.sandbox_routes import sandbox_router
 from services.api.app.schemas import ErrorResponse, HealthResponse
 from services.api.app.settings import Settings
 from services.application.analysis import AnalysisService
@@ -86,6 +87,7 @@ def create_app(
     assert service is not None
     app.include_router(discovery_router(service))
     app.include_router(browser_router(service, config))
+    app.include_router(sandbox_router(service, config))
     analysis_service = (
         analysis
         if analysis is not None
