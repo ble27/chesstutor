@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { expect, it, vi } from "vitest";
 import { summary, imported } from "../../testFixtures/discovery";
 import { GameRow } from "./GameRow";
@@ -48,14 +48,14 @@ it("keeps ratings failure separate from game discovery and can retry", async () 
   expect(screen.getByText(/Cached ratings/)).toBeVisible();
 });
 
-it("keeps result, winner, validated move count, and opening in one row", () => {
+it("keeps result, validated move count, and opening in one row", () => {
   const open = vi.fn();
   const { rerender } = render(
     <ul>
       <GameRow game={summary} opened={null} open={open} />
     </ul>,
   );
-  expect(screen.getByText("alice won")).toBeVisible();
+  expect(screen.getByText("1–0")).toBeVisible();
   expect(screen.getByText("Move count unavailable")).toBeVisible();
   fireEvent.click(screen.getByRole("button", { name: "Analyze" }));
   expect(open).toHaveBeenCalledWith(summary.id);
@@ -64,8 +64,8 @@ it("keeps result, winner, validated move count, and opening in one row", () => {
       <GameRow game={summary} opened={imported} open={open} />
     </ul>,
   );
-  expect(screen.getByText("1 move · 1 ply")).toBeVisible();
-  expect(screen.getByRole("button", { name: "Analyze again" })).toHaveAttribute(
+  expect(screen.getByText("1 move")).toBeVisible();
+  expect(screen.getByRole("button", { name: "Analyze" })).toHaveAttribute(
     "aria-pressed",
     "true",
   );
@@ -75,13 +75,17 @@ it("preserves advanced filters when changing time control", () => {
   const apply = vi.fn();
   render(
     <LibraryFilters
+      month="2026-11"
+      months={["2026-11"]}
       filters={{ ...emptyFilters, opponent: "bobby", color: "black" }}
       apply={apply}
     />,
   );
-  const group = screen.getByRole("group", { name: "Filter by time control" });
-  fireEvent.click(within(group).getByRole("button", { name: "Blitz" }));
-  expect(apply).toHaveBeenCalledWith({
+  fireEvent.change(screen.getByLabelText("Time control"), {
+    target: { value: "blitz" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Apply filters" }));
+  expect(apply).toHaveBeenCalledWith("2026-11", {
     opponent: "bobby",
     color: "black",
     time_class: "blitz",

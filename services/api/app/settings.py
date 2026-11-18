@@ -11,6 +11,7 @@ class Settings(BaseSettings):
         env_prefix="CHESS_", env_file=".env", extra="ignore", frozen=True
     )
 
+    elevenlabs_api_key: SecretStr = SecretStr("")
     environment: Literal["development", "test", "production"] = "development"
     database_url: SecretStr = SecretStr(
         "postgresql://chess:local-development@127.0.0.1:5433/chesstutor"

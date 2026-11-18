@@ -33,25 +33,13 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await page.getByRole("button", { name: "Find games" }).click();
     await page.getByRole("button", { name: "Analyze" }).click();
     await expect(page.getByText("Completed · 3/3 plies")).toBeVisible();
-    await page.getByRole("tab", { name: "Review", exact: true }).click();
-    const table = page.getByRole("table", {
-      name: "Move classifications by player",
-    });
-    await expect(
-      table.getByRole("columnheader", { name: /alice.*White/ }),
-    ).toBeVisible();
-    await expect(
-      table.getByRole("columnheader", { name: /bobby.*Black/ }),
-    ).toBeVisible();
-    await expect(
-      table.getByRole("row", { name: "Best move 1 1" }),
-    ).toBeVisible();
-    await expect(
-      table.getByRole("row", { name: "Unclassified 1 0" }),
-    ).toBeVisible();
-    await expect(
-      table.getByRole("row", { name: "Chess Tutor accuracy 100.0% 100.0%" }),
-    ).toBeVisible();
+    const moves = page.getByRole("region", { name: "Moves", exact: true });
+    await expect(moves.getByText("100.0%", { exact: false })).toHaveCount(2);
+    const white = moves.getByRole("button", { name: "1. White: e4" });
+    const black = moves.getByRole("button", { name: "1... Black: e5" });
+    await expect(white).toHaveAccessibleDescription("Best move");
+    await expect(black).toHaveAccessibleDescription("Best move");
+    expect((await white.boundingBox())?.y).toBe((await black.boundingBox())?.y);
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
@@ -64,25 +52,14 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await expect(page.getByText(/Your pawn moved from e2 to e4/)).toBeVisible();
     await page.getByRole("button", { name: "Next move", exact: true }).click();
     await expect(page.getByText(/Your pawn moved from e7 to e5/)).toBeVisible();
-    await expect(page.getByText("Ply 2 · Black move")).toBeVisible();
-    await page.getByText("Coach options and alternatives").click();
-    await expect(
-      page.getByText("Base label: best · Expected-score loss: 0.0%"),
-    ).toBeVisible();
+    await expect(black).toHaveAttribute("aria-current", "step");
     await page.getByRole("button", { name: "Next move", exact: true }).click();
     await expect(
       page.getByText(/Your knight moved from g1 to f3/),
     ).toBeVisible();
     await expect(
-      page
-        .getByRole("region", { name: "Move coach" })
-        .getByText("Unclassified", { exact: true }),
-    ).toBeVisible();
-    await expect(
-      page.getByText(
-        "Base label: unclassified · Expected-score loss: unavailable",
-      ),
-    ).toBeVisible();
+      moves.getByRole("button", { name: "2. White: Nf3" }),
+    ).toHaveAccessibleDescription("Unclassified");
     await expect(
       page.getByRole("button", { name: "Next move", exact: true }),
     ).toBeDisabled();

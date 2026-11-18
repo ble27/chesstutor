@@ -9,7 +9,7 @@ it("offers local full-strength review with explicit provisional trust", () => {
     screen.getByRole("button", { name: "Browser Quick review" }),
   ).toBeVisible();
   expect(screen.getByText(/provisional/i)).toBeVisible();
-  expect(screen.getByText(/Full Stockfish 17\.1/)).toBeVisible();
+  expect(screen.getByText(/Stockfish 17\.1/)).toBeVisible();
 });
 
 it("does not submit server engine jobs when starting local review", async () => {

@@ -99,17 +99,19 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await expect(
       page.getByRole("button", { name: "1. White: e4" }),
     ).toHaveAttribute("aria-current", "step");
-    await expect(page.locator(".position-score strong")).toBeVisible();
-    await expect(page.getByText("White evaluation · after e4")).toBeVisible();
-    await page.getByLabel("Engine settings").click();
+    await expect(page.locator(".evaluation-rail strong")).toBeVisible();
+    await expect(
+      page.getByRole("img", { name: /Evaluation .*White perspective/ }),
+    ).toBeVisible();
+    await page.getByRole("button", { name: "Engine settings" }).click();
     await page.getByLabel("Server review").selectOption("deep");
     await page.getByRole("button", { name: "Run review" }).click();
-    await expect(status).toContainText("Deep · Queued");
+    await expect(status).toContainText("Thorough · Queued");
     await page.getByRole("button", { name: "Cancel analysis" }).click();
     await expect(status).toContainText("Cancelled", { timeout: 10000 });
-    await expect(page.getByText(/Partial evidence retained/)).toBeVisible();
+    await expect(status).toContainText("0/1 plies");
     await page.getByRole("button", { name: "Retry analysis" }).click();
-    await expect(status).toContainText("Deep · Completed");
+    await expect(status).toContainText("Thorough · Completed");
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
@@ -169,15 +171,14 @@ test("verified classification proof follows the selected ply", async ({
     route.fulfill({ json: { ...verifiedGreatAnalysis, cached: true } }),
   );
   await openGame(page);
-  await page.getByLabel("Engine settings").click();
+  await page.getByRole("button", { name: "Engine settings" }).click();
   await page.getByLabel("Server review").selectOption("deep");
   await page.getByRole("button", { name: "Run review" }).click();
-  await expect(page.getByText("Great", { exact: true })).toBeVisible();
-  await expect(page.getByText("Checked supporting line: d4")).toBeVisible();
-  await expect(page.getByText(/Practice: calculation/)).toBeVisible();
-  await expect(page.getByText(/Brilliant is a heuristic/)).toBeVisible();
+  const played = page.getByRole("button", { name: "1. White: e4" });
+  await expect(played).toHaveAccessibleDescription("Great move");
+  await expect(page.getByText("Checked line: d4 · unique move")).toBeVisible();
   await page.getByRole("button", { name: "First position" }).click();
-  await expect(page.getByText("Great", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("Checked line: d4 · unique move")).toHaveCount(0);
   await page.getByRole("button", { name: "Last position" }).click();
-  await expect(page.getByText("Checked supporting line: d4")).toBeVisible();
+  await expect(page.getByText("Checked line: d4 · unique move")).toBeVisible();
 });

@@ -75,9 +75,7 @@ for (const threads of [1, 2]) {
     );
     expect(transcript).toMatch(/bestmove [a-h][1-8][a-h][1-8]/);
 
-    await expect(
-      page.getByText("Current-position variations are unavailable"),
-    ).toBeVisible();
+    await expect(page.getByText("Played-line evaluation")).toBeVisible();
     await page.getByRole("button", { name: "First position" }).click();
     await expect(
       page.getByRole("list", { name: "Engine variations" }),

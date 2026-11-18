@@ -52,9 +52,8 @@ export function VariationFooter({
       />
       <p id="replay-help">
         {preview
-          ? `Variation · ${preview.step} of ${preview.length} · recorded ply ${selectedPly}`
-          : `Ply ${selectedPly} of ${lastPly}`}{" "}
-        · Use Left/Right, Home or End in the replay area.
+          ? `${preview.step} / ${preview.length}`
+          : `${selectedPly} / ${lastPly}`}
       </p>
     </div>
   );

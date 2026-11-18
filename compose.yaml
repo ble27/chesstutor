@@ -37,6 +37,7 @@ services:
     environment:
       CHESS_DATABASE_URL: postgresql://chess:local-development@postgres:5432/chesstutor
       CHESS_PUBAPI_USER_AGENT: ${CHESS_PUBAPI_USER_AGENT:-}
+      CHESS_ELEVENLABS_API_KEY: ${CHESS_ELEVENLABS_API_KEY:-}
       CHESS_REDIS_URL: redis://redis:6379/0
       CHESS_ENGINE_PLATFORM: linux-x86_64
       CHESS_SESSION_SECRET: ${CHESS_SESSION_SECRET:-local-development-session-key-change-before-hosting}

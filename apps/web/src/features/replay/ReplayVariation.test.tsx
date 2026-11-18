@@ -28,8 +28,8 @@ it("previews a stored line, bounds keyboard navigation, and returns to the recor
     screen.getByRole("status", { name: "Replay position" }),
   ).toHaveTextContent("Starting position");
   expect(
-    screen.getByRole("status", { name: "Replay position" }),
-  ).toHaveTextContent("Black at bottom");
+    screen.getByRole("img", { name: "Chessboard, Black at bottom" }),
+  ).toBeVisible();
   await waitFor(() =>
     expect(
       screen.getByRole("button", { name: "Explore variation 1" }),

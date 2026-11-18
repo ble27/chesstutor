@@ -1,7 +1,7 @@
 import type { Game } from "../../api/discoveryValidation";
 import type { Evidence } from "../../api/analysisEvidence";
 import { positionAnalysis } from "./positionAnalysis";
-import { formatScore } from "./EngineEvidence";
+import { formatWhiteEvaluation, whiteAdvantage } from "./reviewPresentation";
 export type EvaluationPoint = { ply: number; label: string; advantage: number };
 export function evaluationSeries(
   game: Game,
@@ -12,18 +12,11 @@ export function evaluationSeries(
     if (!view || view.status !== "usable") return null;
     const score = view.score;
     if (score.kind === "mate" && score.moves === 0 && !view.result) return null;
-    const direction = score.pov === "white" ? 1 : -1;
-    const advantage =
-      score.kind === "cp"
-        ? Math.tanh((0.00368208 * score.centipawns * direction) / 2)
-        : score.moves === 0
-          ? view.result === "1-0"
-            ? 1
-            : view.result === "0-1"
-              ? -1
-              : 0
-          : Math.sign(score.moves) * direction;
-    return { ply, label: formatScore(score, 2), advantage };
+    return {
+      ply,
+      label: formatWhiteEvaluation(score, 2),
+      advantage: whiteAdvantage(score, view.result),
+    };
   });
 }
 export function graphSegments(

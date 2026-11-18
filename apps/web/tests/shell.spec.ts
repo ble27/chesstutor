@@ -7,19 +7,15 @@ for (const width of [320, 390, 768, 1024, 1440]) {
       route.fulfill({ json: { status: "ready" } }),
     );
     await page.goto("/");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-      "Understand every move.",
-    );
-    await expect(page.getByRole("status")).toHaveText(
-      "Review service connected",
-    );
     await expect(
-      page.getByRole("heading", { name: "Game library" }),
+      page.getByRole("link", { name: "Chess Tutor home" }),
     ).toBeVisible();
     await expect(page.getByLabel("Chess.com username")).toBeVisible();
     await expect(
-      page.getByRole("heading", { name: "Engine analysis" }),
+      page.getByRole("button", { name: "Find games" }),
     ).toBeVisible();
+    await expect(page.getByRole("heading")).toHaveCount(0);
+    await expect(page.getByRole("status")).toHaveCount(0);
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= window.innerWidth,

@@ -1,18 +1,21 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { App } from "./App";
 
 describe("service status", () => {
-  it("shows confirmed readiness", async () => {
+  it("keeps the ready shell focused on search", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue(Response.json({ status: "ready" })),
     );
     render(<App />);
-    expect(await screen.findByText("Review service connected")).toBeVisible();
+    await waitFor(() =>
+      expect(screen.queryByRole("status")).not.toBeInTheDocument(),
+    );
+    expect(screen.getByRole("button", { name: "Find games" })).toBeVisible();
     expect(
-      screen.getByRole("heading", { name: "Engine analysis" }),
-    ).toBeVisible();
+      screen.queryByRole("heading", { name: "Engine analysis" }),
+    ).not.toBeInTheDocument();
   });
 
   it("shows service failure without claiming readiness", async () => {

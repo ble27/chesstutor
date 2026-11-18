@@ -10,18 +10,15 @@ export function PlayerRatings({ username }: { username: string }) {
     >
       <div className="ratings-heading">
         <h3>{username}</h3>
-        <p>Public Chess.com ratings</p>
         {state.status === "loading" && <p role="status">Loading ratings…</p>}
         {state.status === "error" && (
           <>
-            <p>Ratings are unavailable. You can still review games.</p>
+            <p>Ratings unavailable</p>
             <button onClick={retry}>Retry ratings</button>
           </>
         )}
         {state.status === "ready" && state.data.stale && (
-          <p role="status">
-            Cached ratings · Chess.com could not be refreshed.
-          </p>
+          <p role="status">Cached ratings</p>
         )}
       </div>
       <dl className="rating-list">

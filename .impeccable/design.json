@@ -1,436 +1,341 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-09T07:15:17.000440+00:00",
+  "generatedAt": "2026-11-18T18:49:55+00:00",
   "title": "Design System: Chess Tutor",
   "extensions": {
     "colorMeta": {
       "accent": {
         "role": "primary",
-        "displayName": "Accent",
+        "displayName": "Brass",
         "tonalRamp": [
-          "oklch(15% 0.0241 90.5)",
-          "oklch(27% 0.0602 90.5)",
-          "oklch(39% 0.0963 90.5)",
-          "oklch(51% 0.1204 90.5)",
-          "oklch(63% 0.1204 90.5)",
-          "oklch(75% 0.0963 90.5)",
-          "oklch(87% 0.0602 90.5)",
-          "oklch(95% 0.0241 90.5)"
+          "oklch(15% 0.0250 84.7)",
+          "oklch(27% 0.0549 84.7)",
+          "oklch(39% 0.0849 84.7)",
+          "oklch(51% 0.0999 84.7)",
+          "oklch(63% 0.0999 84.7)",
+          "oklch(75% 0.0799 84.7)",
+          "oklch(87% 0.0450 84.7)",
+          "oklch(95% 0.0200 84.7)"
+        ]
+      },
+      "accent-text": {
+        "role": "primary",
+        "displayName": "Dark Brass Text",
+        "tonalRamp": [
+          "oklch(15% 0.0052 80.0)",
+          "oklch(27% 0.0113 80.0)",
+          "oklch(39% 0.0175 80.0)",
+          "oklch(51% 0.0206 80.0)",
+          "oklch(63% 0.0206 80.0)",
+          "oklch(75% 0.0165 80.0)",
+          "oklch(87% 0.0093 80.0)",
+          "oklch(95% 0.0041 80.0)"
         ]
       },
       "accent-hover": {
         "role": "primary",
-        "displayName": "Accent Hover",
+        "displayName": "Light Brass",
         "tonalRamp": [
-          "oklch(15% 0.0154 92.9)",
-          "oklch(27% 0.0384 92.9)",
-          "oklch(39% 0.0615 92.9)",
+          "oklch(15% 0.0192 92.9)",
+          "oklch(27% 0.0423 92.9)",
+          "oklch(39% 0.0653 92.9)",
           "oklch(51% 0.0769 92.9)",
           "oklch(63% 0.0769 92.9)",
           "oklch(75% 0.0615 92.9)",
-          "oklch(87% 0.0384 92.9)",
+          "oklch(87% 0.0346 92.9)",
           "oklch(95% 0.0154 92.9)"
         ]
       },
       "accent-active": {
         "role": "primary",
-        "displayName": "Accent Active",
+        "displayName": "Pressed Brass",
         "tonalRamp": [
-          "oklch(15% 0.0249 91.0)",
-          "oklch(27% 0.0622 91.0)",
-          "oklch(39% 0.0995 91.0)",
+          "oklch(15% 0.0311 91.0)",
+          "oklch(27% 0.0684 91.0)",
+          "oklch(39% 0.1057 91.0)",
           "oklch(51% 0.1244 91.0)",
           "oklch(63% 0.1244 91.0)",
           "oklch(75% 0.0995 91.0)",
-          "oklch(87% 0.0622 91.0)",
+          "oklch(87% 0.0560 91.0)",
           "oklch(95% 0.0249 91.0)"
         ]
       },
-      "board-teal": {
+      "board-tan": {
         "role": "secondary",
-        "displayName": "Board Teal",
+        "displayName": "Board Tan",
         "tonalRamp": [
-          "oklch(15% 0.0049 196.5)",
-          "oklch(27% 0.0123 196.5)",
-          "oklch(39% 0.0197 196.5)",
-          "oklch(51% 0.0247 196.5)",
-          "oklch(63% 0.0247 196.5)",
-          "oklch(75% 0.0197 196.5)",
-          "oklch(87% 0.0123 196.5)",
-          "oklch(95% 0.0049 196.5)"
+          "oklch(15% 0.0185 63.9)",
+          "oklch(27% 0.0408 63.9)",
+          "oklch(39% 0.0630 63.9)",
+          "oklch(51% 0.0741 63.9)",
+          "oklch(63% 0.0741 63.9)",
+          "oklch(75% 0.0593 63.9)",
+          "oklch(87% 0.0333 63.9)",
+          "oklch(95% 0.0148 63.9)"
         ]
       },
       "board-cream": {
         "role": "secondary",
         "displayName": "Board Cream",
         "tonalRamp": [
-          "oklch(15% 0.0027 102.0)",
-          "oklch(27% 0.0067 102.0)",
-          "oklch(39% 0.0108 102.0)",
-          "oklch(51% 0.0135 102.0)",
-          "oklch(63% 0.0135 102.0)",
-          "oklch(75% 0.0108 102.0)",
-          "oklch(87% 0.0067 102.0)",
-          "oklch(95% 0.0027 102.0)"
+          "oklch(15% 0.0135 79.0)",
+          "oklch(27% 0.0296 79.0)",
+          "oklch(39% 0.0458 79.0)",
+          "oklch(51% 0.0538 79.0)",
+          "oklch(63% 0.0538 79.0)",
+          "oklch(75% 0.0431 79.0)",
+          "oklch(87% 0.0242 79.0)",
+          "oklch(95% 0.0108 79.0)"
         ]
       },
       "canvas": {
         "role": "neutral",
-        "displayName": "Canvas",
+        "displayName": "Ink Canvas",
         "tonalRamp": [
-          "oklch(15% 0.0000 89.9)",
-          "oklch(27% 0.0000 89.9)",
-          "oklch(39% 0.0000 89.9)",
-          "oklch(51% 0.0000 89.9)",
-          "oklch(63% 0.0000 89.9)",
-          "oklch(75% 0.0000 89.9)",
-          "oklch(87% 0.0000 89.9)",
-          "oklch(95% 0.0000 89.9)"
-        ]
-      },
-      "canvas-end": {
-        "role": "neutral",
-        "displayName": "Canvas End",
-        "tonalRamp": [
-          "oklch(15% 0.0000 89.9)",
-          "oklch(27% 0.0000 89.9)",
-          "oklch(39% 0.0000 89.9)",
-          "oklch(51% 0.0000 89.9)",
-          "oklch(63% 0.0000 89.9)",
-          "oklch(75% 0.0000 89.9)",
-          "oklch(87% 0.0000 89.9)",
-          "oklch(95% 0.0000 89.9)"
+          "oklch(15% 0.0051 258.3)",
+          "oklch(27% 0.0112 258.3)",
+          "oklch(39% 0.0173 258.3)",
+          "oklch(51% 0.0203 258.3)",
+          "oklch(63% 0.0203 258.3)",
+          "oklch(75% 0.0162 258.3)",
+          "oklch(87% 0.0091 258.3)",
+          "oklch(95% 0.0041 258.3)"
         ]
       },
       "panel": {
         "role": "neutral",
-        "displayName": "Panel",
+        "displayName": "Ink Panel",
         "tonalRamp": [
-          "oklch(15% 0.0006 197.0)",
-          "oklch(27% 0.0015 197.0)",
-          "oklch(39% 0.0023 197.0)",
-          "oklch(51% 0.0029 197.0)",
-          "oklch(63% 0.0029 197.0)",
-          "oklch(75% 0.0023 197.0)",
-          "oklch(87% 0.0015 197.0)",
-          "oklch(95% 0.0006 197.0)"
+          "oklch(15% 0.0070 257.5)",
+          "oklch(27% 0.0154 257.5)",
+          "oklch(39% 0.0237 257.5)",
+          "oklch(51% 0.0279 257.5)",
+          "oklch(63% 0.0279 257.5)",
+          "oklch(75% 0.0223 257.5)",
+          "oklch(87% 0.0126 257.5)",
+          "oklch(95% 0.0056 257.5)"
         ]
       },
-      "surface-raised": {
+      "inset": {
         "role": "neutral",
-        "displayName": "Surface Raised",
+        "displayName": "Inset Ink",
         "tonalRamp": [
-          "oklch(15% 0.0014 196.8)",
-          "oklch(27% 0.0035 196.8)",
-          "oklch(39% 0.0056 196.8)",
-          "oklch(51% 0.0070 196.8)",
-          "oklch(63% 0.0070 196.8)",
-          "oklch(75% 0.0056 196.8)",
-          "oklch(87% 0.0035 196.8)",
-          "oklch(95% 0.0014 196.8)"
-        ]
-      },
-      "field": {
-        "role": "neutral",
-        "displayName": "Field",
-        "tonalRamp": [
-          "oklch(15% 0.0009 196.9)",
-          "oklch(27% 0.0022 196.9)",
-          "oklch(39% 0.0036 196.9)",
-          "oklch(51% 0.0045 196.9)",
-          "oklch(63% 0.0045 196.9)",
-          "oklch(75% 0.0036 196.9)",
-          "oklch(87% 0.0022 196.9)",
-          "oklch(95% 0.0009 196.9)"
-        ]
-      },
-      "action-secondary": {
-        "role": "neutral",
-        "displayName": "Action Secondary",
-        "tonalRamp": [
-          "oklch(15% 0.0021 196.7)",
-          "oklch(27% 0.0053 196.7)",
-          "oklch(39% 0.0085 196.7)",
-          "oklch(51% 0.0107 196.7)",
-          "oklch(63% 0.0107 196.7)",
-          "oklch(75% 0.0085 196.7)",
-          "oklch(87% 0.0053 196.7)",
-          "oklch(95% 0.0021 196.7)"
-        ]
-      },
-      "selected": {
-        "role": "neutral",
-        "displayName": "Selected",
-        "tonalRamp": [
-          "oklch(15% 0.0026 189.3)",
-          "oklch(27% 0.0066 189.3)",
-          "oklch(39% 0.0105 189.3)",
-          "oklch(51% 0.0132 189.3)",
-          "oklch(63% 0.0132 189.3)",
-          "oklch(75% 0.0105 189.3)",
-          "oklch(87% 0.0066 189.3)",
-          "oklch(95% 0.0026 189.3)"
-        ]
-      },
-      "opened": {
-        "role": "neutral",
-        "displayName": "Opened",
-        "tonalRamp": [
-          "oklch(15% 0.0030 183.1)",
-          "oklch(27% 0.0076 183.1)",
-          "oklch(39% 0.0121 183.1)",
-          "oklch(51% 0.0151 183.1)",
-          "oklch(63% 0.0151 183.1)",
-          "oklch(75% 0.0121 183.1)",
-          "oklch(87% 0.0076 183.1)",
-          "oklch(95% 0.0030 183.1)"
-        ]
-      },
-      "text": {
-        "role": "neutral",
-        "displayName": "Text",
-        "tonalRamp": [
-          "oklch(15% 0.0000 89.9)",
-          "oklch(27% 0.0000 89.9)",
-          "oklch(39% 0.0000 89.9)",
-          "oklch(51% 0.0000 89.9)",
-          "oklch(63% 0.0000 89.9)",
-          "oklch(75% 0.0000 89.9)",
-          "oklch(87% 0.0000 89.9)",
-          "oklch(95% 0.0000 89.9)"
-        ]
-      },
-      "heading": {
-        "role": "neutral",
-        "displayName": "Heading",
-        "tonalRamp": [
-          "oklch(15% 0.0005 165.1)",
-          "oklch(27% 0.0013 165.1)",
-          "oklch(39% 0.0020 165.1)",
-          "oklch(51% 0.0025 165.1)",
-          "oklch(63% 0.0025 165.1)",
-          "oklch(75% 0.0020 165.1)",
-          "oklch(87% 0.0013 165.1)",
-          "oklch(95% 0.0005 165.1)"
-        ]
-      },
-      "text-secondary": {
-        "role": "neutral",
-        "displayName": "Text Secondary",
-        "tonalRamp": [
-          "oklch(15% 0.0018 197.0)",
-          "oklch(27% 0.0044 197.0)",
-          "oklch(39% 0.0071 197.0)",
-          "oklch(51% 0.0089 197.0)",
-          "oklch(63% 0.0089 197.0)",
-          "oklch(75% 0.0071 197.0)",
-          "oklch(87% 0.0044 197.0)",
-          "oklch(95% 0.0018 197.0)"
-        ]
-      },
-      "text-muted": {
-        "role": "neutral",
-        "displayName": "Text Muted",
-        "tonalRamp": [
-          "oklch(15% 0.0000 89.9)",
-          "oklch(27% 0.0000 89.9)",
-          "oklch(39% 0.0000 89.9)",
-          "oklch(51% 0.0000 89.9)",
-          "oklch(63% 0.0000 89.9)",
-          "oklch(75% 0.0000 89.9)",
-          "oklch(87% 0.0000 89.9)",
-          "oklch(95% 0.0000 89.9)"
+          "oklch(15% 0.0061 256.5)",
+          "oklch(27% 0.0135 256.5)",
+          "oklch(39% 0.0208 256.5)",
+          "oklch(51% 0.0245 256.5)",
+          "oklch(63% 0.0245 256.5)",
+          "oklch(75% 0.0196 256.5)",
+          "oklch(87% 0.0110 256.5)",
+          "oklch(95% 0.0049 256.5)"
         ]
       },
       "line": {
         "role": "neutral",
-        "displayName": "Line",
+        "displayName": "Slate Divider",
         "tonalRamp": [
-          "oklch(15% 0.0016 196.8)",
-          "oklch(27% 0.0039 196.8)",
-          "oklch(39% 0.0063 196.8)",
-          "oklch(51% 0.0079 196.8)",
-          "oklch(63% 0.0079 196.8)",
-          "oklch(75% 0.0063 196.8)",
-          "oklch(87% 0.0039 196.8)",
-          "oklch(95% 0.0016 196.8)"
+          "oklch(15% 0.0086 253.6)",
+          "oklch(27% 0.0190 253.6)",
+          "oklch(39% 0.0293 253.6)",
+          "oklch(51% 0.0345 253.6)",
+          "oklch(63% 0.0345 253.6)",
+          "oklch(75% 0.0276 253.6)",
+          "oklch(87% 0.0155 253.6)",
+          "oklch(95% 0.0069 253.6)"
         ]
       },
-      "panel-border": {
+      "surface-raised": {
         "role": "neutral",
-        "displayName": "Panel Border",
+        "displayName": "Raised Ink",
         "tonalRamp": [
-          "oklch(15% 0.0000 89.9)",
-          "oklch(27% 0.0000 89.9)",
-          "oklch(39% 0.0000 89.9)",
-          "oklch(51% 0.0000 89.9)",
-          "oklch(63% 0.0000 89.9)",
-          "oklch(75% 0.0000 89.9)",
-          "oklch(87% 0.0000 89.9)",
-          "oklch(95% 0.0000 89.9)"
+          "oklch(15% 0.0092 256.6)",
+          "oklch(27% 0.0203 256.6)",
+          "oklch(39% 0.0313 256.6)",
+          "oklch(51% 0.0369 256.6)",
+          "oklch(63% 0.0369 256.6)",
+          "oklch(75% 0.0295 256.6)",
+          "oklch(87% 0.0166 256.6)",
+          "oklch(95% 0.0074 256.6)"
+        ]
+      },
+      "surface-hover": {
+        "role": "neutral",
+        "displayName": "Raised Ink Hover",
+        "tonalRamp": [
+          "oklch(15% 0.0110 253.8)",
+          "oklch(27% 0.0242 253.8)",
+          "oklch(39% 0.0374 253.8)",
+          "oklch(51% 0.0440 253.8)",
+          "oklch(63% 0.0440 253.8)",
+          "oklch(75% 0.0352 253.8)",
+          "oklch(87% 0.0198 253.8)",
+          "oklch(95% 0.0088 253.8)"
         ]
       },
       "field-border": {
         "role": "neutral",
-        "displayName": "Field Border",
+        "displayName": "Field Stroke",
         "tonalRamp": [
-          "oklch(15% 0.0022 196.8)",
-          "oklch(27% 0.0056 196.8)",
-          "oklch(39% 0.0089 196.8)",
-          "oklch(51% 0.0112 196.8)",
-          "oklch(63% 0.0112 196.8)",
-          "oklch(75% 0.0089 196.8)",
-          "oklch(87% 0.0056 196.8)",
-          "oklch(95% 0.0022 196.8)"
+          "oklch(15% 0.0097 251.3)",
+          "oklch(27% 0.0214 251.3)",
+          "oklch(39% 0.0330 251.3)",
+          "oklch(51% 0.0388 251.3)",
+          "oklch(63% 0.0388 251.3)",
+          "oklch(75% 0.0311 251.3)",
+          "oklch(87% 0.0175 251.3)",
+          "oklch(95% 0.0078 251.3)"
         ]
       },
-      "action-border": {
+      "text": {
         "role": "neutral",
-        "displayName": "Action Border",
+        "displayName": "Ice White",
         "tonalRamp": [
-          "oklch(15% 0.0035 181.3)",
-          "oklch(27% 0.0087 181.3)",
-          "oklch(39% 0.0140 181.3)",
-          "oklch(51% 0.0175 181.3)",
-          "oklch(63% 0.0175 181.3)",
-          "oklch(75% 0.0140 181.3)",
-          "oklch(87% 0.0087 181.3)",
-          "oklch(95% 0.0035 181.3)"
+          "oklch(15% 0.0004 247.8)",
+          "oklch(27% 0.0009 247.8)",
+          "oklch(39% 0.0015 247.8)",
+          "oklch(51% 0.0017 247.8)",
+          "oklch(63% 0.0017 247.8)",
+          "oklch(75% 0.0014 247.8)",
+          "oklch(87% 0.0008 247.8)",
+          "oklch(95% 0.0003 247.8)"
+        ]
+      },
+      "text-secondary": {
+        "role": "neutral",
+        "displayName": "Muted Blue-Gray",
+        "tonalRamp": [
+          "oklch(15% 0.0058 254.4)",
+          "oklch(27% 0.0128 254.4)",
+          "oklch(39% 0.0197 254.4)",
+          "oklch(51% 0.0232 254.4)",
+          "oklch(63% 0.0232 254.4)",
+          "oklch(75% 0.0186 254.4)",
+          "oklch(87% 0.0104 254.4)",
+          "oklch(95% 0.0046 254.4)"
         ]
       }
     },
     "typographyMeta": {
-      "headline": {
-        "displayName": "Page headline",
-        "purpose": "Primary page heading; 28px at narrow widths."
+      "review-title": {
+        "displayName": "Review title",
+        "purpose": "Game review heading."
       },
-      "body": {
-        "displayName": "Shared sans",
-        "purpose": "Inter is named but not bundled; system sans is the installed fallback."
+      "module-title": {
+        "displayName": "Module title",
+        "purpose": "Compact Engine, Evaluation history, Coach, and Moves headings."
+      },
+      "control": {
+        "displayName": "Control",
+        "purpose": "Shared button, input, and select scale."
+      },
+      "numeric-detail": {
+        "displayName": "Numeric detail",
+        "purpose": "Accuracy and other compact supporting data."
       }
     },
     "shadows": [
       {
-        "name": "selected-tab",
-        "value": "inset 0 -2px #eac96a",
-        "purpose": "Underline the selected review tab."
-      },
-      {
         "name": "last-move",
         "value": "inset 0 0 0 3px #181818, inset 0 0 0 6px #eac96a",
-        "purpose": "Identify both last-move squares."
+        "purpose": "Marks the recorded move's origin and destination squares."
       }
     ],
     "motion": [
       {
-        "name": "button-feedback",
+        "name": "button-colors",
         "value": "background-color 150ms ease-out, border-color 150ms ease-out",
-        "purpose": "Button feedback; disabled by prefers-reduced-motion: reduce."
+        "purpose": "Shared button feedback. Disabled under reduced motion."
       }
     ],
     "breakpoints": [
       {
-        "name": "desktop-review",
+        "name": "review-two-columns",
         "value": "1024px"
       },
       {
-        "name": "compact-gutters-max",
-        "value": "767px"
+        "name": "review-desktop-scroll-height",
+        "value": "740px"
       },
       {
-        "name": "narrow-library-max",
-        "value": "600px"
+        "name": "compact-board-and-coach-max-width",
+        "value": "540px"
       }
     ]
   },
   "components": [
     {
-      "name": "Primary action",
+      "name": "Find games",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Gold search action.",
+      "description": "Brass primary action for public-game discovery.",
       "html": "<button class=\"ds-primary\">Find games</button>",
-      "css": ".ds-primary{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:14px;min-height:44px;padding:10px 12px;border:1px solid #63716e;border-radius:8px;cursor:pointer;transition:background-color 150ms ease-out,border-color 150ms ease-out;padding-inline:22px;background:var(--accent,#eac96a);color:#181818;border-color:transparent;font-weight:600}.ds-primary:hover{background:#f6e4aa}.ds-primary:active{background:#d9b854}.ds-primary:focus-visible{outline:2px solid var(--accent,#eac96a);outline-offset:3px;} @media(prefers-reduced-motion:reduce){button{transition:none}}"
+      "css": ".ds-primary { font: 14px ui-sans-serif, system-ui, sans-serif; font-weight: 600; min-height: 44px; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: background-color 150ms ease-out, border-color 150ms ease-out; background: var(--accent, #e9c67d); color: var(--accent-text, #1e180e); border: 1px solid transparent; padding-inline: 22px; } .ds-primary:hover { background: #f6e4aa; } .ds-primary:active { background: #d9b854; } .ds-primary:focus-visible { outline: 2px solid var(--accent, #e9c67d); outline-offset: 3px; } @media (prefers-reduced-motion: reduce) { .ds-primary { transition: none; } }"
     },
     {
-      "name": "Secondary action",
+      "name": "Settings trigger",
       "kind": "button",
       "refersTo": "button-secondary",
-      "description": "Quiet action used on library rows.",
-      "html": "<button class=\"ds-secondary\">Open game</button>",
-      "css": ".ds-secondary{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:14px;min-height:44px;padding:10px 12px;border:1px solid #63716e;border-radius:8px;cursor:pointer;transition:background-color 150ms ease-out,border-color 150ms ease-out;background:#363e3e;color:#f1f3f2;font-weight:600}.ds-secondary:hover{background:#f6e4aa;color:#181818}.ds-secondary:active{background:#d9b854;color:#181818}.ds-secondary:focus-visible{outline:2px solid var(--accent,#eac96a);outline-offset:3px;} @media(prefers-reduced-motion:reduce){button{transition:none}}"
+      "description": "Raised ink action within the Engine module.",
+      "html": "<button class=\"ds-secondary\" aria-haspopup=\"dialog\">Settings</button>",
+      "css": ".ds-secondary { font: 14px ui-sans-serif, system-ui, sans-serif; font-weight: 600; min-height: 44px; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: background-color 150ms ease-out, border-color 150ms ease-out; background: var(--surface-raised, #263345); color: var(--text, #f3f4f5); border: 1px solid var(--line, #354354); } .ds-secondary:hover { background: #35475d; } .ds-secondary:active { background: #35475d; } .ds-secondary:focus-visible { outline: 2px solid var(--accent, #e9c67d); outline-offset: 3px; } @media (prefers-reduced-motion: reduce) { .ds-secondary { transition: none; } }"
     },
     {
       "name": "Username field",
       "kind": "input",
       "refersTo": "input",
-      "description": "Explicitly labeled public username input.",
-      "html": "<label class=\"ds-label\">Chess.com username<input class=\"ds-input\" placeholder=\"e.g. your Chess.com username\" /></label>",
-      "css": ".ds-label{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:14px;display:grid;gap:8px;color:#eeeeee}.ds-input{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:14px;min-height:44px;padding:10px 12px;background:#1d2020;color:#eeeeee;border:1px solid #596262;border-radius:8px;caret-color:var(--accent,#eac96a)}.ds-input::placeholder{color:#a5afaf}.ds-input:hover{border-color:#899595}.ds-input:focus-visible{outline:2px solid var(--accent,#eac96a);outline-offset:3px;} @media(prefers-reduced-motion:reduce){button{transition:none}}"
+      "description": "A visible label above an inset field.",
+      "html": "<label class=\"ds-field\">Chess.com username<input autocomplete=\"username\"></label>",
+      "css": ".ds-field { display: grid; gap: 8px; font: 14px ui-sans-serif, system-ui, sans-serif; color: var(--text, #f3f4f5); } .ds-field input { box-sizing: border-box; font: 14px ui-sans-serif, system-ui, sans-serif; min-height: 44px; padding: 10px 12px; border: 1px solid #536579; border-radius: 8px; background: var(--inset, #151d28); color: inherit; } .ds-field input:hover { border-color: #899595; } .ds-field input:focus-visible { outline: 2px solid var(--accent, #e9c67d); outline-offset: 3px; }"
     },
     {
-      "name": "Selected time filter",
-      "kind": "chip",
-      "refersTo": "filter-selected",
-      "description": "Pressed-state filter with local Lucide timer geometry.",
-      "html": "<button class=\"ds-filter\" aria-pressed=\"true\"><svg aria-hidden=\"true\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><line x1=\"10\" x2=\"14\" y1=\"2\" y2=\"2\"/><line x1=\"12\" x2=\"15\" y1=\"14\" y2=\"11\"/><circle cx=\"12\" cy=\"14\" r=\"8\"/></svg>Rapid</button>",
-      "css": ".ds-filter{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:14px;min-height:44px;padding:10px 12px;border:1px solid #63716e;border-radius:8px;cursor:pointer;transition:background-color 150ms ease-out,border-color 150ms ease-out;display:inline-flex;align-items:center;gap:8px;background:#3b4544;color:#fff;border-color:#748782;font-weight:500}.ds-filter:hover{background:#363e3e}.ds-filter:focus-visible{outline:2px solid var(--accent,#eac96a);outline-offset:3px;} @media(prefers-reduced-motion:reduce){button{transition:none}}"
+      "name": "Back to library",
+      "kind": "nav",
+      "refersTo": "button-secondary",
+      "description": "The return action at the start of the review header.",
+      "html": "<button class=\"ds-back\">Back to library</button>",
+      "css": ".ds-back { font: 14px ui-sans-serif, system-ui, sans-serif; font-weight: 600; min-height: 44px; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: background-color 150ms ease-out, border-color 150ms ease-out; background: var(--surface-raised, #263345); color: var(--text, #f3f4f5); border: 1px solid var(--line, #354354); } .ds-back:hover { background: #35475d; } .ds-back:active { background: #35475d; } .ds-back:focus-visible { outline: 2px solid var(--accent, #e9c67d); outline-offset: 3px; } @media (prefers-reduced-motion: reduce) { .ds-back { transition: none; } }"
     },
     {
-      "name": "Panel",
+      "name": "Evaluation history",
+      "kind": "custom",
+      "refersTo": "panel",
+      "description": "Inset plot with a gold selected-ply marker and a focusable range control.",
+      "html": "<section class=\"ds-graph\"><h2>Evaluation history</h2><div class=\"ds-track\"><svg viewBox=\"0 0 1000 100\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><path d=\"M0 50H1000\" stroke=\"#8f9693\"/><path d=\"M0 50Q160 54 260 45T510 39T1000 46V100H0Z\" fill=\"#f0e6d6\" opacity=\".9\"/><path d=\"M0 50Q160 54 260 45T510 39T1000 46V0H0Z\" fill=\"#424b42\"/><path d=\"M0 50Q160 54 260 45T510 39T1000 46\" stroke=\"#ACC65B\" stroke-width=\"2\" vector-effect=\"non-scaling-stroke\" fill=\"none\"/><path d=\"M500 0V100\" stroke=\"#eac96a\" stroke-width=\"2\" vector-effect=\"non-scaling-stroke\"/></svg><input type=\"range\" aria-label=\"Position on graph\"></div></section>",
+      "css": ".ds-graph { background: var(--panel, #1a2330); color: var(--text, #f3f4f5); border: 1px solid var(--line, #354354); border-radius: 12px; padding: 12px; } .ds-graph h2 { font: 700 15px ui-sans-serif, system-ui, sans-serif; margin: 0; } .ds-track { position: relative; margin-top: 6px; } .ds-track svg { display: block; width: 100%; height: 44px; background: var(--inset, #151d28); } .ds-track input { position: absolute; inset: 0; appearance: none; border: 0; border-radius: 3px; padding: 0; margin: 0; width: 100%; height: 100%; cursor: crosshair; background: transparent; } .ds-track input::-webkit-slider-thumb { appearance: none; width: 12px; height: 26px; background: transparent; } .ds-track input::-moz-range-thumb { width: 12px; height: 26px; border: 0; background: transparent; } .ds-track input:focus-visible { outline: 2px solid var(--accent, #e9c67d); outline-offset: 3px; }"
+    },
+    {
+      "name": "Paired moves",
+      "kind": "custom",
+      "refersTo": "move-selected",
+      "description": "Full-move rows pair White and Black SAN and show the current ply in brass.",
+      "html": "<section class=\"ds-moves\"><h2>Moves</h2><div class=\"ds-move-columns\"><span>#</span><span>White</span><span>Black</span></div><ol aria-label=\"Game moves\"><li><span>1.</span><button aria-current=\"step\">e4</button><button>e5</button></li><li><span>2.</span><button>Nf3</button><button>Nc6</button></li></ol></section>",
+      "css": ".ds-moves { background: var(--panel, #1a2330); color: var(--text, #f3f4f5); border: 1px solid var(--line, #354354); border-radius: 12px; font: 14px ui-sans-serif, system-ui, sans-serif; padding: 12px; font-variant-numeric: tabular-nums; } .ds-moves h2 { font-size: 15px; margin: 0; } .ds-move-columns, .ds-moves li { display: grid; grid-template-columns: 3ch repeat(2, minmax(0, 1fr)); gap: 8px; align-items: center; } .ds-move-columns { margin-top: 6px; padding: 4px 8px; color: var(--text-secondary, #b6c1cf); font-size: 12px; } .ds-moves ol { border: 1px solid var(--line, #354354); border-radius: 8px; padding: 4px; margin: 0; list-style: none; } .ds-moves li { padding: 2px 4px; } .ds-moves li:nth-child(odd) { background: var(--inset, #151d28); } .ds-moves button { font: 14px ui-sans-serif, system-ui, sans-serif; font-weight: 600; min-height: 44px; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: background-color 150ms ease-out, border-color 150ms ease-out; text-align: left; background: transparent; border: 1px solid transparent; color: inherit; font-weight: 400; } .ds-moves button:not([aria-current]):hover { background: var(--surface-raised, #263345); } .ds-moves button[aria-current=step] { background: var(--accent, #e9c67d); color: var(--accent-text, #1e180e); border: 1px solid transparent; font-weight: 700; } .ds-moves button:focus-visible { outline: 2px solid var(--accent, #e9c67d); outline-offset: 3px; } @media (prefers-reduced-motion: reduce) { .ds-moves button { transition: none; } }"
+    },
+    {
+      "name": "Engine module",
       "kind": "card",
       "refersTo": "panel",
-      "description": "Flat bordered material shared by search and library.",
-      "html": "<section class=\"ds-panel\"><h2>Game library</h2><p>Recent games, ready for a closer look.</p></section>",
-      "css": ".ds-panel{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:14px;background:#242626;color:#eeeeee;border:1px solid #3b3b3b;border-radius:12px;padding:24px}.ds-panel h2{font-size:20px;font-weight:500;letter-spacing:-.02em;color:#f1f3f2;margin:0 0 8px}.ds-panel p{color:#b8b8b8;font-size:15px;line-height:1.65;margin:0} @media(prefers-reduced-motion:reduce){button{transition:none}}"
-    },
-    {
-      "name": "Review tabs",
-      "kind": "nav",
-      "refersTo": "panel",
-      "description": "Flat tab navigation with gold inset selection.",
-      "html": "<div class=\"ds-tabs\" role=\"tablist\" aria-label=\"Game review\"><button role=\"tab\" aria-selected=\"true\">Analysis</button><button role=\"tab\" aria-selected=\"false\">Review</button><button role=\"tab\" aria-selected=\"false\">Chess guidance</button></div>",
-      "css": ".ds-tabs{display:flex;background:#242626;border-bottom:1px solid var(--line,#414747)}.ds-tabs button{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:14px;flex:1;min-height:44px;padding:12px 8px;background:transparent;border:0;color:#b8b8b8;font-weight:500;cursor:pointer}.ds-tabs [aria-selected=\"true\"]{background:#303837;color:#fff;box-shadow:inset 0 -2px #eac96a}.ds-tabs button:hover{background:#343c3b}.ds-tabs button:focus-visible{outline:2px solid var(--accent,#eac96a);outline-offset:3px;outline-offset:-4px} @media(prefers-reduced-motion:reduce){button{transition:none}}"
+      "description": "A flat panel with a depth readout and ranked lines divided by thin rules.",
+      "html": "<section class=\"ds-engine\"><header><h2>Stockfish</h2><span>Depth 18</span></header><ol aria-label=\"Engine variations\"><li><strong>PV</strong><span>Nf3 Nc6 Bb5</span></li><li><strong>+0.24</strong><span>Bc4 Nf6</span></li></ol></section>",
+      "css": ".ds-engine { background: var(--panel, #1a2330); color: var(--text, #f3f4f5); border: 1px solid var(--line, #354354); border-radius: 12px; padding: 12px; font: 13px ui-sans-serif, system-ui, sans-serif; } .ds-engine header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; } .ds-engine h2 { font-size: 15px; margin: 0; } .ds-engine header span { color: var(--text-secondary, #b6c1cf); font-size: 12px; } .ds-engine ol { list-style: none; padding: 0; margin: 4px 0; } .ds-engine li { display: grid; grid-template-columns: 6ch minmax(0, 1fr); gap: 8px; padding: 4px 6px; font-weight: 500; font-variant-numeric: tabular-nums; } .ds-engine li + li { border-top: 1px solid var(--line, #354354); } .ds-engine strong { color: var(--accent, #e9c67d); }"
     }
   ],
   "narrative": {
-    "northStar": "The Quiet Review Workspace",
-    "overview": "Chess Tutor uses the approved quiet charcoal Operate direction: a practical tool whose visual emphasis belongs to the chess position and the next useful action. The existing teal and cream board remains the recognizable center of the review.  Flat bordered surfaces, one sans family, and compact explanatory text support careful reading. Gold connects actions, keyboard focus, and the current move. This records the implemented interface, not release or accessibility gate status.",
+    "northStar": "The Chess Review Workbench",
+    "overview": "The warm chessboard anchors a compact ink-blue workbench. Distinct modules make engine evidence, evaluation history, coaching, and paired notation easy to scan alongside the position. Brass draws attention to the current move and primary actions.",
     "keyCharacteristics": [
-      "Charcoal surfaces with quiet dividers.",
-      "Teal and cream chessboard with gold move emphasis.",
-      "Consistent sans typography and tabular chess numbers.",
-      "Flat controls with visible keyboard focus."
+      "Tan and cream squares with locally served Merida pieces.",
+      "Flat ink-blue panels with restrained brass selection.",
+      "One system sans stack with tabular scores and move numbers.",
+      "A graph that also serves as the position scrubber."
     ],
-    "rules": [
-      {
-        "name": "The Board Identity Rule",
-        "body": "Preserve teal and cream squares; use gold to identify selected moves and actions rather than recoloring the board.",
-        "section": "colors"
-      },
-      {
-        "name": "The One Voice Rule",
-        "body": "Use the shared sans stack for interface text and reserve monospace for literal position notation.",
-        "section": "typography"
-      },
-      {
-        "name": "The Flat Surface Rule",
-        "body": "Use borders and tone to separate tool surfaces; reserve inset emphasis for selected state.",
-        "section": "elevation"
-      }
-    ],
+    "rules": [],
     "dos": [
-      "**Do** preserve the teal and cream board with gold move emphasis.",
-      "**Do** use the shared sans family stack and tabular numbers for chess data.",
-      "**Do** keep controls at least 44px high and show a visible keyboard focus state.",
-      "**Do** use local SVG icons with their text labels and retain asset licenses.",
-      "**Do** preserve the desktop 60/40 review split and stack it below 1024px."
+      "Use brass for the current move, primary actions, and keyboard focus.",
+      "Keep each game in a divided library row and each chess move in its color column.",
+      "Use the evaluation graph itself for scrubbing and preserve visible replay controls.",
+      "Keep the coach note primary and voice playback user-initiated."
     ],
-    "donts": [
-      "**Don't** introduce decorative glyph icons or a competing display typeface.",
-      "**Don't** turn individual library games into a grid of cards.",
-      "**Don't** add ambient card shadows to the flat charcoal surfaces.",
-      "**Don't** treat the named Inter family as an installed font guarantee."
-    ]
+    "donts": []
   }
 }

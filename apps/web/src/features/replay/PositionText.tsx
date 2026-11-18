@@ -12,9 +12,7 @@ const pieceNames: Record<string, string> = {
 export function PositionText({ fen }: { fen: string }) {
   const pieces = fenStringToPositionObject(fen, 8, 8);
   return (
-    <details className="position-text">
-      <summary>Text position and FEN</summary>
-      <p>Occupied squares are listed below; all other squares are empty.</p>
+    <div className="visually-hidden">
       <table>
         <caption>Position pieces</caption>
         <thead>
@@ -38,6 +36,6 @@ export function PositionText({ fen }: { fen: string }) {
       <p aria-label="Position FEN" className="fen">
         {fen}
       </p>
-    </details>
+    </div>
   );
 }

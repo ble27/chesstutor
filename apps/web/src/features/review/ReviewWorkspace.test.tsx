@@ -22,7 +22,7 @@ function ReviewHarness({ game = imported }: { game?: Game }) {
   );
 }
 
-it("renders engine-supplied evaluations and keeps the analysis session through tab navigation", async () => {
+it("renders engine-supplied evaluations and keeps one analysis session while navigating moves", async () => {
   const evidence = completedAnalysis.evidence[0];
   if (!evidence) throw new Error("Missing fixture");
   const fetcher = vi.fn().mockResolvedValue(Response.json(completedAnalysis));
@@ -30,19 +30,15 @@ it("renders engine-supplied evaluations and keeps the analysis session through t
   render(<ReviewHarness />);
   fireEvent.click(screen.getByRole("button", { name: "Quick review" }));
   expect(
-    await screen.findByText("+1.20", { selector: ".position-score strong" }),
+    await screen.findByText("+1.20", { selector: ".line-score" }),
   ).toBeVisible();
   expect(screen.getByRole("list", { name: "Engine variations" })).toBeVisible();
   fireEvent.click(screen.getByRole("button", { name: "Next move" }));
-  expect(screen.getByText(/White evaluation · after e4/)).toBeVisible();
+  expect(screen.getByText("+1.20", { selector: ".line-score" })).toBeVisible();
   expect(
     screen.queryByRole("list", { name: "Engine variations" }),
   ).not.toBeInTheDocument();
-  fireEvent.click(screen.getByRole("tab", { name: "Review" }));
-  fireEvent.keyDown(screen.getByRole("tab", { name: "Review" }), {
-    key: "Home",
-  });
-  expect(screen.getByRole("tab", { name: "Analysis" })).toHaveFocus();
+  expect(screen.queryByRole("tablist")).not.toBeInTheDocument();
   expect(screen.getByRole("button", { name: "1. White: e4" })).toHaveAttribute(
     "aria-current",
     "step",
@@ -59,7 +55,7 @@ it("synchronizes consecutive White and Black positions with engine values in bot
   render(<ReviewHarness game={analysisGame} />);
   fireEvent.click(screen.getByRole("button", { name: "Quick review" }));
   expect(
-    await screen.findByText("+1.20", { selector: ".position-score strong" }),
+    await screen.findByText("+1.20", { selector: ".line-score" }),
   ).toBeVisible();
   for (const [control, score] of [
     ["Next move", "-0.35"],
@@ -70,9 +66,7 @@ it("synchronizes consecutive White and Black positions with engine values in bot
   ]) {
     if (!control || !score) throw new Error("Missing navigation step");
     fireEvent.click(screen.getByRole("button", { name: control }));
-    expect(
-      screen.getByText(score, { selector: ".position-score strong" }),
-    ).toBeVisible();
+    expect(screen.getByText(score, { selector: ".line-score" })).toBeVisible();
   }
 });
 
@@ -99,7 +93,7 @@ it("replaces pending evidence when a poll supplies the selected position without
   expect(screen.queryByText("+0.18")).not.toBeInTheDocument();
 });
 
-it("retains selected-move labels and coverage and restores focus after opening a critical moment", async () => {
+it("puts move classifications on their selectable rows without extra jump controls", async () => {
   const evidence = completedAnalysis.evidence[0];
   if (!evidence) throw new Error("Missing evidence");
   const payload = {
@@ -136,33 +130,26 @@ it("retains selected-move labels and coverage and restores focus after opening a
   render(<ReviewHarness />);
   fireEvent.click(screen.getByRole("button", { name: "Quick review" }));
   await screen.findByRole("status", { name: "Analysis progress" });
-  fireEvent.click(screen.getByRole("tab", { name: "Review" }));
-  expect(screen.getByText("1 of 1 plies classified")).toBeVisible();
-  const moment = screen.getByRole("button", {
-    name: "Inspect ply 1 · blunder",
-  });
-  moment.focus();
-  fireEvent.click(moment);
-  expect(screen.getByRole("tab", { name: "Analysis" })).toHaveFocus();
+  const move = screen.getByRole("button", { name: "1. White: e4" });
+  expect(move).toHaveAccessibleDescription("Blunder");
+  fireEvent.click(move);
+  expect(move).toHaveAttribute("aria-current", "step");
   expect(
-    screen.getByText(/Independent classification: blunder/),
-  ).toHaveTextContent("Quick is provisional");
+    screen.queryByRole("button", { name: /Inspect ply/ }),
+  ).not.toBeInTheDocument();
 });
 
-it("keeps navigation inside the tabbed workspace and preserves selection across tabs", () => {
+it("keeps navigation and the coach available alongside paired moves", () => {
   render(<ReviewHarness />);
-  const review = screen.getByRole("region", { name: "Game review" });
+  const review = screen.getByRole("complementary", { name: "Game insights" });
   expect(
     within(review).getByRole("navigation", { name: "Replay controls" }),
   ).toBeVisible();
   expect(
-    screen.queryByRole("heading", { name: "Game moves" }),
-  ).not.toBeInTheDocument();
+    within(review).getByRole("region", { name: "Move coach" }),
+  ).toBeVisible();
   fireEvent.click(within(review).getByRole("button", { name: "Next move" }));
-  fireEvent.click(screen.getByRole("tab", { name: "Review" }));
   expect(screen.getByRole("button", { name: "Previous move" })).toBeEnabled();
-  expect(screen.getByText(/Run a review to get chess guidance/)).toBeVisible();
-  fireEvent.click(screen.getByRole("tab", { name: "Analysis" }));
   expect(screen.getByRole("button", { name: "1. White: e4" })).toHaveAttribute(
     "aria-current",
     "step",

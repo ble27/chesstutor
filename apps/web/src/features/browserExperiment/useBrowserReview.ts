@@ -6,9 +6,7 @@ import { runBrowserReview } from "./run";
 export function useBrowserReview(game: Game, threads: number) {
   const [values, setValues] = useState<Evidence[]>([]);
   const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState(
-    "Ready. Engine assets download on first use.",
-  );
+  const [message, setMessage] = useState("Ready");
   const [error, setError] = useState<string | null>(null);
   const controller = useRef<AbortController | null>(null);
   useEffect(() => () => controller.current?.abort(), []);
@@ -56,9 +54,7 @@ export function useBrowserReview(game: Game, threads: number) {
   const cancel = () => {
     controller.current?.abort();
     setBusy(false);
-    setMessage(
-      "Cancelled. Completed local positions retained; review again to resume.",
-    );
+    setMessage("Cancelled");
   };
   return { values, busy, message, error, run, cancel };
 }

@@ -68,13 +68,12 @@ for (const width of [320, 390, 768, 1024, 1440]) {
       page.getByRole("list", { name: "Recent games" }).getByRole("listitem"),
     ).toHaveCount(2);
     await expect(page.getByText("32 moves", { exact: true })).toBeVisible();
-    const filter = page.getByRole("group", { name: "Filter by time control" });
-    await filter.getByRole("button", { name: "Blitz" }).click();
-    await expect(filter.getByRole("button", { name: "Blitz" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
-    await filter.getByRole("button", { name: "All games" }).click();
+    const filter = page.getByLabel("Time control");
+    await filter.selectOption("blitz");
+    await page.getByRole("button", { name: "Apply filters" }).click();
+    await expect(filter).toHaveValue("blitz");
+    await filter.selectOption("");
+    await page.getByRole("button", { name: "Apply filters" }).click();
     if (process.env.CAPTURE_UI && [390, 1440].includes(width)) {
       await page.evaluate(() => window.scrollTo(0, 0));
       await page.screenshot({
@@ -86,26 +85,18 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await expect(
       page.getByRole("region", { name: "Game replay" }),
     ).toBeFocused();
-    await page.getByLabel("Engine settings").click();
+    await page.getByRole("button", { name: "Engine settings" }).click();
     await page.getByLabel("Server review").selectOption("deep");
     await page.getByRole("button", { name: "Run review" }).click();
     await page.getByRole("button", { name: "Next move" }).click();
-    await expect(page.locator(".position-score strong")).toBeVisible();
-    await page.getByRole("tab", { name: "Review", exact: true }).click();
+    await expect(page.locator(".evaluation-rail strong")).toBeVisible();
     await expect(
-      page.getByRole("region", { name: "Classification summary" }),
+      page.getByRole("region", { name: "Moves", exact: true }),
     ).toBeVisible();
-    await page.getByRole("tab", { name: "Analysis", exact: true }).click();
-    if (width >= 1024) {
-      const board = await page.locator(".board-frame").boundingBox();
-      const analysis = await page
-        .getByRole("region", { name: "Game review", exact: true })
-        .boundingBox();
-      expect(board && analysis && board.width / analysis.width).toBeCloseTo(
-        1.5,
-        1,
-      );
-    }
+    await expect(
+      page.getByRole("region", { name: "Move coach" }),
+    ).toBeVisible();
+    await expect(page.getByRole("tablist")).toHaveCount(0);
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= window.innerWidth,

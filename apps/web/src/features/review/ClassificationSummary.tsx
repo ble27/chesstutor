@@ -35,25 +35,6 @@ export function ClassificationSummary({
           : "Summary so far · analysis incomplete"}
       </h3>
       <ClassificationTable columns={columns} players={players} />
-      <details className="summary-method">
-        <summary>How these numbers work</summary>
-        <p>
-          Chess Tutor accuracy — Lichess-inspired (logistic-v1). Win% = 100 / (1
-          + exp(−0.00368208 × centipawns)). Move accuracy = clamp(103.1668 ×
-          exp(−0.04354 × Win% loss) − 3.1669, 0, 100). Game accuracy blends the
-          harmonic and volatility-weighted means. Only usable, unbounded score
-          pairs count; missing scores stay unavailable. This independent metric
-          is not Chess.com CAPS.
-          {accuracy &&
-            !accuracy.complete &&
-            " Accuracy coverage is incomplete."}
-        </p>
-        <p>
-          One primary label per ply: Brilliant, then Great, then Miss, otherwise
-          the base label. Brilliance is heuristic. Quick results may change
-          after Deep analysis.
-        </p>
-      </details>
       {summary.critical_moments.map((moment) => (
         <p key={moment.ply}>
           Critical moment: ply {moment.ply} · {moment.mover} · {moment.label}

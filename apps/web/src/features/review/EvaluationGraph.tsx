@@ -24,28 +24,29 @@ export function EvaluationGraph({
   const series = evaluationSeries(game, evidence);
   const last = game.positions.length - 1;
   return (
-    <section className="evaluation-graph" aria-label="Game evaluation graph">
-      <GraphCanvas
-        series={series}
-        selectedPly={selectedPly}
-        select={select}
-        reviews={reviews}
-      />
-      <label>
-        Position on graph
+    <section
+      className="panel evaluation-graph"
+      aria-label="Game evaluation graph"
+    >
+      <div className="module-heading">
+        <h2>Evaluation history</h2>
+      </div>
+      <div className="graph-track">
+        <GraphCanvas
+          series={series}
+          selectedPly={selectedPly}
+          reviews={reviews}
+        />
         <input
           type="range"
           min={0}
           max={last}
           value={selectedPly}
           onChange={(event) => select(Number(event.target.value))}
+          aria-label="Position on graph"
           aria-valuetext={`Ply ${selectedPly}: ${series[selectedPly]?.label ?? "evaluation pending"}, White perspective`}
         />
-      </label>
-      <p aria-live="polite">
-        Ply {selectedPly} · {series[selectedPly]?.label ?? "Pending"} · White
-        evaluation
-      </p>
+      </div>
     </section>
   );
 }
@@ -54,12 +55,10 @@ type Marker = { ply: number; classification: { base_label: string } };
 function GraphCanvas({
   series,
   selectedPly,
-  select,
   reviews,
 }: {
   series: (EvaluationPoint | null)[];
   selectedPly: number;
-  select: (ply: number) => void;
   reviews: readonly Marker[] | undefined;
 }) {
   const last = series.length - 1;
@@ -69,18 +68,6 @@ function GraphCanvas({
       preserveAspectRatio="none"
       role="img"
       aria-label="White advantage above the centre; Black advantage below. Missing evidence leaves gaps."
-      onClick={(event) => {
-        const bounds = event.currentTarget.getBoundingClientRect();
-        select(
-          Math.max(
-            0,
-            Math.min(
-              last,
-              Math.round(((event.clientX - bounds.left) / bounds.width) * last),
-            ),
-          ),
-        );
-      }}
     >
       <path d="M0,50H1000" stroke="#8f9693" strokeWidth="1" />
       {graphSegments(series).map((points, index) => {

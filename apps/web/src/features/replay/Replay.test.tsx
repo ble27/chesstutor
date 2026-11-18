@@ -6,9 +6,9 @@ import { Replay } from "./Replay";
 
 it("groups engine analysis above the selectable game moves", () => {
   render(<Replay game={imported} />);
-  const review = screen.getByRole("region", { name: "Game review" });
+  const review = screen.getByRole("complementary", { name: "Game insights" });
   const engine = within(review).getByRole("heading", {
-    name: "Engine analysis",
+    name: "Engine",
   });
   const moves = within(review).getByRole("list", { name: "Game moves" });
   expect(
@@ -77,10 +77,7 @@ it("describes the selected position in text after en passant", () => {
   fireEvent.click(screen.getByRole("button", { name: "Last position" }));
   expect(
     screen.getByRole("status", { name: "Replay position" }),
-  ).toHaveTextContent(
-    "After 13. White: exd6 · Black to move · White at bottom",
-  );
-  fireEvent.click(screen.getByText("Text position and FEN"));
+  ).toHaveTextContent("After 13. White: exd6 · Black to move");
   const pieces = screen.getByRole("table", { name: "Position pieces" });
   expect(
     within(pieces).getByRole("row", { name: "d6 White pawn" }),

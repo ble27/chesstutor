@@ -39,18 +39,20 @@ test("free analysis validates branches, publishes real WASM scores, and restores
   await expect(
     page.getByRole("status", { name: "Analysis progress" }),
   ).toContainText("Completed");
-  await page.getByLabel("Engine settings").click();
+  await page.getByRole("button", { name: "Engine settings" }).click();
   await page.getByLabel("Local search depth").fill("6");
+  await page.getByRole("button", { name: "Done" }).click();
   await page.getByLabel("Self-analysis / Free play").check();
   await page.getByLabel("Legal move").selectOption("e2e4");
   await page.getByRole("button", { name: "Play move", exact: true }).click();
   await expect(
     page.getByRole("status", { name: "Replay position" }),
   ).toContainText("branch ply 1");
-  await expect(page.getByText(/Local evaluation:/)).toBeVisible({
+  await expect(
+    page.getByRole("img", { name: /Evaluation .*White perspective/ }),
+  ).toBeVisible({
     timeout: 45000,
   });
-  await page.getByText("Text position and FEN", { exact: true }).click();
   await expect(page.getByLabel("Position FEN")).toHaveText(
     imported.positions[1]?.fen ?? "missing",
   );
@@ -71,6 +73,6 @@ test("free analysis validates branches, publishes real WASM scores, and restores
   await expect(page.getByLabel("Position FEN")).toHaveText(
     imported.initial_fen,
   );
-  await expect(page.getByText(/Local evaluation:/)).toHaveCount(0);
+  await expect(page.getByText(/Client-unverified/)).toHaveCount(0);
   await expect(page.getByLabel("Self-analysis / Free play")).not.toBeChecked();
 });

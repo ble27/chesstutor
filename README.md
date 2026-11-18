@@ -22,14 +22,24 @@ coaching remains S5.
 ## Current status
 
 This is a local development project, not a production release. Game Review now
-includes automatic per-ply template coaching, optional device-local voice,
+includes automatic per-ply template coaching, optional ElevenLabs playback,
 independent calibrated accuracy, a selectable evaluation graph and legal free
 analysis. Analyze starts a bounded Standard server review; Settings also offers
 Thorough review and local WASM depth/thread controls. The recorded game stays
 unchanged when exploring branches. See [the upgrade record](docs/review-upgrade.md)
 and [S6 evidence](docs/sprints/S6.md) for implementation and acceptance limits.
+The [redesign audit and component map](docs/review-redesign.md) describe the
+current search and analysis layout.
 Manual accessibility gates remain open. S7 is unstarted; its 43 inherited test
 specifications remain visible and keep the aggregate `make verify` gate red.
+
+## Coach voice
+
+Set `CHESS_ELEVENLABS_API_KEY` in the API environment or local `.env` and restart
+the API. Play requests synthesis of the selected move's reviewed note. The
+application sends only that note to ElevenLabs George (Multilingual v2).
+Play and mute are independent, and changing plies stops playback. The text coach
+works without credentials. Audio generation can use ElevenLabs account credits.
 
 ## Local setup
 

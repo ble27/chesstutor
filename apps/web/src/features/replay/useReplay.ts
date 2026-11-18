@@ -30,7 +30,7 @@ export function replayKeyDown(
   if (
     event.target instanceof HTMLElement &&
     event.target.closest(
-      'input, textarea, select, [contenteditable]:not([contenteditable="false"])',
+      'dialog, input, textarea, select, [contenteditable]:not([contenteditable="false"])',
     )
   )
     return;

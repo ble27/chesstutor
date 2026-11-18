@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useId, type ReactNode } from "react";
 import type { Game } from "../../api/discoveryValidation";
 import { Board } from "./Board";
 import type { BoardArrow } from "../guidance/arrows";
@@ -39,6 +39,7 @@ export function BoardFrame({
   arrows,
   onMove,
   legalMoves,
+  evaluation,
 }: {
   players: Pick<Game["game"], "white" | "black">;
   fen: string;
@@ -46,6 +47,7 @@ export function BoardFrame({
   lastMove: string | null;
   arrows?: BoardArrow[] | undefined;
   onMove?: ((move: string) => void) | undefined;
+  evaluation?: ReactNode;
   legalMoves?: readonly string[] | undefined;
 }) {
   const id = useId();
@@ -58,15 +60,18 @@ export function BoardFrame({
         color={topColor}
         edge="Top"
       />
-      <Board
-        fen={fen}
-        orientation={orientation}
-        lastMove={lastMove}
-        arrows={arrows}
-        onMove={onMove}
-        legalMoves={legalMoves}
-        describedBy={`${id}-top ${id}-bottom`}
-      />
+      <div className="board-and-evaluation">
+        {evaluation}
+        <Board
+          fen={fen}
+          orientation={orientation}
+          lastMove={lastMove}
+          arrows={arrows}
+          onMove={onMove}
+          legalMoves={legalMoves}
+          describedBy={`${id}-top ${id}-bottom`}
+        />
+      </div>
       <PlayerLabel
         id={`${id}-bottom`}
         player={players[orientation]}

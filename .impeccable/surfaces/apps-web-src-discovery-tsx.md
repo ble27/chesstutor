@@ -2,25 +2,27 @@
 version: 1
 slug: "apps-web-src-discovery-tsx"
 primary_target: "apps/web/src/Discovery.tsx"
-related_targets: ["apps/web/src/library.css","apps/web/src/features/library","apps/web/src/features/replay/Replay.tsx"]
+related_targets: ["apps/web/src/dashboard.css","apps/web/src/features/library","apps/web/src/features/replay/Replay.tsx"]
 ---
 
 ## Direction contract
 
-THESIS: Make finding and reviewing a public game one clear workflow. Replace the
-scattered game cards and competing empty panels with a chronological library.
+Mode: Operate
 
-OWN-WORLD: Preserve the established charcoal, teal/cream board, and gold selection.
-Use one system sans family, flat bordered surfaces, 44px controls, and quiet dividers.
+**Thesis.** Take a player search directly to the game. Give each review task a
+defined place in the same viewport.
 
-STORY: Search a player, see their public ratings, filter recent games, inspect a
-result and validated move count, then open the game into the existing review tools.
+**Visual world.** Ink-blue surfaces, brass actions and focused states, tan and
+cream Merida squares, an ivory knight portrait, and tabular scores.
 
-FIRST VIEWPORT: Compact title and service status above a two-column search strip;
-a single library below starts with ratings, month and time-control filters.
-Opening a game focuses the larger board on the left and tabbed analysis on the right.
+**First viewport.** Open on the Chess.com username field and Find games action.
+Results add ratings, visible filters and chronological rows. Review puts the
+board, evaluation rail and replay controls beside the engine, history, coach
+and paired moves. Engine settings uses one modal.
 
-FORM: User-specified chronological list and preserved 60/40 review composition.
-This extends an established application surface; no concept tournament applies.
+**Interaction.** The score rail follows the displayed position and the graph
+scrubs recorded history. Desktop can dedicate scrolling to a long move list.
+Smaller and content-heavy layouts use page scrolling.
 
-FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+**Sources.** See [DESIGN.md](../../DESIGN.md) and the
+[redesign audit and component map](../../docs/review-redesign.md).

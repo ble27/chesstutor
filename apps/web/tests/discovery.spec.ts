@@ -18,9 +18,8 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await page.getByLabel("Chess.com username").fill("alice");
     await page.getByRole("button", { name: "Find games" }).click();
     await expect(page.getByLabel("Archive month")).toHaveValue("2026-11");
-    await expect(page.getByText(/Stale cached data/)).toBeVisible();
+    await expect(page.getByText("Cached archive")).toBeVisible();
     await expect(page.getByText(/White: alice/)).toBeVisible();
-    await page.getByText("More filters", { exact: true }).click();
     await page.getByLabel("Player color").selectOption("black");
     await page.getByRole("button", { name: "Apply filters" }).click();
     await page.getByRole("button", { name: "Analyze" }).click();

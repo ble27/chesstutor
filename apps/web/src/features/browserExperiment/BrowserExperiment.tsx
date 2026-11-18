@@ -1,15 +1,25 @@
 import { useState } from "react";
+import type { ReactNode } from "react";
 import type { Game } from "../../api/discoveryValidation";
-import { PositionEvidence } from "../review/PositionEvidence";
+import { EngineDepth, EngineLines } from "../review/WorkspaceEngine";
+import { positionAnalysis } from "../review/positionAnalysis";
+import type { PositionAnalysis } from "../review/positionAnalysis";
+
+type BrowserProps = {
+  game: Game;
+  selectedPly: number;
+  workspace?: (
+    engine: ReactNode,
+    position: PositionAnalysis | null,
+  ) => ReactNode;
+};
 import { useBrowserReview } from "./useBrowserReview";
 
 export function BrowserExperiment({
   game,
   selectedPly,
-}: {
-  game: Game;
-  selectedPly: number;
-}) {
+  workspace,
+}: BrowserProps) {
   const supportsThreads =
     globalThis.crossOriginIsolated &&
     typeof SharedArrayBuffer !== "undefined" &&
@@ -23,6 +33,7 @@ export function BrowserExperiment({
       threads={threads}
       setThreads={setThreads}
       supportsThreads={supportsThreads}
+      {...(workspace ? { workspace } : {})}
     />
   );
 }
@@ -33,9 +44,8 @@ function BrowserSession({
   threads,
   setThreads,
   supportsThreads,
-}: {
-  game: Game;
-  selectedPly: number;
+  workspace,
+}: BrowserProps & {
   threads: number;
   setThreads: (value: number) => void;
   supportsThreads: boolean;
@@ -44,24 +54,14 @@ function BrowserSession({
     game,
     threads,
   );
-  return (
-    <section
-      className="panel engine-panel"
-      aria-labelledby="browser-engine-title"
-    >
-      <p className="eyebrow">Branch experiment · this device</p>
-      <h2 id="browser-engine-title">Browser engine analysis</h2>
-      <p>
-        Full Stockfish 17.1 · provisional personal review. Scores are
-        client-generated, not server-verified classifications. No server engine
-        job is submitted.
-      </p>
-      <p>
-        Quick targets 30,000 nodes per search with a 250ms cap; selected-move
-        refinement targets 300,000 nodes with a 1500ms cap. First download is
-        approximately 70 MiB; browser caching speeds later starts. Closing this
-        tab stops computation.
-      </p>
+  const position = positionAnalysis(game, selectedPly, values);
+  const engine = (
+    <section className="engine-panel" aria-labelledby="browser-engine-title">
+      <div className="module-heading">
+        <h2 id="browser-engine-title">Browser engine analysis</h2>
+        <EngineDepth position={position} />
+      </div>
+      <p className="engine-status">Stockfish 17.1 · Provisional</p>
       <label>
         Engine threads{" "}
         <select
@@ -88,27 +88,17 @@ function BrowserSession({
       <p role="status" aria-label="Browser analysis progress">
         {message}
       </p>
-      <p>
+      <p className="engine-status">
         {values.length}/{game.positions.length - 1} plies available
       </p>
-      <progress
-        aria-label="Browser analysed plies"
-        value={values.length}
-        max={game.positions.length - 1}
-      />
-      {error && (
-        <p role="alert">
-          {error} Completed local positions are retained for retry.
-        </p>
-      )}
-      <PositionEvidence
+      {error && <p role="alert">{error}</p>}
+      <EngineLines
         game={game}
-        selectedPly={selectedPly}
-        evidence={values}
+        ply={selectedPly}
+        position={position}
+        showPrimaryScore={!workspace}
       />
       <p className="engine-provenance">
-        Full WASM 17.1 · Threads {threads} · Hash 128 MiB · browser-policy1 ·
-        local unverified evidence.{" "}
         <a href="/engine/LICENSE.txt">GPLv3 license</a> ·{" "}
         <a href="https://github.com/nmrugg/stockfish.js/tree/v17.1.0">
           Exact source/build
@@ -117,4 +107,5 @@ function BrowserSession({
       <a href="?engine=server">Compare existing server analysis</a>
     </section>
   );
+  return workspace ? workspace(engine, position) : engine;
 }

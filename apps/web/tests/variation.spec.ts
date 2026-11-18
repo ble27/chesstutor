@@ -32,7 +32,7 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await openReview(page);
     await page.getByRole("button", { name: "Next move" }).click();
-    const evaluation = page.locator(".position-score strong");
+    const evaluation = page.locator(".evaluation-rail strong");
     await expect(evaluation).toHaveText("-0.35");
     expect(
       await evaluation.evaluate((element) => {
@@ -42,8 +42,7 @@ for (const width of [320, 390, 768, 1024, 1440]) {
       }),
     ).toBe(1);
     await page.getByRole("button", { name: "Explore variation 1" }).click();
-    await expect(evaluation).toHaveCount(0);
-    await page.getByText("Text position and FEN").click();
+    await expect(evaluation).toHaveText("—");
     await page.getByRole("button", { name: "Next move" }).click();
     await expect(page.getByLabel("Position FEN")).toHaveText(
       analysisGame.positions[2]?.fen ?? "missing",
@@ -71,7 +70,6 @@ for (const width of [320, 390, 768, 1024, 1440]) {
         () => document.documentElement.scrollWidth <= innerWidth,
       ),
     ).toBe(true);
-    await page.getByText("Text position and FEN").click();
     if (width === 320 || width === 1440)
       await page
         .locator(".workspace")
@@ -79,16 +77,17 @@ for (const width of [320, 390, 768, 1024, 1440]) {
   });
 }
 
-test("review disclosures retain touch size and visible keyboard focus", async ({
+test("engine settings retain touch size and visible keyboard focus", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openReview(page);
-  const limits = page.getByText("Review settings and limits", { exact: true });
+  const limits = page.getByRole("button", { name: "Engine settings" });
   const bounds = await limits.boundingBox();
   expect(bounds?.height).toBeGreaterThanOrEqual(44);
-  await page.getByLabel("Engine settings").focus();
+  await limits.focus();
   await page.keyboard.press("Shift+Tab");
+  await page.keyboard.press("Tab");
   await expect(limits).toBeFocused();
   const outline = await limits.evaluate((element) => {
     const style = getComputedStyle(element);
@@ -199,13 +198,15 @@ for (const viewport of [
   }) => {
     await page.setViewportSize(viewport);
     await openReview(page);
-    await expect(page.locator(".position-score strong")).toHaveText("+1.20");
+    await expect(page.locator(".evaluation-rail strong")).toHaveText("+1.20");
     await page.evaluate(() => scrollTo(0, 0));
     await expect(page.getByRole("img", { name: /Chessboard/ })).toBeInViewport({
       ratio: 1,
     });
-    await expect(page.locator(".workspace-coach")).toBeInViewport({ ratio: 1 });
-    await expect(page.locator(".review-graph")).toBeInViewport({ ratio: 1 });
+    await expect(page.locator(".coach-module")).toBeInViewport({ ratio: 1 });
+    await expect(page.locator(".evaluation-graph")).toBeInViewport({
+      ratio: 1,
+    });
     await expect(
       page.getByRole("navigation", { name: "Replay controls" }),
     ).toBeInViewport({ ratio: 1 });

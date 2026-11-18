@@ -38,7 +38,7 @@ it("compares both named players with one primary label per ply including zero co
   ).toBeVisible();
 });
 
-it("defines independent accuracy and never gives an unscored opponent 100 percent", () => {
+it("labels independent accuracy and keeps unscored players unavailable", () => {
   render(<ClassificationSummary summary={summary} />);
   const table = screen.getByRole("table", {
     name: "Move classifications by player",
@@ -48,7 +48,7 @@ it("defines independent accuracy and never gives an unscored opponent 100 percen
       name: /Chess Tutor accuracy Unavailable Unavailable/,
     }),
   ).toBeVisible();
-  expect(screen.getByText(/Lichess-inspired/)).toBeInTheDocument();
+  expect(screen.queryByText("How these numbers work")).not.toBeInTheDocument();
   expect(
     within(table).getByRole("row", { name: /Scored plies 0 0/ }),
   ).toBeVisible();

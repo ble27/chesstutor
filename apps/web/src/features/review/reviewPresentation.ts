@@ -33,6 +33,14 @@ export function formatWhiteEvaluation(score: Score, digits = 1): string {
   return `${rounded > 0 ? "+" : ""}${(rounded === 0 ? 0 : pawns).toFixed(digits)}`;
 }
 
+export function whiteAdvantage(score: Score, result: string | null): number {
+  const direction = score.pov === "white" ? 1 : -1;
+  if (score.kind === "cp")
+    return Math.tanh((0.00368208 * score.centipawns * direction) / 2);
+  if (score.moves !== 0) return Math.sign(score.moves) * direction;
+  return result === "1-0" ? 1 : result === "0-1" ? -1 : 0;
+}
+
 export function reviewPresentation(input: PresentationInput) {
   const evidence =
     input.evidence?.gameId === input.gameId &&

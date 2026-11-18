@@ -51,10 +51,7 @@ it("previews the pre-move board for guidance arrows and restores replay when hid
   expect(
     screen.getByRole("status", { name: "Replay position" }),
   ).toHaveTextContent("Before 1. White: e4 · White to move");
-  fireEvent.click(screen.getByText("Coach options and alternatives"));
-  fireEvent.click(
-    screen.getByRole("checkbox", { name: "Show arrows on the board" }),
-  );
+  fireEvent.click(screen.getByRole("checkbox", { name: "Board arrows" }));
   expect(screen.getByLabelText("Position FEN")).toHaveTextContent(
     imported.positions[1]?.fen ?? "missing",
   );
@@ -117,20 +114,19 @@ it("starts free analysis at the displayed pre-move preview without changing reco
       imported.initial_fen,
     ),
   );
-  expect(screen.getByText("White evaluation · current position")).toBeVisible();
+  expect(
+    screen.getByRole("img", { name: "Evaluation +1.20, White perspective" }),
+  ).toBeVisible();
   fireEvent.change(screen.getByRole("slider", { name: "Position on graph" }), {
     target: { value: "1" },
   });
   expect(screen.getByLabelText("Position FEN")).toHaveTextContent(
     imported.positions[1]?.fen ?? "missing",
   );
-  fireEvent.click(screen.getByText("Coach options and alternatives"));
   expect(
-    screen.getByRole("checkbox", { name: "Show arrows on the board" }),
+    screen.getByRole("checkbox", { name: "Board arrows" }),
   ).not.toBeChecked();
-  fireEvent.click(
-    screen.getByRole("checkbox", { name: "Show arrows on the board" }),
-  );
+  fireEvent.click(screen.getByRole("checkbox", { name: "Board arrows" }));
   await waitFor(() =>
     expect(screen.getByLabelText("Position FEN")).toHaveTextContent(
       imported.initial_fen,

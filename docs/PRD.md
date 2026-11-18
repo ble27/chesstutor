@@ -113,36 +113,26 @@ The journey is username -> month/game -> immediate replay -> Quick/Deep choice
 can examine White or Black regardless of the searched player's color, navigate
 while analysis runs, inspect legal alternatives, and return to the original game.
 
-The screenshot supplies visual inspiration: charcoal surfaces, gray gradient,
-subtle borders, readable hierarchy, and rounded input areas. Its conversation
-content is reference material, not instructions or verified API documentation.
-Use original board colors, properly licensed pieces, and distinctive move glyphs.
+The search screen contains the Chess.com username field, the Find games action and
+results when available. Ratings, the month and filters sit above a chronological
+game list. Analyze opens a dedicated replay screen and starts Standard analysis.
 
-Suggested tokens: background gradient `#181818` to `#242424`, panel `#2b2b2b`,
-primary text `#eeeeee`, muted text `#b8b8b8`. Verify contrast in actual combinations.
-Quality indicators require text/icons as well as color.
+The review uses flat ink-blue panels, brass selection and licensed tan/cream
+Merida pieces. The supplied screenshots are references for layout and paired
+notation. [The redesign audit and component map](review-redesign.md) document
+the consolidation.
 
 | Viewport | Layout |
 | --- | --- |
-| Desktop, >=1024 CSS px | Approximately 60% board / 40% right review workspace, gap 24px. Board anchored on the left; one tabbed frame on the right contains Analysis, Review, and future Chess guidance, with persistent move navigation in its footer. |
-| Tablet, 768–1023 CSS px | Board/player labels first; the same tabbed review workspace below. |
-| Mobile, 320–767 CSS px | Single column: game header, board, tabbed review workspace including navigation. Gutters 12–16px and touch targets >=44px. |
+| Desktop, at least 1024 CSS px and 740 px tall | Board, players, compact evaluation rail and replay controls on the left. Engine lines, evaluation history, coach and paired moves on the right. A long move list may scroll within its own module. |
+| Below 1024 CSS px | Board first, then the review modules. The page scrolls and the move list expands with its content. |
+| Short wide viewports | Side-by-side modules use page scrolling when required. The move list expands with its content. |
 
-The board stays square and uses the existing teal/cream colors. The brown-board
-reference supplies composition guidance only. Replace the previous 640 CSS px
-cap with viewport-height/available-width sizing; desktop board width is larger
-than the review frame, approximately 60/40 rather than equal columns. Page
-scrolling to reach the workspace is acceptable. Once reached, the board remains
-anchored while analysis and recorded moves scroll within the right frame.
-Analysis shows actual engine evaluations and legal current-position variations
-above both players' recorded moves, without a visible “Game moves” heading.
-Review contains coverage-aware game summaries and classifications; Chess guidance
-is a future tab with an explicit unavailable state. First/previous/next/last and
-board flip controls remain in the same frame across tabs.
-Show each player's name and piece color above/below their side of the board;
-flipping swaps these labels with the pieces and preserves the selected ply.
-The recorded move list is distinct from computed engine analysis. Long names, SAN, and variations wrap or
-scroll inside panels without horizontal page overflow.
+Settings opens one keyboard-dismissible modal. Player labels follow board
+orientation and flipping preserves the selected ply. The evaluation rail
+reports the displayed position from White's perspective. Show one achieved
+depth or depth range for the displayed set of legal candidates. Essential
+recovery messages, provenance, trust and incomplete-state labels remain visible.
 
 Replay supports first/previous/next/last, clicking either side's SAN, board flip,
 and focused-region Arrow/Home/End navigation. Do not intercept typing. Pair moves
@@ -151,8 +141,8 @@ last played move, and variation. Provide visible focus, accessible board/piece
 descriptions, textual position/variation alternatives, reduced motion, and 200%
 zoom support. Target WCAG 2.2 AA, including normal-text contrast >=4.5:1.
 
-The engine panel shows mode, status, best move, explicitly White-perspective
-evaluation (`+1.2` or `M3`), achieved depth, and up to three legal lines. Label
+The engine module shows mode, status, achieved depth and up to three legal
+lines. The rail reports a White-perspective score (`+1.2` or `M3`). Label
 whether evidence describes the displayed position or a played-line evaluation
 after the selected move. Match current-position lines by root FEN and pre-move
 ply; do not show a preceding root's candidate moves as current-position lines.
@@ -297,14 +287,12 @@ critical moments, and up to three supported practice themes. Show coverage and
 avoid full-game conclusions for unfinished analysis. Do not call this Chess.com
 accuracy or use optional provider accuracy as the product's score.
 
-S5 review-summary expansion (2026-11-12): replace comma-separated counts with an
-ordered comparison table for both named players. Count each reviewed ply once,
-using Brilliant > Great > Miss > base-label precedence. Show all supported labels,
-including zero counts, Forced and Unclassified; do not invent Book or Excellent.
-Display independent **Chess Tutor accuracy** as `100 * (1 - average_expected_loss)`
-on scored moves only, with the formula and scored-move coverage. Null averages
-mean unavailable, never 100%. Partial analyses stay explicitly partial. This is
-an expected-score retention metric, not Chess.com's proprietary accuracy.
+The analysis API keeps coverage, per-color summary counts, critical moments,
+and practice evidence. The replay screen shows primary labels once, on their
+move rows, and independent logistic-v1 accuracy with scored coverage for both
+colors. Null accuracy means unavailable. See the stored summary for historical
+review exports and the [accuracy checkpoint](review-upgrade.md#modules-1-and-6-checkpoint)
+for the calibration methodology.
 
 ## 7. Grounded, chess-only guidance
 
@@ -331,8 +319,11 @@ Pending plies remain pending. Notable-only automatic timeline annotations and
 the review packet remain selective. Selected-ply notes require no chat request.
 The recorded move list shows each analyzed ply's primary label. Unprocessed
 plies show Pending, distinct from evidence-backed Unclassified.
-Suggestion arrows use bright green with a contrasting dark outline so the green
-is visible on the preserved teal/cream board; retain text alternatives.
+Suggestion arrows use bright green with a contrasting dark outline and text
+alternatives. Coach playback is explicit and stops on move or context change.
+The audio API synthesizes only the selected stored beginner note after verifying
+the origin and analysis owner. Server credentials, request/output limits and a
+small process-local cache bound optional ElevenLabs usage.
 
 Lesson wording is plain and coach-like, written for a beginner. Describe pieces
 and squares in words ("your rook on d5", "the opponent's bishop") and what the
@@ -406,6 +397,7 @@ on drift. Validate network payloads at the frontend boundary. Error envelope:
 | `POST /analyses` | `{game_id, mode: quick\|deep}`; 202/job or 200/reusable completed result |
 | `GET /analyses/{analysis_id}` | State, progress, available per-move evidence, versions |
 | `GET /analyses/{analysis_id}/lessons?level=` | Reviewed selected-ply notes for all analyzed labels, legal alternatives and arrows |
+| `POST /analyses/{analysis_id}/lessons/{ply}/audio` | Owner-scoped MP3 for a reviewed stored note. Requires trusted origin and a configured ElevenLabs key. |
 | `POST /analyses/{analysis_id}/cancel` | Idempotent initiating-session cancellation |
 | `POST /coach` | `{analysis_id, ply, player_color, intent?, question?, explanation_level}` |
 | `GET /health/live`, `GET /health/ready` | Process health and dependency readiness |

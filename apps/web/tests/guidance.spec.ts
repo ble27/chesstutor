@@ -85,22 +85,22 @@ test("explains a flagged move in plain words and draws labelled arrows", async (
   await expect(
     page.getByText(/leaves your rook on d1 undefended/),
   ).toBeVisible();
-  await expect(page.getByText("Mistake", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "1. White: Kh1" }),
+  ).toHaveAttribute("aria-current", "step");
   await page.screenshot({
     path: test.info().outputPath("guidance-desktop.png"),
   });
-  await page.getByText("Coach options and alternatives").click();
-  const arrows = page.getByRole("list", { name: "Board arrows" });
-  await expect(arrows).toContainText("Your move: g1 to h1");
-  await expect(arrows).toContainText("Suggestion 1: d1 to d4");
+  await expect(
+    page.getByText(/Your move: g1 to h1.*Suggestion 1: d1 to d4/),
+  ).toBeAttached();
   const parts = () => page.locator(".replay-board svg *").count();
   const withArrows = await parts();
-  await page
-    .getByRole("checkbox", { name: "Show arrows on the board" })
-    .uncheck();
+  await page.getByRole("checkbox", { name: "Board arrows" }).uncheck();
   await expect.poll(parts).toBeLessThan(withArrows);
-  await expect(page.getByRole("list", { name: "Board arrows" })).toBeVisible();
-  await page.getByText("Coach options and alternatives").click();
+  await expect(
+    page.getByRole("checkbox", { name: "Board arrows" }),
+  ).not.toBeChecked();
 });
 
 test("shows continuous coaching with opt-in voice and no chat", async ({
@@ -115,12 +115,11 @@ test("shows continuous coaching with opt-in voice and no chat", async ({
     page.getByRole("textbox", { name: "Ask a chess question" }),
   ).toHaveCount(0);
   await expect(
-    page.getByRole("checkbox", { name: "Coach voice" }),
-  ).not.toBeChecked();
-  await page.getByRole("checkbox", { name: "Coach voice" }).check();
+    page.getByRole("button", { name: "Play coach voice" }),
+  ).toBeEnabled();
   await expect(
-    page.getByRole("button", { name: "Replay voice" }),
-  ).toBeVisible();
+    page.getByRole("button", { name: "Mute coach" }),
+  ).toHaveAttribute("aria-pressed", "false");
 });
 
 test("recovers automatic notes on retry without a new analysis", async ({
@@ -208,7 +207,6 @@ test("completes username to Quick, replay, coaching, Deep cancellation and retry
   await expect(
     page.getByText(/leaves your rook on d1 undefended/),
   ).toBeVisible();
-  await page.getByRole("tab", { name: "Analysis" }).click();
   const { queuedAnalysis } = await import("../src/testFixtures/analysis");
   let submissions = 0;
   const queued = { ...queuedAnalysis, mode: "deep" };
@@ -228,16 +226,16 @@ test("completes username to Quick, replay, coaching, Deep cancellation and retry
       },
     }),
   );
-  await page.getByLabel("Engine settings").click();
+  await page.getByRole("button", { name: "Engine settings" }).click();
   await page.getByLabel("Server review").selectOption("deep");
   await page.getByRole("button", { name: "Run review" }).click();
   const progress = page.getByRole("status", { name: "Analysis progress" });
-  await expect(progress).toContainText("Deep · Queued");
+  await expect(progress).toContainText("Thorough · Queued");
   await page.getByRole("button", { name: "Cancel analysis" }).click();
   await expect(progress).toContainText("Cancelled");
-  await expect(page.getByText(/Partial evidence retained/)).toBeVisible();
+  await expect(progress).toContainText("0/1 plies");
   await page.getByRole("button", { name: "Retry analysis" }).click();
-  await expect(progress).toContainText("Deep · Completed");
+  await expect(progress).toContainText("Thorough · Completed");
   await expect(
     page.getByRole("button", { name: "1. White: Kh1" }),
   ).toHaveAttribute("aria-current", "step");

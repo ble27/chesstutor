@@ -1,59 +1,54 @@
 import { useState } from "react";
 import type { Filters } from "../../api/discovery";
-import { TimeControl } from "./TimeControl";
 
-export function LibraryFilters({
-  filters,
-  apply,
-}: {
+type Props = {
+  month: string;
+  months: readonly string[];
   filters: Filters;
-  apply: (value: Filters) => void;
-}) {
-  return (
-    <div className="library-filters">
-      <div
-        className="time-filters"
-        role="group"
-        aria-label="Filter by time control"
-      >
-        {["", "rapid", "blitz", "bullet", "daily"].map((value) => (
-          <button
-            key={value}
-            aria-pressed={filters.time_class === value}
-            onClick={() => apply({ ...filters, time_class: value })}
-          >
-            {value ? <TimeControl value={value} /> : "All games"}
-          </button>
-        ))}
-      </div>
-      <details className="advanced-filters">
-        <summary>More filters</summary>
-        <AdvancedFilters
-          key={`${filters.color}:${filters.opponent}:${filters.time_class}`}
-          filters={filters}
-          apply={apply}
-        />
-      </details>
-    </div>
-  );
+  apply: (month: string, filters: Filters) => void;
+};
+
+export function LibraryFilters(props: Props) {
+  const { filters, month } = props;
+  return <FilterForm key={JSON.stringify([month, filters])} {...props} />;
 }
 
-function AdvancedFilters({
-  filters,
-  apply,
-}: {
-  filters: Filters;
-  apply: (value: Filters) => void;
-}) {
+function FilterForm({ month, months, filters, apply }: Props) {
   const [draft, setDraft] = useState(filters);
   return (
     <form
-      className="filters"
+      className="library-filter-bar"
       onSubmit={(event) => {
         event.preventDefault();
-        apply(draft);
+        apply(month, draft);
       }}
     >
+      <label>
+        Archive month
+        <select
+          value={month}
+          onChange={(event) => apply(event.target.value, draft)}
+        >
+          {months.map((value) => (
+            <option key={value}>{value}</option>
+          ))}
+        </select>
+      </label>
+      <label>
+        Time control
+        <select
+          value={draft.time_class}
+          onChange={(event) =>
+            setDraft({ ...draft, time_class: event.target.value })
+          }
+        >
+          <option value="">All</option>
+          <option value="rapid">Rapid</option>
+          <option value="blitz">Blitz</option>
+          <option value="bullet">Bullet</option>
+          <option value="daily">Daily</option>
+        </select>
+      </label>
       <label>
         Player color
         <select
@@ -78,20 +73,6 @@ function AdvancedFilters({
             setDraft({ ...draft, opponent: event.target.value })
           }
         />
-      </label>
-      <label>
-        Time class
-        <select
-          value={draft.time_class}
-          onChange={(event) =>
-            setDraft({ ...draft, time_class: event.target.value })
-          }
-        >
-          <option value="">All</option>
-          {["bullet", "blitz", "rapid", "daily"].map((value) => (
-            <option key={value}>{value}</option>
-          ))}
-        </select>
       </label>
       <button>Apply filters</button>
     </form>

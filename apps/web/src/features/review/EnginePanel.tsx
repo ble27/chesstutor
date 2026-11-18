@@ -90,7 +90,6 @@ export function EngineView({
       {workspace && variation?.kind !== "variation" && job && (
         <SelectedMoveClassification job={job} selectedPly={selectedPly} />
       )}
-      <AnalysisLimits />
       {automatic && (
         <EngineSettings
           busy={busy}
@@ -119,19 +118,6 @@ export function EngineView({
         <button onClick={retry}>Retry analysis</button>
       )}
     </section>
-  );
-}
-
-function AnalysisLimits() {
-  return (
-    <details className="analysis-limits">
-      <summary>Review settings and limits</summary>
-      <p>
-        Quick: 100ms per search. Deep: 750ms per search. Limit: one active job,
-        five Quick and two Deep reviews per hour. Shared-network limits also
-        apply; cached results are free.
-      </p>
-    </details>
   );
 }
 

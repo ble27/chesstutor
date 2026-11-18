@@ -1,5 +1,6 @@
 import { useReviewPosition } from "./useReviewPosition";
-import { formatScore } from "../review/EngineEvidence";
+import type { ReactNode } from "react";
+import { EvaluationRail } from "../review/EvaluationRail";
 import type { Game } from "../../api/discoveryValidation";
 import { replayKeyDown } from "./useReplay";
 import { ReviewWorkspace } from "../review/ReviewWorkspace";
@@ -71,23 +72,6 @@ function ReplaySession({
         )
       }
     >
-      <ReplayBoard
-        game={game}
-        selectedMove={selectedMove}
-        fen={boardPosition.fen}
-        orientation={variation.orientation}
-        lastMove={preview ? null : boardPosition.uci}
-        arrows={view.arrows}
-        localScore={
-          local.live.line && (local.refine || local.sandbox.enabled)
-            ? formatScore(local.live.line.score, 2)
-            : null
-        }
-        onMove={
-          local.sandbox.enabled && !local.sandbox.busy ? local.play : undefined
-        }
-        legalMoves={local.sandbox.position?.legal_moves}
-      />
       <ReviewWorkspace
         automatic={automatic}
         game={game}
@@ -100,6 +84,37 @@ function ReplaySession({
         flip={variation.flip}
         variation={variation}
         onArrows={setArrows}
+        board={(score, footer) => (
+          <ReplayBoard
+            game={game}
+            selectedMove={selectedMove}
+            fen={boardPosition.fen}
+            orientation={variation.orientation}
+            lastMove={preview ? null : boardPosition.uci}
+            arrows={view.arrows}
+            evaluation={
+              <EvaluationRail
+                score={score}
+                orientation={variation.orientation}
+                result={
+                  !local.refine &&
+                  !local.sandbox.enabled &&
+                  variation.kind === "game" &&
+                  view.positionPly === lastPly
+                    ? game.result
+                    : null
+                }
+              />
+            }
+            footer={footer}
+            onMove={
+              local.sandbox.enabled && !local.sandbox.busy
+                ? local.play
+                : undefined
+            }
+            legalMoves={local.sandbox.position?.legal_moves}
+          />
+        )}
       />
     </section>
   );
@@ -127,7 +142,8 @@ function ReplayBoard({
   orientation,
   lastMove,
   arrows,
-  localScore,
+  evaluation,
+  footer,
   onMove,
   legalMoves,
 }: {
@@ -137,14 +153,15 @@ function ReplayBoard({
   orientation: "white" | "black";
   lastMove: string | null;
   arrows: BoardArrow[];
-  localScore: string | null;
+  evaluation: ReactNode;
+  footer: ReactNode;
   onMove?: ((move: string) => void) | undefined;
   legalMoves?: readonly string[] | undefined;
 }) {
   return (
     <section className="panel replay-panel" aria-labelledby="game-title">
       <h2 id="game-title" className="visually-hidden">
-        Replay both sides
+        Board
       </h2>
       <p
         role="status"
@@ -153,13 +170,7 @@ function ReplayBoard({
         className="replay-position"
       >
         {selectedMove} · {fen.split(" ")[1] === "w" ? "White" : "Black"} to move
-        · {orientation === "white" ? "White" : "Black"} at bottom
       </p>
-      {localScore && (
-        <p role="status">
-          Local evaluation: {localScore} · White perspective · Client-unverified
-        </p>
-      )}
       <BoardFrame
         players={game.game}
         fen={fen}
@@ -168,7 +179,9 @@ function ReplayBoard({
         arrows={arrows}
         onMove={onMove}
         legalMoves={legalMoves}
+        evaluation={evaluation}
       />
+      {footer}
       <PositionText fen={fen} />
       <PieceCredit />
     </section>

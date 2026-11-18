@@ -83,7 +83,7 @@ export async function runBrowserReview(
         (await publishBatch(game, pending, key, signal, updates)) &&
         storageAvailable;
     updates.message(
-      `${refine ? "Selected move refinement" : "Screening"} finished in ${((performance.now() - started) / 1000).toFixed(1)}s. Provisional client results.${storageAvailable ? "" : " Local storage unavailable; resume is disabled."}`,
+      `${refine ? "Selected move refinement" : "Screening"} finished in ${((performance.now() - started) / 1000).toFixed(1)}s${storageAvailable ? "" : " · Resume unavailable"}`,
     );
   } finally {
     engine?.close();

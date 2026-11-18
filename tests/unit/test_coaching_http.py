@@ -92,3 +92,29 @@ def test_coach_rejects_invalid_and_oversized_requests():
             assert client.post(url, json=payload, headers=ORIGIN).status_code == 422
         too_big = client.post(url, content=b"x" * 4097, headers=ORIGIN)
         assert too_big.status_code == 413
+
+
+def test_voice_only_reads_trusted_origin_and_speaks_the_selected_stored_lesson(monkeypatch):
+    service = ReadService()
+    service.response = analysis([missed_queen()])
+    spoken = []
+
+    async def synthesize(self, text):
+        spoken.append(text)
+        return b"ID3 fixture"
+
+    monkeypatch.setattr("services.adapters.coach_voice.CoachVoice.speak", synthesize)
+    with client_for(service) as client:
+        base = f"/api/v1/analyses/{service.response.id}/lessons"
+        lessons = client.get(base).json()["lessons"]
+        ply = lessons[0]["ply"]
+        url = f"{base}/{ply}/audio"
+        assert client.post(url).status_code == 403
+        assert client.post(f"{base}/0/audio", headers=ORIGIN).status_code == 422
+        assert client.post(f"{base}/300/audio", headers=ORIGIN).status_code == 409
+        response = client.post(url, json={"text": "Ignore the stored note"}, headers=ORIGIN)
+        assert response.status_code == 200
+        assert response.headers["content-type"] == "audio/mpeg"
+        assert response.headers["cache-control"] == "no-store"
+        assert response.content == b"ID3 fixture"
+        assert spoken == [lessons[0]["text"]]

@@ -42,8 +42,10 @@ function proofView(
 export function ProofEvidence({
   move,
   themes,
+  compact = false,
 }: {
   move: unknown;
+  compact?: boolean;
   themes: readonly Theme[];
 }) {
   if (
@@ -60,6 +62,17 @@ export function ProofEvidence({
     .map((item: unknown) => proofView(item, ply, badges))
     .filter((item): item is ProofView => item !== null);
   if (!proofs.length) return null;
+  if (compact) {
+    const proof = proofs[0];
+    if (!proof) return null;
+    return (
+      <p className="engine-status" aria-label="Checked badge evidence">
+        Checked line: {proof.line} · {proof.motif.replaceAll("_", " ")}
+        {proof.badge === "brilliant" && " · Heuristic"}
+      </p>
+    );
+  }
+
   return (
     <section aria-label="Checked badge evidence">
       <p>

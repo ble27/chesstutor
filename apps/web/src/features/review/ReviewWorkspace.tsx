@@ -1,24 +1,26 @@
-import { LocalAnalysisControls } from "../analysis/LocalAnalysisControls";
-import type { LocalAnalysis } from "../analysis/useLocalAnalysis";
-import type { Variation } from "./useVariation";
 import { useState } from "react";
 import type { ReactNode } from "react";
 import type { Game } from "../../api/discoveryValidation";
 import type { Analysis } from "../../api/analysis";
+import type { Evidence } from "../../api/analysisEvidence";
 import { active } from "../../api/analysis";
+import { LocalAnalysisControls } from "../analysis/LocalAnalysisControls";
+import type { LocalAnalysis } from "../analysis/useLocalAnalysis";
+import type { BoardArrow } from "../guidance/arrows";
 import { MoveList } from "../replay/MoveList";
 import { BrowserExperiment } from "../browserExperiment/BrowserExperiment";
+import { useReviewScroll } from "./useReviewScroll";
 import { useAnalysis } from "./useAnalysis";
-import { EngineView } from "./EnginePanel";
-import { ClassificationSummary } from "./ClassificationSummary";
-import type { LocalSettings } from "./EngineSettings";
+import { WorkspaceEngine } from "./WorkspaceEngine";
 import { EngineSettings, defaultLocalSettings } from "./EngineSettings";
 import { EvaluationGraph } from "./EvaluationGraph";
 import { CoachPanel } from "./CoachPanel";
-import type { BoardArrow } from "../guidance/arrows";
 import { VariationFooter } from "./VariationFooter";
-import { ReviewTabs } from "./ReviewTabs";
-import type { ReviewTab } from "./ReviewTabs";
+import type { Variation } from "./useVariation";
+import { ProofEvidence } from "./ProofEvidence";
+import { positionAnalysis } from "./positionAnalysis";
+
+type Score = Evidence["played"]["score"];
 
 type Props = {
   localAnalysis?: LocalAnalysis;
@@ -31,257 +33,218 @@ type Props = {
   select: (ply: number) => void;
   flip: () => void;
   onArrows?: (arrows: BoardArrow[]) => void;
-  moveReviews?: Analysis["classifications"];
   variation?: Variation | undefined;
+  board?: (score: Score | null, footer: ReactNode) => ReactNode;
 };
 
 const noArrows = () => undefined;
 
 export function ReviewWorkspace(props: Props) {
-  return new URLSearchParams(window.location.search).get("engine") ===
-    "browser" ? (
-    <ReviewShell
-      {...props}
-      analysis={
-        <BrowserExperiment game={props.game} selectedPly={props.selectedPly} />
-      }
-      guidance={() => (
-        <p>
-          Chess guidance needs a server-verified review. The browser experiment
-          does not provide it.
-        </p>
-      )}
-      review={() => (
-        <p>
-          Browser evidence is provisional. Server-verified game summaries are
-          unavailable in this experiment.
-        </p>
-      )}
-    />
-  ) : (
-    <ServerWorkspace {...props} />
-  );
+  if (new URLSearchParams(window.location.search).get("engine") === "browser")
+    return (
+      <BrowserExperiment
+        game={props.game}
+        selectedPly={props.selectedPly}
+        workspace={(engine, position) => (
+          <ReviewLayout
+            {...props}
+            analysis={null}
+            score={position?.score ?? null}
+            engine={engine}
+          />
+        )}
+      />
+    );
+  return <ServerWorkspace {...props} />;
 }
 
 function ServerWorkspace(props: Props) {
   const session = useAnalysis(props.game, props.automatic);
   const [fallbackLocal, setFallbackLocal] = useState(defaultLocalSettings);
-  const local = props.localAnalysis?.settings ?? fallbackLocal;
-  const setLocal = props.localAnalysis?.setSettings ?? setFallbackLocal;
-  const summary = session.state.job?.summary;
+  const { game, localAnalysis, variation } = props;
+  const job = session.state.job;
+  const ply = props.positionPly ?? props.selectedPly;
+  const sandbox = localAnalysis?.sandbox.enabled === true;
+  const preview = variation?.kind === "variation";
+  const localActive = sandbox || localAnalysis?.refine === true;
+  const position =
+    sandbox || preview
+      ? null
+      : positionAnalysis(game, ply, job?.evidence ?? []);
   return (
-    <ReviewShell
+    <ReviewLayout
       {...props}
-      moveReviews={session.state.job?.classifications}
-      analysis={
-        <ServerAnalysis
-          props={props}
+      analysis={job}
+      score={
+        localActive
+          ? (localAnalysis?.live.line?.score ?? null)
+          : (position?.score ?? null)
+      }
+      engine={
+        <WorkspaceEngine
+          game={game}
           session={session}
-          local={local}
-          setLocal={setLocal}
+          automatic={props.automatic === true}
+          position={position}
+          ply={ply}
+          preview={sandbox ? "Free analysis" : preview ? "Variation" : null}
+          showPrimaryScore={!props.board || localActive}
+          onVariation={
+            variation &&
+            ((line) => {
+              localAnalysis?.setRefine(false);
+              variation.enter(line);
+            })
+          }
+        />
+      }
+      settings={
+        <EngineSettings
+          busy={
+            session.state.status === "loading" || (job !== null && active(job))
+          }
+          start={session.start}
+          local={localAnalysis?.settings ?? fallbackLocal}
+          setLocal={localAnalysis?.setSettings ?? setFallbackLocal}
         />
       }
       graph={
-        !props.localAnalysis?.sandbox.enabled && (
+        !sandbox && (
           <EvaluationGraph
-            game={props.game}
-            evidence={session.state.job?.evidence ?? []}
-            reviews={session.state.job?.classifications}
-            selectedPly={props.positionPly ?? props.selectedPly}
+            game={game}
+            evidence={job?.evidence ?? []}
+            reviews={job?.classifications}
+            selectedPly={ply}
             select={props.selectPosition ?? props.select}
           />
         )
       }
-      guidance={() => (
-        <WorkspaceCoach props={props} analysis={session.state.job} />
-      )}
-      review={(selectMoment) =>
-        summary ? (
-          <>
-            <p>
-              {summary.coverage.classified_plies} of{" "}
-              {summary.coverage.total_plies} plies classified
-              {!summary.is_final && " · analysis incomplete"}
-            </p>
-            <ClassificationSummary
-              summary={summary}
-              accuracy={session.state.job?.accuracy}
-              reviews={session.state.job?.classifications}
-              players={props.game.game}
-            />
-            {summary.critical_moments.map((moment) => (
-              <button key={moment.ply} onClick={() => selectMoment(moment.ply)}>
-                Inspect ply {moment.ply} · {moment.label}
-              </button>
-            ))}
-          </>
-        ) : (
-          <p>
-            Run a review to see game summaries, mistakes, and blunders. Partial
-            analysis will show its coverage.
-          </p>
+      local={
+        localAnalysis && (
+          <LocalAnalysisControls
+            local={localAnalysis}
+            selectedPly={ply}
+            leaveVariation={variation?.exit ?? noArrows}
+          />
         )
       }
     />
   );
 }
 
-function ReviewShell({
+function ReviewLayout({
   game,
   selectedPly,
   select,
   flip,
-  moveReviews,
   localAnalysis,
   variation,
-  analysis,
+  coachArrows,
+  onArrows,
+  board,
+  score,
+  engine,
   graph,
-  guidance,
-  review,
-}: Props & {
-  analysis: ReactNode;
-  graph?: ReactNode;
-  guidance: () => ReactNode;
-  review: (selectMoment: (ply: number) => void) => ReactNode;
-}) {
-  const [tab, setTab] = useState<ReviewTab>("Analysis");
-  const selectMoment = (ply: number) => {
-    select(ply);
-    setTab("Analysis");
-    document.getElementById("tab-analysis")?.focus();
-  };
-  return (
-    <aside className="insights" aria-label="Game insights">
-      <section className="panel review-panel" aria-label="Game review">
-        <div className="workspace-coach">{guidance()}</div>
-        <ReviewTabs
-          selected={tab}
-          select={(next) => {
-            variation?.exit();
-            setTab(next);
-          }}
-        />
-        <div
-          id="view-analysis"
-          role="tabpanel"
-          aria-labelledby="tab-analysis"
-          hidden={tab !== "Analysis"}
-          className="analysis-tab"
-        >
-          {graph && <div className="review-graph">{graph}</div>}
-          <div className="analysis-region">{analysis}</div>
-          <div className="review-moves">
-            <MoveList
-              game={game}
-              selectedPly={selectedPly}
-              select={select}
-              reviews={moveReviews}
-            />
-          </div>
-        </div>
-        <div
-          id="view-review"
-          role="tabpanel"
-          aria-labelledby="tab-review"
-          hidden={tab !== "Review"}
-          className="review-tab-content"
-        >
-          {tab === "Review" && review(selectMoment)}
-        </div>
-        <VariationFooter
-          selectedPly={selectedPly}
-          lastPly={game.positions.length - 1}
-          select={select}
-          flip={flip}
-          variation={variation}
-          sandbox={localAnalysis?.sandbox}
-        />
-      </section>
-    </aside>
-  );
-}
-
-function ServerAnalysis({
-  props,
-  session,
-  local,
-  setLocal,
-}: {
-  props: Props;
-  session: ReturnType<typeof useAnalysis>;
-  local: LocalSettings;
-  setLocal: (settings: LocalSettings) => void;
-}) {
-  return (
-    <>
-      {props.localAnalysis?.sandbox.enabled && (
-        <EngineSettings
-          busy={
-            session.state.status === "loading" ||
-            (session.state.job !== null && active(session.state.job))
-          }
-          start={session.start}
-          local={local}
-          setLocal={setLocal}
-        />
-      )}
-      {!props.localAnalysis?.sandbox.enabled && (
-        <EngineView
-          game={props.game}
-          selectedPly={props.selectedPly}
-          session={session}
-          workspace
-          automatic={props.automatic}
-          local={local}
-          setLocal={setLocal}
-          positionPly={props.positionPly ?? props.selectedPly}
-          onVariation={(line) => {
-            props.localAnalysis?.setRefine(false);
-            props.variation?.enter(line);
-          }}
-          variation={props.variation}
-        />
-      )}{" "}
-      {props.localAnalysis && (
-        <LocalAnalysisControls
-          local={props.localAnalysis}
-          selectedPly={props.positionPly ?? props.selectedPly}
-          leaveVariation={props.variation?.exit ?? noArrows}
-        />
-      )}
-    </>
-  );
-}
-
-function WorkspaceCoach({
-  props,
+  settings,
   analysis,
-}: {
-  props: Props;
+  local,
+}: Props & {
+  score: Score | null;
+  engine: ReactNode;
+  graph?: ReactNode;
+  settings?: ReactNode;
   analysis: Analysis | null;
+  local?: ReactNode;
 }) {
-  const suspended =
-    props.localAnalysis?.sandbox.enabled === true ||
-    props.variation?.kind === "variation";
+  const scroll = useReviewScroll();
+  const footer = (
+    <VariationFooter
+      selectedPly={selectedPly}
+      lastPly={game.positions.length - 1}
+      select={select}
+      flip={flip}
+      variation={variation}
+      sandbox={localAnalysis?.sandbox}
+    />
+  );
   return (
     <>
-      {suspended && (
-        <p role="status">
-          {props.localAnalysis?.sandbox.enabled
-            ? "Free analysis is separate from recorded move coaching. Return to game to resume your lesson."
-            : "Exploring an engine variation. Return to the game for the recorded move’s coaching."}
-        </p>
-      )}
-      <div hidden={suspended}>
+      {board?.(score, footer)}
+      <aside ref={scroll} className="review-modules" aria-label="Game insights">
+        <section className="panel review-engine" aria-label="Engine analysis">
+          {settings}
+          {engine}
+          {local}
+          {!localAnalysis?.sandbox.enabled &&
+            variation?.kind !== "variation" && (
+              <ProofEvidence
+                compact
+                move={analysis?.classifications?.find(
+                  (move) => move.ply === selectedPly,
+                )}
+                themes={[]}
+              />
+            )}
+        </section>
+        {graph}
         <CoachPanel
           analysis={analysis}
-          selectedPly={props.selectedPly}
-          onArrows={props.onArrows ?? noArrows}
-          suspended={suspended}
-          arrowsVisible={props.coachArrows?.visible}
-          onArrowsVisible={props.coachArrows?.setVisible}
+          selectedPly={selectedPly}
+          onArrows={onArrows ?? noArrows}
+          suspended={
+            localAnalysis?.sandbox.enabled === true ||
+            variation?.kind === "variation"
+          }
+          arrowsVisible={coachArrows?.visible}
+          onArrowsVisible={coachArrows?.setVisible}
         />
-      </div>
+        <section className="panel moves-module" aria-labelledby="moves-title">
+          <div className="module-heading">
+            <h2 id="moves-title">Moves</h2>
+            <AccuracyReadout analysis={analysis} />
+          </div>
+          <div className="move-columns" aria-hidden="true">
+            <span>#</span>
+            <span>White</span>
+            <span>Black</span>
+          </div>
+          <MoveList
+            game={game}
+            selectedPly={selectedPly}
+            select={select}
+            reviews={analysis?.classifications}
+          />
+        </section>
+        {!board && footer}
+      </aside>
     </>
+  );
+}
+
+function AccuracyReadout({ analysis }: { analysis: Analysis | null }) {
+  const accuracy = analysis?.accuracy;
+  if (!accuracy) return null;
+  const players = accuracy.players;
+  return (
+    <div className="accuracy-readout" aria-label="Accuracy">
+      <span>Accuracy</span>
+      {(["white", "black"] as const).map((color) => {
+        const item = players[color];
+        if (!item) return null;
+        return (
+          <span key={color}>
+            <i className={`piece-color ${color}`} aria-hidden="true" />
+            <span className="visually-hidden">{color} </span>
+            {item.accuracy == null ? "—" : `${item.accuracy.toFixed(1)}%`}
+            <span
+              className="accuracy-coverage"
+              aria-label={`${item.scored_plies} of ${item.total_plies} scored plies`}
+            >
+              {item.scored_plies}/{item.total_plies}
+            </span>
+          </span>
+        );
+      })}
+    </div>
   );
 }

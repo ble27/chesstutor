@@ -52,20 +52,16 @@ export function GameRow({
       </div>
       <div className="game-result" aria-label="Game summary">
         <strong>{outcome.score}</strong>
-        <span>{outcome.description}</span>
         <small>
           {moves != null
             ? `${moves} ${moves === 1 ? "move" : "moves"}`
             : "Move count unavailable"}
-          {selected &&
-            opened &&
-            ` · ${opened.positions.length - 1} ${opened.positions.length === 2 ? "ply" : "plies"}`}
         </small>
       </div>
       <div className="game-row-actions">
         {game.eligibility === "available" ? (
           <button aria-pressed={selected} onClick={() => open(game.id)}>
-            {selected ? "Analyze again" : "Analyze"}
+            Analyze
           </button>
         ) : (
           <span>{unavailable[game.eligibility]}</span>

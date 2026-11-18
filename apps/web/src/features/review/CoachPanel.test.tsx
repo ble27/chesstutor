@@ -16,9 +16,10 @@ it("automatically explains the ply without exposing standalone chat", async () =
   expect(
     screen.queryByRole("textbox", { name: /question/i }),
   ).not.toBeInTheDocument();
-  expect(
-    screen.getByRole("checkbox", { name: "Coach voice" }),
-  ).not.toBeChecked();
+  expect(screen.getByRole("button", { name: "Mute coach" })).toHaveAttribute(
+    "aria-pressed",
+    "false",
+  );
   expect(
     fetcher.mock.calls.every(([url]) => String(url).includes("/lessons")),
   ).toBe(true);
@@ -51,10 +52,7 @@ it("suspends arrows during previews and preserves the user's arrow choice on ret
       onArrows={onArrows}
     />,
   );
-  fireEvent.click(screen.getByText("Coach options and alternatives"));
-  fireEvent.click(
-    screen.getByRole("checkbox", { name: "Show arrows on the board" }),
-  );
+  fireEvent.click(screen.getByRole("checkbox", { name: "Board arrows" }));
   rerender(
     <CoachPanel
       analysis={guidanceAnalysis}
@@ -71,7 +69,7 @@ it("suspends arrows during previews and preserves the user's arrow choice on ret
     />,
   );
   expect(
-    screen.getByRole("checkbox", { name: "Show arrows on the board" }),
+    screen.getByRole("checkbox", { name: "Board arrows" }),
   ).not.toBeChecked();
   expect(onArrows).toHaveBeenLastCalledWith([]);
 });

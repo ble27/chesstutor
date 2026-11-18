@@ -24,7 +24,7 @@ from services.core.coaching.lessons import (
     lesson_kind,
     make_arrow,
 )
-from services.core.coaching.move_notes import move_notes
+from services.core.coaching.move_notes import move_note, move_notes
 from services.core.coaching.templates import render_blocks, render_coaching
 from services.core.coaching.values import Evidence, Level
 
@@ -66,6 +66,14 @@ def lessons_response(analysis: AnalysisResponse, level: Level) -> LessonsRespons
         complete=analysis.state == "completed",
         lessons=[lesson_out(lesson) for lesson in move_notes(pairs, level)],
     )
+
+
+def voice_note(analysis: AnalysisResponse, ply: int) -> str:
+    review = next((item for item in analysis.classifications if item.ply == ply), None)
+    evidence = next((item for item in analysis.evidence if item.ply == ply), None)
+    if review is None or evidence is None:
+        raise AnalysisError("voice_note_unavailable", "Voice note unavailable", 409)
+    return render_blocks(move_note(review, evidence, "beginner").blocks)
 
 
 def best_first_move(move: MoveEvidence) -> tuple[str, ...]:

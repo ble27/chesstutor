@@ -85,8 +85,8 @@ it("cancels a running search and reaps its worker", async () => {
   );
   expect(FakeWorker.active.size).toBe(0);
   expect(
-    screen.getByText(/Cancelled\. Completed local positions retained/),
-  ).toBeVisible();
+    screen.getByRole("status", { name: "Browser analysis progress" }),
+  ).toHaveTextContent("Cancelled");
 });
 
 it("reaps its worker immediately even if local storage is blocked after search", async () => {
